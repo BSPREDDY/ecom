@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ShopMate — Your Ultimate Shopping Destination</title>
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/styles/home/main.css" as="style">
+    <link rel="preload" href="/styles/navbar.css" as="style">
+    <link rel="preload" href="/styles/footer.css" as="style">
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/styles/home/main.css">
+    <link rel="stylesheet" href="/styles/navbar.css">
+    <link rel="stylesheet" href="/styles/footer.css">
+    <link rel="stylesheet" href="/styles/auth.css">
+
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <link rel="preconnect" href="https://www.gstatic.com">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="site-header" id="mainHeader">
+        <div class="wrap">
+            <a class="brand" href="/pages/home.html">
+                <span class="logo-mark">SM</span> ShopMate
+            </a>
+
+            <nav class="primary">
+                <a href="/pages/home.html" class="nav-link active">Home</a>
+                <a href="/pages/home.html#products" class="nav-link">Products</a>
+                <a href="/pages/deals.html" class="nav-link">Deals</a>
+                <a href="/pages/about.html" class="nav-link">About</a>
+                <a href="/pages/contact.html" class="nav-link">Contact</a>
+            </nav>
+
+            <div class="search" role="search">
+                <input id="desktopSearch" placeholder="Search products, brands and more" aria-label="Search products" />
+                <button aria-label="Search" id="searchBtn">🔍</button>
+            </div>
+
+            <div class="actions">
+                <button class="icon-btn" id="wishlistBtn" title="Wishlist" aria-label="Wishlist">♡</button>
+                <button class="icon-btn" id="cartBtn" title="Cart" aria-label="Shopping cart">
+                    🛒 <span class="badge" id="cartCount">0</span>
+                </button>
+
+                <div style="position:relative" class="d-none d-md-block">
+                    <div class="profile" id="profileBtn" aria-haspopup="true" aria-expanded="false" role="button"
+                        tabindex="0">
+                        <div class="avatar" id="userAvatar">U</div>
+                    </div>
+
+                    <div class="dropdown-menu" id="profileMenu" role="menu">
+                        <a href="#" role="menuitem">👤 Your Account</a>
+                        <a href="#" role="menuitem">📦 Orders</a>
+                        <a href="/pages/wishlist.html" role="menuitem">❤️ Saved Items</a>
+                        <hr style="border:none;border-top:1px solid #eef2f7;margin:8px 0">
+                        <a href="#" id="logoutBtn" role="menuitem">🚪 Sign out</a>
+                    </div>
+                </div>
+
+                <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="mobile-panel" id="mobilePanel">
+        <button class="mobile-close" id="mobileClose">✕</button>
+
+        <div class="mobile-profile" id="mobileProfile">
+            <div class="avatar" id="mobileUserAvatar">U</div>
+            <div class="user-info">
+                <div class="user-name" id="mobileUserName">Welcome Back!</div>
+                <div class="user-email" id="mobileUserEmail">user@example.com</div>
+            </div>
+        </div>
+
+        <div class="mobile-search">
+            <input id="mobileSearch" placeholder="Search products..." aria-label="Search products" />
+            <button id="mobileSearchBtn">🔍</button>
+        </div>
+
+        <div class="mobile-nav-section">
+            <a href="/pages/home.html" class="active">
+                <span class="nav-icon">🏠</span> Home
+            </a>
+            <a href="/pages/home.html#products">
+                <span class="nav-icon">🛍️</span> Products
+            </a>
+            <a href="/pages/deals.html">
+                <span class="nav-icon">🔥</span> Deals
+            </a>
+            <a href="/pages/about.html">
+                <span class="nav-icon">ℹ️</span> About
+            </a>
+            <a href="/pages/contact.html">
+                <span class="nav-icon">📞</span> Contact
+            </a>
+        </div>
+
+        <hr>
+
+        <div class="mobile-nav-section">
+            <div class="mobile-nav-title">Your Account</div>
+            <a href="#">
+                <span class="nav-icon">👤</span> Your Account
+            </a>
+            <a href="#">
+                <span class="nav-icon">📦</span> Orders
+            </a>
+            <a href="/pages/wishlist.html">
+                <span class="nav-icon">❤️</span> Saved Items
+            </a>
+            <a href="#" id="mobileLogoutBtn">
+                <span class="nav-icon">🚪</span> Sign out
+            </a>
+        </div>
+
+        <div class="mobile-footer">
+            <p>© 2025 ShopMate<br>Your Ultimate Shopping Destination</p>
+        </div>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-modal-content">
+            <div class="auth-modal-icon">🔒</div>
+            <h2 class="auth-modal-title">Sign In Required</h2>
+            <p class="auth-modal-text">You need to sign in to access your account features.</p>
+            <div class="auth-modal-buttons">
+                <button class="auth-modal-btn primary" id="loginRedirectBtn">
+                    Sign In
+                </button>
+                <button class="auth-modal-btn secondary" id="closeAuthModal">
+                    Maybe Later
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-inner">
+            <h1 class="fade-up">Biggest Sale of the Year!</h1>
+            <p class="fade-up" style="transition-delay:.1s">
+                Discover amazing deals on the latest products. Limited time only - Don't miss out!
+            </p>
+            <div class="cta fade-up" style="transition-delay:.2s">
+                <a class="btn-cta" href="#products">🛒 Shop Now</a>
+                <a class="btn-outline" href="/pages/deals.html">View Deals</a>
+            </div>
+
+            <div class="hero-cats fade-up" style="transition-delay:.3s">
+                <a href="/pages/category.html?category=smartphones">📱 Electronics</a>
+                <a href="/pages/category.html?category=fashion">👕 Fashion</a>
+                <a href="/pages/category.html?category=home-decoration">🏡 Home</a>
+                <a href="/pages/category.html?category=beauty">💄 Beauty</a>
+                <a href="/pages/category.html?category=fitness">⚽ Sports</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="section">
+        <h3 class="section-title">Shop by Category</h3>
+
+        <div class="slider" id="catSlider">
+            <div class="slider-track" id="catTrack">
+                <div class="slide" data-category="smartphones">
+                    <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=800&q=60"
+                        alt="Smartphones" loading="lazy">
+                    <div class="slide-title">📱 Smartphones</div>
+                    <div class="slide-desc">Latest models</div>
+                </div>
+                <div class="slide" data-category="fashion">
+                    <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=60"
+                        alt="Fashion" loading="lazy">
+                    <div class="slide-title">👕 Fashion</div>
+                    <div class="slide-desc">Trending styles</div>
+                </div>
+                <div class="slide" data-category="home-decoration">
+                    <img src="https://images.unsplash.com/photo-1602810316977-38d5f3b9d2a5?auto=format&fit=crop&w=800&q=60"
+                        alt="Home" loading="lazy">
+                    <div class="slide-title">🏡 Home</div>
+                    <div class="slide-desc">Essentials</div>
+                </div>
+                <div class="slide" data-category="fitness">
+                    <img src="https://images.unsplash.com/photo-1519744792095-2f2205e87b6f?auto=format&fit=crop&w=800&q=60"
+                        alt="Fitness" loading="lazy">
+                    <div class="slide-title">⚽ Fitness</div>
+                    <div class="slide-desc">Gear & wearables</div>
+                </div>
+                <div class="slide" data-category="beauty">
+                    <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=60"
+                        alt="Beauty" loading="lazy">
+                    <div class="slide-title">💄 Beauty</div>
+                    <div class="slide-desc">Top picks</div>
+                </div>
+            </div>
+            <div class="slider-controls">
+                <button id="catPrev" aria-label="Previous">‹</button>
+                <button id="catNext" aria-label="Next">›</button>
+            </div>
+        </div>
+
+        <h3 class="section-title">Featured Products</h3>
+        <div class="grid" id="productGrid">
+            <div class="loading">Loading products...</div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>ShopMate</h3>
+                <p>Your trusted online store with fast delivery, amazing deals, and exceptional customer service.</p>
+            </div>
+            <div class="footer-column">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Returns & Refunds</a></li>
+                    <li><a href="#">Shipping Info</a></li>
+                    <li><a href="#">Track Order</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="/pages/about.html">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Connect</h3>
+                <ul>
+                    <li><a href="/pages/contact.html">Contact Us</a></li>
+                    <li><a href="#">Partners</a></li>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Instagram</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2025 ShopMate — All rights reserved. Made with <span>🟩</span> for shoppers worldwide.
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span style="font-size:1.5rem">✓</span>
+        <span id="toastMessage">Item added to cart!</span>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="/scripts/firebase-config.js"></script>
+    <script type="module" src="/scripts/home/main.js"></script>
+</body>
+
+</html>

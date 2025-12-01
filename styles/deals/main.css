@@ -1,0 +1,10 @@
+/* ========== LOADING & TOAST STYLES ========== */
+.loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: #64748b;
+    font-size: 1.1rem;
+    grid-column: 1 / -1;
+}
+
+/* Toast styles are now in auth.css */

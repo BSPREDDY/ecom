@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Product Details — ShopMate</title>
+
+    <!-- CSS files -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/navbar.css">
+    <link rel="stylesheet" href="../styles/footer.css">
+    <link rel="stylesheet" href="../styles/product/main.css">
+    <link rel="stylesheet" href="../styles/auth.css">
+
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://www.gstatic.com">
+    <link rel="preconnect" href="https://dummyjson.com">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <header class="site-header" id="mainHeader">
+        <div class="wrap">
+            <a class="brand" href="../pages/home.html">
+                <span class="logo-mark">SM</span> ShopMate
+            </a>
+
+            <nav class="primary">
+                <a href="../pages/home.html">Home</a>
+                <a href="../pages/home.html#products">Products</a>
+                <a href="../pages/deals.html">Deals</a>
+                <a href="../pages/about.html">About</a>
+                <a href="../pages/contact.html">Contact</a>
+            </nav>
+
+            <div class="search" role="search">
+                <input id="desktopSearch" placeholder="Search products..." aria-label="Search products" />
+                <button aria-label="Search" id="searchBtn">🔍</button>
+            </div>
+
+            <div class="actions">
+                <button class="icon-btn" id="wishlistBtn" title="Wishlist" aria-label="Wishlist">♡</button>
+                <button class="icon-btn" id="cartBtn" title="Cart" aria-label="Shopping cart">
+                    🛒 <span class="badge" id="cartCount">0</span>
+                </button>
+
+                <div style="position:relative" class="d-none d-md-block">
+                    <div class="profile" id="profileBtn" aria-haspopup="true" aria-expanded="false" role="button"
+                        tabindex="0">
+                        <div class="avatar" id="userAvatar">U</div>
+                    </div>
+
+                    <div class="dropdown-menu" id="profileMenu" role="menu">
+                        <a href="#" role="menuitem">👤 Your Account</a>
+                        <a href="#" role="menuitem">📦 Orders</a>
+                        <a href="../pages/wishlist.html" role="menuitem">❤️ Saved Items</a>
+                        <hr style="border:none;border-top:1px solid #eef2f7;margin:8px 0">
+                        <a href="#" id="logoutBtn" role="menuitem">🚪 Sign out</a>
+                    </div>
+                </div>
+
+                <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Panel -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="mobile-panel" id="mobilePanel">
+        <button class="mobile-close" id="mobileClose">✕</button>
+
+        <div class="mobile-profile" id="mobileProfile">
+            <div class="avatar" id="mobileUserAvatar">U</div>
+            <div class="user-info">
+                <div class="user-name" id="mobileUserName">Welcome Back!</div>
+                <div class="user-email" id="mobileUserEmail">user@example.com</div>
+            </div>
+        </div>
+
+        <div class="mobile-search">
+            <input id="mobileSearch" placeholder="Search products..." aria-label="Search products" />
+            <button id="mobileSearchBtn">🔍</button>
+        </div>
+
+        <div class="mobile-nav-section">
+            <a href="../pages/home.html">
+                <span class="nav-icon">🏠</span> Home
+            </a>
+            <a href="../pages/home.html#products">
+                <span class="nav-icon">🛍️</span> Products
+            </a>
+            <a href="../pages/deals.html">
+                <span class="nav-icon">🔥</span> Deals
+            </a>
+            <a href="../pages/about.html">
+                <span class="nav-icon">ℹ️</span> About
+            </a>
+            <a href="../pages/contact.html">
+                <span class="nav-icon">📞</span> Contact
+            </a>
+        </div>
+
+        <hr>
+
+        <div class="mobile-nav-section">
+            <div class="mobile-nav-title">Your Account</div>
+            <a href="#">
+                <span class="nav-icon">👤</span> Your Account
+            </a>
+            <a href="#">
+                <span class="nav-icon">📦</span> Orders
+            </a>
+            <a href="../pages/wishlist.html">
+                <span class="nav-icon">❤️</span> Saved Items
+            </a>
+            <a href="#" id="mobileLogoutBtn">
+                <span class="nav-icon">🚪</span> Sign out
+            </a>
+        </div>
+
+        <div class="mobile-footer">
+            <p>© 2025 ShopMate<br>Your Ultimate Shopping Destination</p>
+        </div>
+    </div>
+    <!-- Add this Authentication Modal after mobile panel and before footer -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-modal-content">
+            <div class="auth-modal-icon">🔒</div>
+            <h2 class="auth-modal-title">Sign In Required</h2>
+            <p class="auth-modal-text">You need to sign in to access your account features.</p>
+            <div class="auth-modal-buttons">
+                <button class="auth-modal-btn primary" id="loginRedirectBtn">
+                    Sign In
+                </button>
+                <button class="auth-modal-btn secondary" id="closeAuthModal">
+                    Maybe Later
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="breadcrumb-section">
+        <div class="breadcrumb-wrap">
+            <div class="breadcrumb">
+                <a href="../pages/home.html">Home</a> <span>›</span>
+                <a href="../pages/home.html#products">Products</a> <span>›</span>
+                <span id="breadcrumbCategory">Loading...</span> <span>›</span>
+                <span id="breadcrumbProduct">Product Details</span>
+            </div>
+        </div>
+    </div>
+
+    <section class="product-section">
+        <div id="productContainer">
+            <div class="loading">
+                <div class="spinner"></div>Loading product details...
+            </div>
+        </div>
+        <div class="related-section" id="relatedSection" style="display:none">
+            <h3 class="section-title">Related Products</h3>
+            <div class="related-grid" id="relatedGrid"></div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="reviews-section" id="reviewsSection" style="display:none">
+            <div class="reviews-container">
+                <div class="reviews-header">
+                    <h3 class="reviews-title">Customer Reviews</h3>
+                    <div class="reviews-summary">
+                        <div class="overall-rating">
+                            <div class="rating-number" id="overallRating">4.5</div>
+                            <div class="rating-stars" id="overallStars">★★★★☆</div>
+                            <div class="rating-count" id="reviewCount">Based on 128 reviews</div>
+                        </div>
+                        <div class="rating-breakdown" id="ratingBreakdown">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="review-form-container">
+                    <h4 class="review-form-title">Write Your Review</h4>
+                    <form class="review-form" id="reviewForm">
+                        <div class="form-group">
+                            <label class="form-label">Your Rating</label>
+                            <div class="star-rating-input">
+                                <input type="radio" id="star5" name="rating" value="5" class="star-input">
+                                <label for="star5" class="star-label">★</label>
+                                <input type="radio" id="star4" name="rating" value="4" class="star-input">
+                                <label for="star4" class="star-label">★</label>
+                                <input type="radio" id="star3" name="rating" value="3" class="star-input">
+                                <label for="star3" class="star-label">★</label>
+                                <input type="radio" id="star2" name="rating" value="2" class="star-input">
+                                <label for="star2" class="star-label">★</label>
+                                <input type="radio" id="star1" name="rating" value="1" class="star-input">
+                                <label for="star1" class="star-label">★</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reviewTitle" class="form-label">Review Title</label>
+                            <input type="text" id="reviewTitle" class="form-input"
+                                placeholder="Summarize your experience" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reviewContent" class="form-label">Your Review</label>
+                            <textarea id="reviewContent" class="form-textarea"
+                                placeholder="Share your thoughts about this product..." required></textarea>
+                        </div>
+                        <button type="submit" class="submit-review-btn" id="submitReviewBtn">Submit Review</button>
+                    </form>
+                </div>
+
+                <div class="reviews-list" id="reviewsList">
+                    <!-- Reviews will be populated by JavaScript -->
+                </div>
+
+                <div class="load-more-reviews" id="loadMoreContainer">
+                    <button class="load-more-btn" id="loadMoreReviews">Load More Reviews</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>ShopMate</h3>
+                <p>Your trusted online store with fast delivery, amazing deals, and exceptional customer service.</p>
+            </div>
+            <div class="footer-column">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Returns & Refunds</a></li>
+                    <li><a href="#">Shipping Info</a></li>
+                    <li><a href="#">Track Order</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="/pages/about.html">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Connect</h3>
+                <ul>
+                    <li><a href="/pages/contact.html">Contact Us</a></li>
+                    <li><a href="#">Partners</a></li>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Instagram</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2025 ShopMate — All rights reserved. Made with <span>🟩</span> for shoppers worldwide.
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span style="font-size:1.5rem">✓</span>
+        <span id="toastMessage">Success!</span>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script type="module" src="../scripts/firebase-config.js"></script>
+    <script type="module" src="../scripts/auth.js" defer></script>
+    <script type="module" src="../scripts/product/main.js" defer></script>
+</body>
+
+</html>

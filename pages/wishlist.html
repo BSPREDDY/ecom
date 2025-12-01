@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Wishlist — ShopMate</title>
+
+    <!-- CSS Files -->
+    <!-- Remove preload tags if files don't exist -->
+    <link rel="stylesheet" href="/styles/navbar.css">
+    <link rel="stylesheet" href="/styles/footer.css">
+    <link rel="stylesheet" href="/styles/auth.css">
+
+    <!-- Add inline CSS for wishlist -->
+    <style>
+        /* ========== WISHLIST STYLES ========== */
+        .wishlist-section {
+            max-width: 1200px;
+            margin: 100px auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        .wishlist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .wishlist-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #111;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 24px;
+        }
+
+        .wishlist-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 14px;
+            box-shadow: 0 2px 8px rgba(11, 22, 60, 0.04);
+            transition: all 0.4s;
+            cursor: pointer;
+            border: 1px solid transparent;
+            position: relative;
+        }
+
+        .wishlist-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 18px 50px rgba(11, 22, 60, 0.12);
+            border-color: rgba(40, 116, 240, 0.1);
+        }
+
+        .wishlist-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            background: #f0f0f0;
+            transition: transform 0.3s;
+        }
+
+        .wishlist-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .remove-wishlist {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #ef4444;
+            color: #ef4444;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+        .remove-wishlist:hover {
+            background: #ef4444;
+            color: #fff;
+            transform: scale(1.15);
+        }
+
+        .card-content {
+            pointer-events: none;
+        }
+
+        .title {
+            font-weight: 700;
+            margin-top: 12px;
+            font-size: 1rem;
+            color: #111;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .category {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-top: 4px;
+            text-transform: capitalize;
+        }
+
+        .price-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+        }
+
+        .price {
+            color: #2874f0;
+            font-weight: 800;
+            font-size: 0.9rem;
+        }
+
+        .add-to-cart-btn {
+            background: #2874f0;
+            color: #fff;
+            border: 0;
+            padding: 8px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+            font-size: 0.7rem;
+            pointer-events: all;
+        }
+
+        .add-to-cart-btn:hover {
+            background: #1f63d6;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 116, 240, 0.3);
+        }
+
+        .empty-wishlist {
+            text-align: center;
+            padding: 80px 20px;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(11, 22, 60, 0.04);
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: #111;
+        }
+
+        .empty-text {
+            color: #94a3b8;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .continue-shopping {
+            background: #2874f0;
+            color: #fff;
+            border: 0;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .continue-shopping:hover {
+            background: #1f63d6;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 116, 240, 0.3);
+        }
+
+        /* ========== RESPONSIVE WISHLIST ========== */
+        @media(max-width: 1024px) {
+            .wishlist-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        @media(max-width: 880px) {
+            .wishlist-title {
+                font-size: 1.6rem;
+            }
+
+            .wishlist-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 16px;
+            }
+        }
+
+        @media(max-width: 520px) {
+            .wishlist-section {
+                padding: 0 16px;
+                margin: 100px auto;
+            }
+
+            .wishlist-title {
+                font-size: 1.4rem;
+            }
+
+            .wishlist-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 12px;
+            }
+
+            .wishlist-card {
+                padding: 10px;
+            }
+
+            .wishlist-card img {
+                height: 150px;
+            }
+
+            .remove-wishlist {
+                width: 35px;
+                height: 35px;
+                font-size: 1.1rem;
+            }
+
+            .empty-icon {
+                font-size: 4rem;
+            }
+
+            .empty-title {
+                font-size: 1.4rem;
+            }
+
+            .empty-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <link rel="preconnect" href="https://www.gstatic.com">
+</head>
+
+<body>
+    <!-- Header (same as before) -->
+    <header class="site-header" id="mainHeader">
+        <div class="wrap">
+            <a class="brand" href="/pages/home.html">
+                <span class="logo-mark">SM</span> ShopMate
+            </a>
+
+            <nav class="primary">
+                <a href="/pages/home.html" class="nav-link">Home</a>
+                <a href="/pages/home.html#products" class="nav-link">Products</a>
+                <a href="/pages/deals.html" class="nav-link">Deals</a>
+                <a href="/pages/about.html" class="nav-link">About</a>
+                <a href="/pages/contact.html" class="nav-link">Contact</a>
+            </nav>
+
+            <div class="search" role="search">
+                <input id="desktopSearch" placeholder="Search products, brands and more" aria-label="Search products" />
+                <button aria-label="Search" id="searchBtn">🔍</button>
+            </div>
+
+            <div class="actions">
+                <button class="icon-btn" id="wishlistBtn" title="Wishlist" aria-label="Wishlist">♡</button>
+                <button class="icon-btn" id="cartBtn" title="Cart" aria-label="Shopping cart">
+                    🛒 <span class="badge" id="cartCount">0</span>
+                </button>
+
+                <div style="position:relative" class="d-none d-md-block">
+                    <div class="profile" id="profileBtn" aria-haspopup="true" aria-expanded="false" role="button"
+                        tabindex="0">
+                        <div class="avatar" id="userAvatar">U</div>
+                    </div>
+
+                    <div class="dropdown-menu" id="profileMenu" role="menu">
+                        <a href="#" role="menuitem">👤 Your Account</a>
+                        <a href="#" role="menuitem">📦 Orders</a>
+                        <a href="/pages/wishlist.html" role="menuitem">❤️ Saved Items</a>
+                        <hr style="border:none;border-top:1px solid #eef2f7;margin:8px 0">
+                        <a href="#" id="logoutBtn" role="menuitem">🚪 Sign out</a>
+                    </div>
+                </div>
+
+                <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation (same as before) -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="mobile-panel" id="mobilePanel">
+        <button class="mobile-close" id="mobileClose">✕</button>
+
+        <div class="mobile-profile" id="mobileProfile">
+            <div class="avatar" id="mobileUserAvatar">U</div>
+            <div class="user-info">
+                <div class="user-name" id="mobileUserName">Welcome Back!</div>
+                <div class="user-email" id="mobileUserEmail">user@example.com</div>
+            </div>
+        </div>
+
+        <div class="mobile-search">
+            <input id="mobileSearch" placeholder="Search products..." aria-label="Search products" />
+            <button id="mobileSearchBtn">🔍</button>
+        </div>
+
+        <div class="mobile-nav-section">
+            <a href="/pages/home.html" class="active">
+                <span class="nav-icon">🏠</span> Home
+            </a>
+            <a href="/pages/home.html#products">
+                <span class="nav-icon">🛍️</span> Products
+            </a>
+            <a href="/pages/deals.html">
+                <span class="nav-icon">🔥</span> Deals
+            </a>
+            <a href="/pages/about.html">
+                <span class="nav-icon">ℹ️</span> About
+            </a>
+            <a href="/pages/contact.html">
+                <span class="nav-icon">📞</span> Contact
+            </a>
+        </div>
+
+        <hr>
+
+        <div class="mobile-nav-section">
+            <div class="mobile-nav-title">Your Account</div>
+            <a href="#">
+                <span class="nav-icon">👤</span> Your Account
+            </a>
+            <a href="#">
+                <span class="nav-icon">📦</span> Orders
+            </a>
+            <a href="/pages/wishlist.html">
+                <span class="nav-icon">❤️</span> Saved Items
+            </a>
+            <a href="#" id="mobileLogoutBtn">
+                <span class="nav-icon">🚪</span> Sign out
+            </a>
+        </div>
+
+        <div class="mobile-footer">
+            <p>© 2025 ShopMate<br>Your Ultimate Shopping Destination</p>
+        </div>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-modal-content">
+            <div class="auth-modal-icon">🔒</div>
+            <h2 class="auth-modal-title">Authentication Required</h2>
+            <p class="auth-modal-text">You need to be logged in to access your wishlist. Please sign in to continue.</p>
+            <div class="auth-modal-buttons">
+                <button class="auth-modal-btn primary" id="loginRedirectBtn">Sign In</button>
+                <button class="auth-modal-btn secondary" id="closeAuthModal">Continue Shopping</button>
+            </div>
+        </div>
+    </div>
+
+    <section class="wishlist-section">
+        <div class="wishlist-header">
+            <h1 class="wishlist-title">
+                <span>❤️</span> My Wishlist (<span id="wishlistCount">0</span>)
+            </h1>
+        </div>
+        <div id="wishlistContent"></div>
+    </section>
+
+    <!-- Footer (same as before) -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>ShopMate</h3>
+                <p>Your trusted online store with fast delivery, amazing deals, and exceptional customer service.</p>
+            </div>
+            <div class="footer-column">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Returns & Refunds</a></li>
+                    <li><a href="#">Shipping Info</a></li>
+                    <li><a href="#">Track Order</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="/pages/about.html">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Connect</h3>
+                <ul>
+                    <li><a href="/pages/contact.html">Contact Us</a></li>
+                    <li><a href="#">Partners</a></li>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Instagram</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2025 ShopMate — All rights reserved. Made with <span>🟩</span> for shoppers worldwide.
+        </div>
+    </footer>
+
+    <div class="toast" id="toast">
+        <span style="font-size:1.5rem">✓</span>
+        <span id="toastMessage">Success!</span>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="/scripts/firebase-config.js"></script>
+    <script type="module" src="/scripts/auth.js"></script>
+    <script type="module" src="/scripts/wishlist/main.js"></script>
+</body>
+
+</html>

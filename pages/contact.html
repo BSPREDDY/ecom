@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="Contact ShopMate - Get in touch with our support team for any queries">
+    <title>Contact Us — ShopMate</title>
+
+    <!-- Preload critical CSS -->
+    <link rel="preload" href="../styles/contact/main.css" as="style">
+    <link rel="preload" href="../styles/navbar.css" as="style">
+    <link rel="preload" href="../styles/footer.css" as="style">
+    <link rel="preload" href="../styles/auth.css" as="style">
+
+    <!-- Async load CSS -->
+    <link rel="stylesheet" href="../styles/contact/main.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="../styles/navbar.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="../styles/footer.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="../styles/auth.css" media="print" onload="this.media='all'">
+
+    <!-- Preconnect to Firebase -->
+    <link rel="preconnect" href="https://www.gstatic.com">
+    <link rel="preconnect" href="https://www.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <!-- Inline critical CSS -->
+    <style>
+        /* Critical above-the-fold CSS */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+            background: #f5f7fb;
+            color: #111;
+            overflow-x: hidden;
+            line-height: 1.6;
+            width: 100%;
+            max-width: 100vw;
+        }
+
+        /* Ensure content is visible while CSS loads */
+        .site-header {
+            min-height: 68px;
+            background: linear-gradient(90deg, #2874f0, #1f63d6);
+        }
+
+        .contact-hero {
+            min-height: 300px;
+            background: linear-gradient(135deg, #2874f0, #1f63d6);
+            color: #fff;
+        }
+
+        /* Mobile panel base styles - Critical for initial render */
+        .mobile-panel {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 320px;
+            height: 100vh;
+            background: white;
+            z-index: 1400;
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .mobile-panel.show {
+            left: 0;
+        }
+
+        .mobile-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1390;
+            display: none;
+        }
+
+        .mobile-overlay.show {
+            display: block;
+        }
+
+        /* Hide elements that require JS */
+        .dropdown-menu {
+            display: none;
+        }
+
+        .auth-modal {
+            display: none;
+        }
+
+        /* Toast notification base */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #10b981;
+            color: #fff;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 2000;
+            animation: slideUp 0.3s;
+            max-width: 400px;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .toast.show {
+            display: flex;
+        }
+    </style>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="site-header" id="mainHeader">
+        <div class="wrap">
+            <a class="brand" href="../pages/home.html">
+                <span class="logo-mark">SM</span> ShopMate
+            </a>
+
+            <nav class="primary">
+                <a href="../pages/home.html" class="nav-link">Home</a>
+                <a href="../pages/home.html#products" class="nav-link">Products</a>
+                <a href="../pages/deals.html" class="nav-link">Deals</a>
+                <a href="../pages/about.html" class="nav-link">About</a>
+                <a href="../pages/contact.html" class="nav-link active">Contact</a>
+            </nav>
+
+            <div class="search" role="search">
+                <input id="desktopSearch" placeholder="Search products, brands and more" aria-label="Search products" />
+                <button aria-label="Search" id="searchBtn">🔍</button>
+            </div>
+
+            <div class="actions">
+                <button class="icon-btn" id="wishlistBtn" title="Wishlist" aria-label="Wishlist">♡</button>
+                <button class="icon-btn" id="cartBtn" title="Cart" aria-label="Shopping cart">
+                    🛒 <span class="badge" id="cartCount">0</span>
+                </button>
+
+                <div style="position:relative" class="d-none d-md-block">
+                    <div class="profile" id="profileBtn" aria-haspopup="true" aria-expanded="false" role="button"
+                        tabindex="0">
+                        <div class="avatar" id="userAvatar">U</div>
+                    </div>
+
+                    <div class="dropdown-menu" id="profileMenu" role="menu">
+                        <a href="#" role="menuitem">👤 Your Account</a>
+                        <a href="#" role="menuitem">📦 Orders</a>
+                        <a href="../pages/wishlist.html" role="menuitem">❤️ Saved Items</a>
+                        <hr style="border:none;border-top:1px solid #eef2f7;margin:8px 0">
+                        <a href="#" id="logoutBtn" role="menuitem">🚪 Sign out</a>
+                    </div>
+                </div>
+
+                <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="mobile-panel" id="mobilePanel">
+        <button class="mobile-close" id="mobileClose">✕</button>
+
+        <div class="mobile-profile" id="mobileProfile">
+            <div class="avatar" id="mobileUserAvatar">U</div>
+            <div class="user-info">
+                <div class="user-name" id="mobileUserName">Welcome Back!</div>
+                <div class="user-email" id="mobileUserEmail">user@example.com</div>
+            </div>
+        </div>
+
+        <div class="mobile-search">
+            <input id="mobileSearch" placeholder="Search products..." aria-label="Search products" />
+            <button id="mobileSearchBtn">🔍</button>
+        </div>
+
+        <div class="mobile-nav-section">
+            <a href="../pages/home.html">
+                <span class="nav-icon">🏠</span> Home
+            </a>
+            <a href="../pages/home.html#products">
+                <span class="nav-icon">🛍️</span> Products
+            </a>
+            <a href="../pages/deals.html">
+                <span class="nav-icon">🔥</span> Deals
+            </a>
+            <a href="../pages/about.html">
+                <span class="nav-icon">ℹ️</span> About
+            </a>
+            <a href="../pages/contact.html" class="active">
+                <span class="nav-icon">📞</span> Contact
+            </a>
+        </div>
+
+        <hr>
+
+        <div class="mobile-nav-section">
+            <div class="mobile-nav-title">Your Account</div>
+            <a href="#">
+                <span class="nav-icon">👤</span> Your Account
+            </a>
+            <a href="#">
+                <span class="nav-icon">📦</span> Orders
+            </a>
+            <a href="../pages/wishlist.html">
+                <span class="nav-icon">❤️</span> Saved Items
+            </a>
+            <a href="#" id="mobileLogoutBtn">
+                <span class="nav-icon">🚪</span> Sign out
+            </a>
+        </div>
+
+        <div class="mobile-footer">
+            <p>© 2025 ShopMate<br>Your Ultimate Shopping Destination</p>
+        </div>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-modal-content">
+            <div class="auth-modal-icon">🔒</div>
+            <h2 class="auth-modal-title">Authentication Required</h2>
+            <p class="auth-modal-text">You need to be logged in to access this page. Please sign in to continue.</p>
+            <div class="auth-modal-buttons">
+                <button class="auth-modal-btn primary" id="loginRedirectBtn">Sign In</button>
+                <button class="auth-modal-btn secondary" id="closeAuthModal">Maybe Later</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <section class="contact-hero">
+        <div class="hero-content">
+            <h1>Get in Touch</h1>
+            <p>Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+        </div>
+    </section>
+
+    <section class="contact-section">
+        <div class="contact-container">
+            <div class="contact-info">
+                <div class="info-card">
+                    <span class="info-icon">📧</span>
+                    <h3 class="info-title">Email Us</h3>
+                    <p class="info-text">
+                        <a href="mailto:support@shopmate.com">support@shopmate.com</a><br>
+                        We'll respond within 24 hours
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <span class="info-icon">📞</span>
+                    <h3 class="info-title">Call Us</h3>
+                    <p class="info-text">
+                        <a href="tel:+918001234567">+91 800 123 4567</a><br>
+                        Mon-Sat: 9:00 AM - 8:00 PM IST
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <span class="info-icon">📍</span>
+                    <h3 class="info-title">Visit Us</h3>
+                    <p class="info-text">
+                        123 Shopping Street<br>
+                        Bengaluru, Karnataka 560001<br>
+                        India
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <span class="info-icon">💬</span>
+                    <h3 class="info-title">Live Chat</h3>
+                    <p class="info-text">
+                        Chat with our support team<br>
+                        Available 24/7 for your queries
+                    </p>
+                </div>
+            </div>
+
+            <div class="contact-form-wrapper">
+                <h2 class="form-title">Send us a Message</h2>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label class="form-label">Full Name *</label>
+                        <input type="text" class="form-input" required placeholder="Enter your name" id="contactName">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email Address *</label>
+                        <input type="email" class="form-input" required placeholder="your.email@example.com"
+                            id="contactEmail">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" class="form-input" placeholder="+91 98765 43210" id="contactPhone">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Subject *</label>
+                        <input type="text" class="form-input" required placeholder="How can we help you?"
+                            id="contactSubject">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Message *</label>
+                        <textarea class="form-textarea" required placeholder="Tell us more about your inquiry..."
+                            id="contactMessage"></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">📨 Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq-section">
+        <h2 class="faq-title">Frequently Asked Questions</h2>
+        <div class="faq-list">
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>What are your shipping options?</span>
+                    <span class="faq-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <p>We offer standard shipping (5-7 business days) and express shipping (2-3 business days). Free
+                        shipping is available on orders over ₹5,000. Track your order anytime using the tracking number
+                        sent to your email.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>How can I track my order?</span>
+                    <span class="faq-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Once your order is shipped, you'll receive a tracking number via email. You can also track your
+                        order by logging into your account and visiting the 'Orders' section.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>What is your return policy?</span>
+                    <span class="faq-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <p>We offer a 30-day return policy for most items. Items must be in original condition with tags
+                        attached. Some items like electronics have a 15-day return window.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Do you ship internationally?</span>
+                    <span class="faq-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Currently, we only ship within India. We're working on expanding our international shipping
+                        options in the near future.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>How can I contact customer service?</span>
+                    <span class="faq-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <p>You can reach us via email at support@shopmate.com, call us at +91 800 123 4567, or use the live
+                        chat feature on our website available 24/7.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>ShopMate</h3>
+                <p>Your trusted online store with fast delivery, amazing deals, and exceptional customer service.</p>
+            </div>
+            <div class="footer-column">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Returns & Refunds</a></li>
+                    <li><a href="#">Shipping Info</a></li>
+                    <li><a href="#">Track Order</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="../pages/about.html">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Connect</h3>
+                <ul>
+                    <li><a href="../pages/contact.html">Contact Us</a></li>
+                    <li><a href="#">Partners</a></li>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Instagram</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2025 ShopMate — All rights reserved. Made with <span>🟩</span> for shoppers worldwide.
+        </div>
+    </footer>
+
+    <div class="toast" id="toast">
+        <span style="font-size:1.5rem">✓</span>
+        <span id="toastMessage">Success!</span>
+    </div>
+
+    <!-- Async load scripts -->
+    <script type="module" src="../scripts/firebase-config.js" defer></script>
+    <script type="module" src="../scripts/auth.js" defer></script>
+    <script type="module" src="../scripts/contact/main.js" defer></script>
+
+    <!-- Fallback for noscript -->
+    <noscript>
+        <style>
+            .auth-modal {
+                display: none !important;
+            }
+
+            .mobile-panel {
+                display: none !important;
+            }
+
+            .dropdown-menu {
+                display: none !important;
+            }
+        </style>
+        <div
+            style="position:fixed;top:0;left:0;right:0;background:#ef4444;color:white;padding:1rem;text-align:center;z-index:9999;">
+            Please enable JavaScript for full functionality.
+        </div>
+    </noscript>
+</body>
+
+</html>
