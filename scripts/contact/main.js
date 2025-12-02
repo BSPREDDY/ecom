@@ -1,4 +1,4 @@
-import { initAuth, showAuthModal, hideAuthModal, logout, isUserLoggedIn } from '../auth.js';
+import { initAuth, showAuthModal, hideAuthModal, logout, getIsUserLoggedIn } from '../auth.js';
 
 // DOM Elements
 const getElement = (id) => document.getElementById(id);
@@ -44,26 +44,26 @@ const elements = {
 };
 
 // Initialize
-function init() {
+async function init() {
     console.log('Initializing contact page...');
 
-    setupEventListeners();
-    setupFAQ();
-    setupHeaderScroll();
-    updateCartBadge();
+    try {
+        // Initialize authentication first
+        await initAuth();
 
-    // Initialize authentication
-    initAuth().then((authenticated) => {
-        console.log('User authenticated:', authenticated);
-    }).catch((error) => {
-        console.error('Authentication init failed:', error);
-    });
+        setupEventListeners();
+        setupFAQ();
+        setupHeaderScroll();
+        updateCartBadge();
 
-    // Fix for right side white space
-    document.body.style.overflowX = 'hidden';
-    document.documentElement.style.overflowX = 'hidden';
+        // Fix for right side white space
+        document.body.style.overflowX = 'hidden';
+        document.documentElement.style.overflowX = 'hidden';
 
-    console.log('Contact page initialized successfully');
+        console.log('Contact page initialized successfully');
+    } catch (error) {
+        console.error('Initialization error:', error);
+    }
 }
 
 // Setup Event Listeners
@@ -122,10 +122,10 @@ function setupEventListeners() {
         });
     }
 
-    // Cart and wishlist
+    // Cart and wishlist - Check authentication using getIsUserLoggedIn()
     if (elements.cartBtn) {
         elements.cartBtn.addEventListener('click', () => {
-            if (isUserLoggedIn) {
+            if (getIsUserLoggedIn()) {
                 window.location.href = '../pages/cart.html';
             } else {
                 showAuthModal();
@@ -135,7 +135,7 @@ function setupEventListeners() {
 
     if (elements.wishlistBtn) {
         elements.wishlistBtn.addEventListener('click', () => {
-            if (isUserLoggedIn) {
+            if (getIsUserLoggedIn()) {
                 window.location.href = '../pages/wishlist.html';
             } else {
                 showAuthModal();
@@ -165,10 +165,10 @@ function setupEventListeners() {
     // Escape key handler
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            if (elements.mobilePanel.classList.contains('show')) {
+            if (elements.mobilePanel && elements.mobilePanel.classList.contains('show')) {
                 closeMobilePanel();
             }
-            if (elements.authModal.classList.contains('show')) {
+            if (elements.authModal && elements.authModal.classList.contains('show')) {
                 hideAuthModal();
             }
             closeProfileMenu();
@@ -177,7 +177,7 @@ function setupEventListeners() {
 
     // Close mobile panel on window resize
     window.addEventListener('resize', () => {
-        if (window.innerWidth > 880 && elements.mobilePanel.classList.contains('show')) {
+        if (window.innerWidth > 880 && elements.mobilePanel && elements.mobilePanel.classList.contains('show')) {
             closeMobilePanel();
         }
     });
@@ -196,6 +196,8 @@ function setupEventListeners() {
 
 // Mobile Panel Functions
 function toggleMobilePanel() {
+    if (!elements.mobilePanel || !elements.mobileOverlay) return;
+
     const isOpening = !elements.mobilePanel.classList.contains('show');
 
     // Toggle classes
@@ -211,7 +213,7 @@ function toggleMobilePanel() {
 
         // Set focus to close button
         setTimeout(() => {
-            elements.mobileClose.focus();
+            if (elements.mobileClose) elements.mobileClose.focus();
         }, 100);
     } else {
         document.body.style.overflow = '';
@@ -227,7 +229,7 @@ function toggleMobilePanel() {
 }
 
 function closeMobilePanel() {
-    if (elements.mobilePanel.classList.contains('show')) {
+    if (elements.mobilePanel && elements.mobilePanel.classList.contains('show')) {
         elements.mobilePanel.classList.remove('show');
         elements.mobileOverlay.classList.remove('show');
         document.body.style.overflow = '';
@@ -415,11 +417,11 @@ function handleContactSubmit(e) {
 
     // Get form data
     const formData = {
-        name: document.getElementById('contactName').value.trim(),
-        email: document.getElementById('contactEmail').value.trim(),
-        phone: document.getElementById('contactPhone').value.trim(),
-        subject: document.getElementById('contactSubject').value.trim(),
-        message: document.getElementById('contactMessage').value.trim()
+        name: document.getElementById('contactName')?.value.trim() || '',
+        email: document.getElementById('contactEmail')?.value.trim() || '',
+        phone: document.getElementById('contactPhone')?.value.trim() || '',
+        subject: document.getElementById('contactSubject')?.value.trim() || '',
+        message: document.getElementById('contactMessage')?.value.trim() || ''
     };
 
     // Simple validation

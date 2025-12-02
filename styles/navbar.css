@@ -57,6 +57,7 @@ nav.primary {
     margin: 0 15px;
     flex: 1;
     justify-content: center;
+    padding: 7px;
 }
 
 nav.primary a {

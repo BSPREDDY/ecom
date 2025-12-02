@@ -1,0 +1,362 @@
+/* ========== ABOUT PAGE STYLES ========== */
+.about-hero {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff;
+    padding: 120px 20px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-top: 64px;
+}
+
+.about-hero::before {
+    content: '';
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
+    top: -250px;
+    right: -250px;
+    border-radius: 50%
+}
+
+.about-hero h1 {
+    font-size: 3rem;
+    font-weight: 900;
+    margin-bottom: 20px;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 1
+}
+
+.about-hero p {
+    font-size: 1.3rem;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.8;
+    opacity: 0.95;
+    position: relative;
+    z-index: 1
+}
+
+.about-section {
+    max-width: var(--max-width);
+    margin: 60px auto;
+    padding: 0 20px
+}
+
+.content-block {
+    background: #fff;
+    border-radius: 14px;
+    padding: 40px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 40px
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 24px;
+    color: #111;
+    position: relative;
+    display: inline-block
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 2px
+}
+
+.section-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #4b5563;
+    margin-bottom: 20px
+}
+
+.section-text:last-child {
+    margin-bottom: 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+    margin-top: 40px
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    padding: 32px;
+    border-radius: 14px;
+    text-align: center;
+    transition: all 0.3s;
+    border: 2px solid transparent
+}
+
+.stat-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-md)
+}
+
+.stat-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    display: block
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--primary);
+    margin-bottom: 8px;
+    display: block
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    color: var(--muted);
+    font-weight: 600
+}
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 40px
+}
+
+.value-card {
+    background: #fff;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s;
+    border-left: 4px solid var(--primary)
+}
+
+.value-card:hover {
+    transform: translateX(8px);
+    box-shadow: var(--shadow-md)
+}
+
+.value-icon {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+    display: block
+}
+
+.value-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: #111
+}
+
+.value-text {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #4b5563
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 40px
+}
+
+.team-card {
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s;
+    text-align: center
+}
+
+.team-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg)
+}
+
+.team-img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    background: linear-gradient(135deg, #e9ecef, #dee2e6)
+}
+
+.team-info {
+    padding: 24px
+}
+
+.team-name {
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: #111
+}
+
+.team-role {
+    font-size: 1rem;
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 12px
+}
+
+.team-bio {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.6
+}
+
+.cta-section {
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    color: #111;
+    padding: 60px 40px;
+    border-radius: 14px;
+    text-align: center;
+    margin: 60px 0
+}
+
+.cta-title {
+    font-size: 2.2rem;
+    font-weight: 900;
+    margin-bottom: 16px
+}
+
+.cta-text {
+    font-size: 1.2rem;
+    margin-bottom: 32px;
+    opacity: 0.9
+}
+
+.cta-btn {
+    display: inline-block;
+    background: #111;
+    color: #fff;
+    border: 0;
+    padding: 16px 40px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3)
+}
+
+.cta-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Responsive styles for about page */
+@media (max-width: 1024px) {
+    .about-hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .about-hero p {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 880px) {
+    .about-hero {
+        margin-top: 64px;
+    }
+
+    .about-hero h1 {
+        font-size: 2.2rem;
+    }
+
+    .about-hero p {
+        font-size: 1.1rem;
+    }
+
+    .content-block {
+        padding: 30px;
+    }
+
+    .section-title {
+        font-size: 1.6rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .values-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .team-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .about-hero {
+        padding: 100px 16px 60px;
+        margin-top: 64px;
+    }
+
+    .about-hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .about-hero p {
+        font-size: 1rem;
+    }
+
+    .content-block {
+        padding: 24px;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+    }
+
+    .section-text {
+        font-size: 1rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+    }
+
+    .cta-section {
+        padding: 40px 24px;
+    }
+
+    .cta-title {
+        font-size: 1.6rem;
+    }
+
+    .cta-text {
+        font-size: 1rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .values-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .team-grid {
+        grid-template-columns: 1fr;
+    }
+}

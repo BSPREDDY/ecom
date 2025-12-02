@@ -2,7 +2,12 @@ import { signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/
 import { auth } from './firebase-config.js';
 
 // Authentication state
-export let isUserLoggedIn = false;
+let isUserLoggedIn = false;
+
+// Getter function for authentication state
+export function getIsUserLoggedIn() {
+    return isUserLoggedIn;
+}
 
 // DOM Elements
 const getElement = (id) => document.getElementById(id);
