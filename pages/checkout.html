@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Checkout — ShopMate</title>
+
+    <!-- CSS files -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/navbar.css">
+    <link rel="stylesheet" href="/styles/footer.css">
+    <link rel="stylesheet" href="/styles/checkout/main.css">
+    <link rel="stylesheet" href="/styles/auth.css">
+
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://www.gstatic.com">
+    <link rel="preconnect" href="https://dummyjson.com">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="site-header" id="mainHeader">
+        <div class="wrap">
+            <a class="brand" href="/pages/home.html">
+                <span class="logo-mark">SM</span> ShopMate
+            </a>
+
+            <nav class="primary">
+                <a href="/pages/home.html">Home</a>
+                <a href="/pages/home.html#products">Products</a>
+                <a href="/pages/deals.html">Deals</a>
+                <a href="/pages/about.html">About</a>
+                <a href="/pages/contact.html">Contact</a>
+            </nav>
+
+            <div class="search" role="search">
+                <input id="desktopSearch" placeholder="Search products..." aria-label="Search products" />
+                <button aria-label="Search" id="searchBtn">🔍</button>
+            </div>
+
+            <div class="actions">
+                <button class="icon-btn" id="wishlistBtn" title="Wishlist" aria-label="Wishlist">♡</button>
+                <button class="icon-btn" id="cartBtn" title="Cart" aria-label="Shopping cart">
+                    🛒 <span class="badge" id="cartCount">0</span>
+                </button>
+
+                <div style="position:relative" class="d-none d-md-block">
+                    <div class="profile" id="profileBtn" aria-haspopup="true" aria-expanded="false" role="button"
+                        tabindex="0">
+                        <div class="avatar" id="userAvatar">U</div>
+                    </div>
+
+                    <div class="dropdown-menu" id="profileMenu" role="menu">
+                        <a href="#" role="menuitem">👤 Your Account</a>
+                        <a href="#" role="menuitem">📦 Orders</a>
+                        <a href="/pages/wishlist.html" role="menuitem">❤️ Saved Items</a>
+                        <hr style="border:none;border-top:1px solid #eef2f7;margin:8px 0">
+                        <a href="#" id="logoutBtn" role="menuitem">🚪 Sign out</a>
+                    </div>
+                </div>
+
+                <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Panel -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="mobile-panel" id="mobilePanel">
+        <button class="mobile-close" id="mobileClose">✕</button>
+
+        <div class="mobile-profile" id="mobileProfile">
+            <div class="avatar" id="mobileUserAvatar">U</div>
+            <div class="user-info">
+                <div class="user-name" id="mobileUserName">Welcome Back!</div>
+                <div class="user-email" id="mobileUserEmail">user@example.com</div>
+            </div>
+        </div>
+
+        <div class="mobile-search">
+            <input id="mobileSearch" placeholder="Search products..." aria-label="Search products" />
+            <button id="mobileSearchBtn">🔍</button>
+        </div>
+
+        <div class="mobile-nav-section">
+            <a href="/pages/home.html">
+                <span class="nav-icon">🏠</span> Home
+            </a>
+            <a href="/pages/home.html#products">
+                <span class="nav-icon">🛍️</span> Products
+            </a>
+            <a href="/pages/deals.html">
+                <span class="nav-icon">🔥</span> Deals
+            </a>
+            <a href="/pages/about.html">
+                <span class="nav-icon">ℹ️</span> About
+            </a>
+            <a href="/pages/contact.html">
+                <span class="nav-icon">📞</span> Contact
+            </a>
+        </div>
+
+        <hr>
+
+        <div class="mobile-nav-section">
+            <div class="mobile-nav-title">Your Account</div>
+            <a href="#">
+                <span class="nav-icon">👤</span> Your Account
+            </a>
+            <a href="#">
+                <span class="nav-icon">📦</span> Orders
+            </a>
+            <a href="/pages/wishlist.html">
+                <span class="nav-icon">❤️</span> Saved Items
+            </a>
+            <a href="#" id="mobileLogoutBtn">
+                <span class="nav-icon">🚪</span> Sign out
+            </a>
+        </div>
+
+        <div class="mobile-footer">
+            <p>© 2025 ShopMate<br>Your Ultimate Shopping Destination</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <section class="checkout-section">
+        <div class="progress-bar">
+            <div class="progress-step active">
+                <div class="step-circle">1</div>
+                <div class="step-label">Shipping</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-circle">2</div>
+                <div class="step-label">Payment</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-circle">3</div>
+                <div class="step-label">Review</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-circle">✓</div>
+                <div class="step-label">Complete</div>
+            </div>
+        </div>
+
+        <div class="checkout-container">
+            <div class="checkout-form">
+                <form id="checkoutForm">
+                    <div class="form-section">
+                        <h2 class="section-title">📦 Shipping Information</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">First Name *</label>
+                                <input type="text" class="form-input" id="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Last Name *</label>
+                                <input type="text" class="form-input" id="lastName" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address *</label>
+                            <input type="email" class="form-input" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number *</label>
+                            <input type="tel" class="form-input" id="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Address *</label>
+                            <input type="text" class="form-input" id="address" placeholder="Street address" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">City *</label>
+                                <input type="text" class="form-input" id="city" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">State *</label>
+                                <input type="text" class="form-input" id="state" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">PIN Code *</label>
+                                <input type="text" class="form-input" id="pincode" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Country *</label>
+                                <input type="text" class="form-input" id="country" value="India" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2 class="section-title">💳 Payment Method</h2>
+                        <div class="radio-group">
+                            <label class="radio-option selected">
+                                <input type="radio" name="payment" value="cod" checked>
+                                <div>
+                                    <div style="font-weight:700">💵 Cash on Delivery</div>
+                                    <div style="font-size:0.85rem;color:var(--muted)">Pay when you receive</div>
+                                </div>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="payment" value="card">
+                                <div>
+                                    <div style="font-weight:700">💳 Card Payment</div>
+                                    <div style="font-size:0.85rem;color:var(--muted)">Credit/Debit card</div>
+                                </div>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="payment" value="upi">
+                                <div>
+                                    <div style="font-weight:700">📱 UPI Payment</div>
+                                    <div style="font-size:0.85rem;color:var(--muted)">GPay, PhonePe, etc.</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="order-summary">
+                <h3 class="summary-title">Order Summary</h3>
+                <div class="summary-items" id="summaryItems"></div>
+                <div class="summary-divider"></div>
+                <div class="summary-row">
+                    <span class="summary-label">Subtotal</span>
+                    <span class="summary-value" id="subtotalValue">₹0</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Discount (10%)</span>
+                    <span class="summary-value" style="color:var(--success)" id="discountValue">−₹0</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Shipping</span>
+                    <span class="summary-value" id="shippingValue">₹0</span>
+                </div>
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span class="total-value" id="totalValue">₹0</span>
+                </div>
+                <button class="place-order-btn" id="placeOrderBtn">
+                    ⚡ Place Order
+                </button>
+                <div class="secure-badge">
+                    🔒 Secure checkout powered by ShopMate
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Authentication Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-modal-content">
+            <div class="auth-modal-icon">🔒</div>
+            <h2 class="auth-modal-title">Sign In Required</h2>
+            <p class="auth-modal-text">You need to sign in to access checkout and place orders.</p>
+            <div class="auth-modal-buttons">
+                <button class="auth-modal-btn primary" id="loginRedirectBtn">
+                    Sign In
+                </button>
+                <button class="auth-modal-btn secondary" id="closeAuthModal">
+                    Continue as Guest
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>ShopMate</h3>
+                <p>Your trusted online store with fast delivery, amazing deals, and exceptional customer service.</p>
+            </div>
+            <div class="footer-column">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Returns & Refunds</a></li>
+                    <li><a href="#">Shipping Info</a></li>
+                    <li><a href="#">Track Order</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="/pages/about.html">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Connect</h3>
+                <ul>
+                    <li><a href="/pages/contact.html">Contact Us</a></li>
+                    <li><a href="#">Partners</a></li>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Instagram</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2025 ShopMate — All rights reserved. Made with <span>🟩</span> for shoppers worldwide.
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span style="font-size:1.5rem">✓</span>
+        <span id="toastMessage">Success!</span>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script type="module" src="/scripts/firebase-config.js"></script>
+    <script type="module" src="/scripts/auth.js" defer></script>
+    <script type="module" src="/scripts/checkout/main.js" defer></script>
+</body>
+
+</html>
