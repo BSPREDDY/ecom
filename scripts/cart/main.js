@@ -29,6 +29,7 @@ const elements = {
     mobileUserEmail: getElement('mobileUserEmail'),
     mobileUserName: getElement('mobileUserName'),
     authModal: getElement('authModal'),
+    closeAuthModal: getElement('closeAuthModal'),
     loginRedirectBtn: getElement('loginRedirectBtn'),
     cartContent: getElement('cartContent'),
     cartItemCount: getElement('cartItemCount')
@@ -48,6 +49,7 @@ async function init() {
 
         setupEventListeners();
         updateCartBadge();
+        updateCartDisplay();
 
         if (getIsUserLoggedIn()) {
             await loadProducts();
@@ -78,9 +80,7 @@ function setupEventListeners() {
     if (elements.mobilePanel) {
         elements.mobilePanel.querySelectorAll('a').forEach(link => {
             if (!link.id.includes('logout')) {
-                link.addEventListener('click', () => {
-                    setTimeout(toggleMobilePanel, 300);
-                });
+                link.addEventListener('click', toggleMobilePanel);
             }
         });
     }
@@ -93,11 +93,15 @@ function setupEventListeners() {
 
     // Logout buttons
     if (elements.logoutBtn) {
-        elements.logoutBtn.addEventListener('click', logout);
+        elements.logoutBtn.addEventListener('click', () => {
+            logout();
+        });
     }
 
     if (elements.mobileLogoutBtn) {
-        elements.mobileLogoutBtn.addEventListener('click', logout);
+        elements.mobileLogoutBtn.addEventListener('click', () => {
+            logout();
+        });
     }
 
     // Search functionality
@@ -133,6 +137,12 @@ function setupEventListeners() {
     }
 
     // Authentication modal
+    if (elements.closeAuthModal) {
+        elements.closeAuthModal.addEventListener('click', () => {
+            hideAuthModal();
+        });
+    }
+
     if (elements.loginRedirectBtn) {
         elements.loginRedirectBtn.addEventListener('click', () => {
             hideAuthModal();
@@ -145,7 +155,6 @@ function setupEventListeners() {
         elements.authModal.addEventListener('click', (e) => {
             if (e.target === elements.authModal) {
                 hideAuthModal();
-                window.location.href = '/index.html';
             }
         });
     }
@@ -216,7 +225,8 @@ function performSearch() {
         return;
     }
 
-    window.location.href = `/index.html?search=${encodeURIComponent(query)}`;
+    sessionStorage.setItem('lastSearch', query);
+    window.location.href = `/pages/home.html?search=${encodeURIComponent(query)}`;
 }
 
 // Load products
@@ -246,13 +256,15 @@ async function loadProducts() {
         displayCart();
     } catch (err) {
         console.error('Error loading products:', err);
-        showToast('Failed to load products');
+        showToast('Failed to load products', 'error');
 
         // Try to use cached products as fallback
         const cachedProducts = localStorage.getItem('cachedProducts');
         if (cachedProducts) {
             allProducts = JSON.parse(cachedProducts);
             displayCart();
+        } else {
+            showEmptyCart();
         }
     }
 }
@@ -262,16 +274,7 @@ function displayCart() {
     if (!elements.cartContent || !elements.cartItemCount) return;
 
     if (cartData.length === 0) {
-        elements.cartContent.innerHTML = `
-            <div class="empty-cart">
-                <div class="empty-cart-icon">🛒</div>
-                <h2 class="empty-cart-title">Your cart is empty</h2>
-                <p class="empty-cart-text">Looks like you haven't added anything to your cart yet.</p>
-                <a href="/index.html" class="continue-shopping">Start Shopping</a>
-            </div>
-        `;
-        elements.cartItemCount.textContent = '0';
-        updateCartBadge();
+        showEmptyCart();
         return;
     }
 
@@ -281,13 +284,18 @@ function displayCart() {
         return { ...product, quantity: item.quantity, cartId: item.id };
     }).filter(Boolean);
 
+    if (cartItems.length === 0) {
+        showEmptyCart();
+        return;
+    }
+
     const subtotal = cartItems.reduce((sum, item) => sum + (item.price * 83 * item.quantity), 0);
     const discount = subtotal * 0.1;
     const shipping = subtotal > 5000 ? 0 : 99;
     const total = subtotal - discount + shipping;
     const savings = discount;
 
-    elements.cartItemCount.textContent = cartData.length;
+    elements.cartItemCount.textContent = cartItems.length;
 
     elements.cartContent.innerHTML = `
         <div class="cart-container">
@@ -320,7 +328,7 @@ function displayCart() {
             <div class="cart-summary">
                 <h3 class="summary-title">Order Summary</h3>
                 <div class="summary-row">
-                    <span class="summary-label">Subtotal (${cartData.length} items)</span>
+                    <span class="summary-label">Subtotal (${cartItems.length} items)</span>
                     <span class="summary-value">₹${Math.round(subtotal).toLocaleString()}</span>
                 </div>
                 <div class="summary-row">
@@ -344,6 +352,29 @@ function displayCart() {
 
     setupCartEventListeners();
     updateCartBadge();
+}
+
+function showEmptyCart() {
+    if (!elements.cartContent || !elements.cartItemCount) return;
+
+    elements.cartContent.innerHTML = `
+        <div class="empty-cart">
+            <div class="empty-cart-icon">🛒</div>
+            <h2 class="empty-cart-title">Your cart is empty</h2>
+            <p class="empty-cart-text">Looks like you haven't added anything to your cart yet.</p>
+            <a href="/pages/home.html" class="continue-shopping">Start Shopping</a>
+        </div>
+    `;
+    elements.cartItemCount.textContent = '0';
+    updateCartBadge();
+}
+
+function updateCartDisplay() {
+    if (cartData.length === 0) {
+        showEmptyCart();
+    } else if (allProducts.length > 0) {
+        displayCart();
+    }
 }
 
 function setupCartEventListeners() {
@@ -389,7 +420,7 @@ function updateQuantity(cartId, change) {
     const newQuantity = item.quantity + change;
 
     if (newQuantity < 1 || newQuantity > product.stock) {
-        showToast('Cannot update quantity');
+        showToast('Cannot update quantity', 'warning');
         return;
     }
 
@@ -427,7 +458,7 @@ function navigateToProduct(productId) {
 
 function proceedToCheckout() {
     if (cartData.length === 0) {
-        showToast('Your cart is empty!');
+        showToast('Your cart is empty!', 'warning');
         return;
     }
 

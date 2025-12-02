@@ -127,25 +127,6 @@
 
     <!-- Main Content -->
     <section class="checkout-section">
-        <div class="progress-bar">
-            <div class="progress-step active">
-                <div class="step-circle">1</div>
-                <div class="step-label">Shipping</div>
-            </div>
-            <div class="progress-step">
-                <div class="step-circle">2</div>
-                <div class="step-label">Payment</div>
-            </div>
-            <div class="progress-step">
-                <div class="step-circle">3</div>
-                <div class="step-label">Review</div>
-            </div>
-            <div class="progress-step">
-                <div class="step-circle">✓</div>
-                <div class="step-label">Complete</div>
-            </div>
-        </div>
-
         <div class="checkout-container">
             <div class="checkout-form">
                 <form id="checkoutForm">
@@ -167,7 +148,7 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Phone Number *</label>
-                            <input type="tel" class="form-input" id="phone" required>
+                            <input type="tel" class="form-input" id="phone" pattern="[0-9]{10}" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Address *</label>
@@ -186,11 +167,11 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label class="form-label">PIN Code *</label>
-                                <input type="text" class="form-input" id="pincode" required>
+                                <input type="text" class="form-input" id="pincode" pattern="[0-9]{6}" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Country *</label>
-                                <input type="text" class="form-input" id="country" value="India" required>
+                                <input type="text" class="form-input" id="country" value="India" readonly>
                             </div>
                         </div>
                     </div>
@@ -226,7 +207,12 @@
 
             <div class="order-summary">
                 <h3 class="summary-title">Order Summary</h3>
-                <div class="summary-items" id="summaryItems"></div>
+                <div class="summary-items" id="summaryItems">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Loading your order...
+                    </div>
+                </div>
                 <div class="summary-divider"></div>
                 <div class="summary-row">
                     <span class="summary-label">Subtotal</span>
@@ -244,8 +230,8 @@
                     <span>Total</span>
                     <span class="total-value" id="totalValue">₹0</span>
                 </div>
-                <button class="place-order-btn" id="placeOrderBtn">
-                    ⚡ Place Order
+                <button class="place-order-btn" id="placeOrderBtn" disabled>
+                    Please fill shipping details
                 </button>
                 <div class="secure-badge">
                     🔒 Secure checkout powered by ShopMate
