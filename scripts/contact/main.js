@@ -1,462 +1,438 @@
-import { initAuth, showAuthModal, hideAuthModal, logout, getIsUserLoggedIn } from '../auth.js';
+// scripts/contact/main.js - Contact page specific functionality
+import { auth, checkAuthentication, showAuthModal, hideAuthModal, logout, getIsUserLoggedIn } from '../auth.js';
 
-// DOM Elements
-const getElement = (id) => document.getElementById(id);
-
-const elements = {
-    // Navigation
-    hamburger: getElement('hamburger'),
-    mobilePanel: getElement('mobilePanel'),
-    mobileOverlay: getElement('mobileOverlay'),
-    mobileClose: getElement('mobileClose'),
-
-    // Profile
-    profileBtn: getElement('profileBtn'),
-    profileMenu: getElement('profileMenu'),
-    logoutBtn: getElement('logoutBtn'),
-    mobileLogoutBtn: getElement('mobileLogoutBtn'),
-
-    // Search
-    searchBtn: getElement('searchBtn'),
-    desktopSearch: getElement('desktopSearch'),
-    mobileSearchBtn: getElement('mobileSearchBtn'),
-    mobileSearch: getElement('mobileSearch'),
-
-    // Cart & Wishlist
-    cartBtn: getElement('cartBtn'),
-    wishlistBtn: getElement('wishlistBtn'),
-    cartCount: getElement('cartCount'),
-
-    // Contact Form
-    contactForm: getElement('contactForm'),
-
-    // FAQ
-    faqItems: document.querySelectorAll('.faq-item'),
-
-    // Auth
-    loginRedirectBtn: getElement('loginRedirectBtn'),
-    closeAuthModal: getElement('closeAuthModal'),
-    authModal: getElement('authModal'),
-
-    // Toast
-    toast: getElement('toast'),
-    toastMessage: getElement('toastMessage')
-};
-
-// Initialize
-async function init() {
-    console.log('Initializing contact page...');
-
-    try {
-        // Initialize authentication first
-        await initAuth();
-
-        setupEventListeners();
-        setupFAQ();
-        setupHeaderScroll();
-        updateCartBadge();
-
-        // Fix for right side white space
-        document.body.style.overflowX = 'hidden';
-        document.documentElement.style.overflowX = 'hidden';
-
-        console.log('Contact page initialized successfully');
-    } catch (error) {
-        console.error('Initialization error:', error);
-    }
-}
-
-// Setup Event Listeners
-function setupEventListeners() {
-    console.log('Setting up event listeners...');
-
-    // Mobile panel
-    if (elements.hamburger) {
-        elements.hamburger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleMobilePanel();
-        });
+class ContactPage {
+    constructor() {
+        this.elements = {};
+        this.cartData = JSON.parse(sessionStorage.getItem('cartData')) || [];
+        this.init();
     }
 
-    if (elements.mobileClose) {
-        elements.mobileClose.addEventListener('click', (e) => {
-            e.stopPropagation();
-            closeMobilePanel();
-        });
+    async init() {
+        // Check authentication
+        await checkAuthentication();
+
+        // Initialize components
+        this.cacheElements();
+        this.setupEventListeners();
+        this.setupScrollEffects();
+        this.updateCartBadge();
+        this.setupFAQ();
+
+        // Check if user needs to be redirected from auth modal
+        this.checkAuthRedirect();
     }
 
-    if (elements.mobileOverlay) {
-        elements.mobileOverlay.addEventListener('click', (e) => {
-            e.stopPropagation();
-            closeMobilePanel();
-        });
+    cacheElements() {
+        this.elements = {
+            // Mobile navigation
+            hamburger: document.getElementById('hamburger'),
+            mobilePanel: document.getElementById('mobilePanel'),
+            mobileOverlay: document.getElementById('mobileOverlay'),
+            mobileClose: document.getElementById('mobileClose'),
+
+            // Profile and auth
+            profileBtn: document.getElementById('profileBtn'),
+            profileMenu: document.getElementById('profileMenu'),
+            logoutBtn: document.getElementById('logoutBtn'),
+            mobileLogoutBtn: document.getElementById('mobileLogoutBtn'),
+            authModal: document.getElementById('authModal'),
+            loginRedirectBtn: document.getElementById('loginRedirectBtn'),
+
+            // Search functionality
+            searchBtn: document.getElementById('searchBtn'),
+            desktopSearch: document.getElementById('desktopSearch'),
+            mobileSearchBtn: document.getElementById('mobileSearchBtn'),
+            mobileSearch: document.getElementById('mobileSearch'),
+
+            // Cart and wishlist
+            cartBtn: document.getElementById('cartBtn'),
+            wishlistBtn: document.getElementById('wishlistBtn'),
+            cartCount: document.getElementById('cartCount'),
+
+            // Contact form
+            contactForm: document.getElementById('contactForm'),
+
+            // Toast notification
+            toast: document.getElementById('toast'),
+            toastMessage: document.getElementById('toastMessage'),
+
+            // Header
+            header: document.getElementById('mainHeader'),
+
+            // FAQ elements
+            faqItems: document.querySelectorAll('.faq-item')
+        };
     }
 
-    // Profile dropdown
-    if (elements.profileBtn && elements.profileMenu) {
-        elements.profileBtn.addEventListener('click', toggleProfileMenu);
-        document.addEventListener('click', closeProfileMenu);
-    }
-
-    // Logout buttons
-    if (elements.logoutBtn) {
-        elements.logoutBtn.addEventListener('click', handleLogout);
-    }
-
-    if (elements.mobileLogoutBtn) {
-        elements.mobileLogoutBtn.addEventListener('click', handleLogout);
-    }
-
-    // Search functionality - Redirect to home page with search
-    if (elements.searchBtn && elements.desktopSearch) {
-        elements.searchBtn.addEventListener('click', performSearch);
-        elements.desktopSearch.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') performSearch();
-        });
-    }
-
-    if (elements.mobileSearchBtn && elements.mobileSearch) {
-        elements.mobileSearchBtn.addEventListener('click', performMobileSearch);
-        elements.mobileSearch.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') performMobileSearch();
-        });
-    }
-
-    // Cart and wishlist - Check authentication using getIsUserLoggedIn()
-    if (elements.cartBtn) {
-        elements.cartBtn.addEventListener('click', () => {
-            if (getIsUserLoggedIn()) {
-                window.location.href = '../pages/cart.html';
-            } else {
-                showAuthModal();
-            }
-        });
-    }
-
-    if (elements.wishlistBtn) {
-        elements.wishlistBtn.addEventListener('click', () => {
-            if (getIsUserLoggedIn()) {
-                window.location.href = '../pages/wishlist.html';
-            } else {
-                showAuthModal();
-            }
-        });
-    }
-
-    // Contact form
-    if (elements.contactForm) {
-        elements.contactForm.addEventListener('submit', handleContactSubmit);
-    }
-
-    // Auth modal buttons
-    if (elements.loginRedirectBtn) {
-        elements.loginRedirectBtn.addEventListener('click', () => {
-            hideAuthModal();
-            window.location.href = '../login_signup.html';
-        });
-    }
-
-    if (elements.closeAuthModal) {
-        elements.closeAuthModal.addEventListener('click', () => {
-            hideAuthModal();
-        });
-    }
-
-    // Escape key handler
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            if (elements.mobilePanel && elements.mobilePanel.classList.contains('show')) {
-                closeMobilePanel();
-            }
-            if (elements.authModal && elements.authModal.classList.contains('show')) {
-                hideAuthModal();
-            }
-            closeProfileMenu();
+    setupEventListeners() {
+        // Mobile panel toggle
+        if (this.elements.hamburger) {
+            this.elements.hamburger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleMobilePanel();
+            });
         }
-    });
 
-    // Close mobile panel on window resize
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 880 && elements.mobilePanel && elements.mobilePanel.classList.contains('show')) {
-            closeMobilePanel();
+        if (this.elements.mobileClose) {
+            this.elements.mobileClose.addEventListener('click', () => this.toggleMobilePanel());
         }
-    });
 
-    // Close mobile panel when clicking on links (except logout)
-    if (elements.mobilePanel) {
-        elements.mobilePanel.querySelectorAll('a').forEach(link => {
-            if (!link.id.includes('logout')) {
-                link.addEventListener('click', () => {
-                    setTimeout(closeMobilePanel, 300);
-                });
+        if (this.elements.mobileOverlay) {
+            this.elements.mobileOverlay.addEventListener('click', () => this.toggleMobilePanel());
+        }
+
+        // Profile dropdown
+        if (this.elements.profileBtn) {
+            this.elements.profileBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleProfileMenu();
+            });
+        }
+
+        // Close profile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!this.elements.profileBtn?.contains(e.target) &&
+                !this.elements.profileMenu?.contains(e.target)) {
+                this.closeProfileMenu();
             }
         });
-    }
-}
 
-// Mobile Panel Functions
-function toggleMobilePanel() {
-    if (!elements.mobilePanel || !elements.mobileOverlay) return;
-
-    const isOpening = !elements.mobilePanel.classList.contains('show');
-
-    // Toggle classes
-    elements.mobilePanel.classList.toggle('show');
-    elements.mobileOverlay.classList.toggle('show');
-
-    // Toggle body scroll
-    if (isOpening) {
-        document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
-        document.body.style.width = '100%';
-        elements.mobilePanel.setAttribute('aria-hidden', 'false');
-
-        // Set focus to close button
-        setTimeout(() => {
-            if (elements.mobileClose) elements.mobileClose.focus();
-        }, 100);
-    } else {
-        document.body.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.width = '';
-        elements.mobilePanel.setAttribute('aria-hidden', 'true');
-
-        // Return focus to hamburger
-        if (elements.hamburger) {
-            elements.hamburger.focus();
+        // Logout functionality
+        if (this.elements.logoutBtn) {
+            this.elements.logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleLogout();
+            });
         }
-    }
-}
 
-function closeMobilePanel() {
-    if (elements.mobilePanel && elements.mobilePanel.classList.contains('show')) {
-        elements.mobilePanel.classList.remove('show');
-        elements.mobileOverlay.classList.remove('show');
-        document.body.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.width = '';
-        elements.mobilePanel.setAttribute('aria-hidden', 'true');
-
-        if (elements.hamburger) {
-            elements.hamburger.focus();
+        if (this.elements.mobileLogoutBtn) {
+            this.elements.mobileLogoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleLogout();
+            });
         }
-    }
-}
 
-// Profile Menu Functions
-function toggleProfileMenu(e) {
-    if (e) e.stopPropagation();
+        // Search functionality
+        if (this.elements.searchBtn) {
+            this.elements.searchBtn.addEventListener('click', () => this.performSearch('desktop'));
+        }
 
-    if (!elements.profileMenu) return;
+        if (this.elements.desktopSearch) {
+            this.elements.desktopSearch.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') this.performSearch('desktop');
+            });
+        }
 
-    const isOpen = elements.profileMenu.style.display === 'block';
-    elements.profileMenu.style.display = isOpen ? 'none' : 'block';
-    if (elements.profileBtn) {
-        elements.profileBtn.setAttribute('aria-expanded', !isOpen);
-    }
-}
+        if (this.elements.mobileSearchBtn) {
+            this.elements.mobileSearchBtn.addEventListener('click', () => {
+                this.performSearch('mobile');
+                this.toggleMobilePanel();
+            });
+        }
 
-function closeProfileMenu() {
-    if (elements.profileMenu) {
-        elements.profileMenu.style.display = 'none';
-    }
-    if (elements.profileBtn) {
-        elements.profileBtn.setAttribute('aria-expanded', 'false');
-    }
-}
-
-// Logout Handler
-function handleLogout(e) {
-    if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    if (confirm('Are you sure you want to sign out?')) {
-        logout();
-    }
-}
-
-// Search Functions
-function performSearch() {
-    if (!elements.desktopSearch) return;
-    const query = elements.desktopSearch.value.trim();
-    if (!query) {
-        showToast('Please enter a search term', 'warning');
-        return;
-    }
-    // Redirect to home page with search parameter
-    window.location.href = `../pages/home.html?search=${encodeURIComponent(query)}`;
-}
-
-function performMobileSearch() {
-    if (!elements.mobileSearch) return;
-    const query = elements.mobileSearch.value.trim();
-    if (!query) {
-        showToast('Please enter a search term', 'warning');
-        return;
-    }
-    window.location.href = `../pages/home.html?search=${encodeURIComponent(query)}`;
-    closeMobilePanel();
-}
-
-// FAQ Setup
-function setupFAQ() {
-    if (!elements.faqItems || elements.faqItems.length === 0) {
-        console.warn('No FAQ items found');
-        return;
-    }
-
-    console.log(`Setting up ${elements.faqItems.length} FAQ items`);
-
-    elements.faqItems.forEach(item => {
-        const questionBtn = item.querySelector('.faq-question');
-
-        if (!questionBtn) return;
-
-        questionBtn.addEventListener('click', function () {
-            const isActive = item.classList.contains('active');
-
-            // Close all other FAQ items
-            elements.faqItems.forEach(otherItem => {
-                if (otherItem !== item) {
-                    otherItem.classList.remove('active');
+        if (this.elements.mobileSearch) {
+            this.elements.mobileSearch.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.performSearch('mobile');
+                    this.toggleMobilePanel();
                 }
             });
-
-            // Toggle current item
-            if (!isActive) {
-                item.classList.add('active');
-            } else {
-                item.classList.remove('active');
-            }
-        });
-
-        // Add keyboard support
-        questionBtn.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                questionBtn.click();
-            }
-        });
-    });
-}
-
-// Header Scroll Effect
-function setupHeaderScroll() {
-    const header = document.getElementById('mainHeader');
-    if (!header) return;
-
-    let lastScroll = 0;
-
-    window.addEventListener('scroll', () => {
-        const currentScroll = window.pageYOffset;
-
-        if (currentScroll > 100) {
-            header.classList.add('scrolled');
-
-            // Hide/show on scroll direction
-            if (currentScroll > lastScroll && currentScroll > 200) {
-                header.style.transform = 'translateY(-100%)';
-            } else {
-                header.style.transform = 'translateY(0)';
-            }
-        } else {
-            header.classList.remove('scrolled');
-            header.style.transform = 'translateY(0)';
         }
 
-        lastScroll = currentScroll;
+        // Cart and wishlist navigation
+        if (this.elements.cartBtn) {
+            this.elements.cartBtn.addEventListener('click', () => this.navigateToCart());
+        }
+
+        if (this.elements.wishlistBtn) {
+            this.elements.wishlistBtn.addEventListener('click', () => this.navigateToWishlist());
+        }
+
+        // Contact form submission
+        if (this.elements.contactForm) {
+            this.elements.contactForm.addEventListener('submit', (e) => this.handleContactForm(e));
+        }
+
+        // Auth modal
+        if (this.elements.loginRedirectBtn) {
+            this.elements.loginRedirectBtn.addEventListener('click', () => {
+                hideAuthModal();
+                window.location.href = '/login_signup.html';
+            });
+        }
+
+        // Close auth modal on overlay click
+        if (this.elements.authModal) {
+            this.elements.authModal.addEventListener('click', (e) => {
+                if (e.target === this.elements.authModal) {
+                    hideAuthModal();
+                }
+            });
+        }
+
+        // Close mobile panel on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (this.elements.mobilePanel?.classList.contains('show')) {
+                    this.toggleMobilePanel();
+                }
+                if (this.elements.authModal?.classList.contains('show')) {
+                    hideAuthModal();
+                }
+            }
+        });
+
+        // Close mobile panel when clicking on links (except logout)
+        const mobileLinks = this.elements.mobilePanel?.querySelectorAll('a:not(#mobileLogoutBtn)');
+        if (mobileLinks) {
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (this.elements.mobilePanel.classList.contains('show')) {
+                        this.toggleMobilePanel();
+                    }
+                });
+            });
+        }
+    }
+
+    setupScrollEffects() {
+        if (this.elements.header) {
+            let lastScroll = 0;
+            window.addEventListener('scroll', () => {
+                const currentScroll = window.pageYOffset;
+
+                if (currentScroll > 100) {
+                    this.elements.header.classList.add('scrolled');
+
+                    // Hide header on scroll down, show on scroll up
+                    if (currentScroll > lastScroll && currentScroll > 200) {
+                        this.elements.header.style.transform = 'translateY(-100%)';
+                    } else {
+                        this.elements.header.style.transform = 'translateY(0)';
+                    }
+                } else {
+                    this.elements.header.classList.remove('scrolled');
+                    this.elements.header.style.transform = 'translateY(0)';
+                }
+
+                lastScroll = currentScroll;
+            });
+        }
+    }
+
+    setupFAQ() {
+        if (this.elements.faqItems) {
+            this.elements.faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                if (question) {
+                    question.addEventListener('click', () => {
+                        // Close other FAQ items
+                        this.elements.faqItems.forEach(otherItem => {
+                            if (otherItem !== item && otherItem.classList.contains('active')) {
+                                otherItem.classList.remove('active');
+                            }
+                        });
+
+                        // Toggle current item
+                        item.classList.toggle('active');
+                    });
+                }
+            });
+        }
+    }
+
+    toggleMobilePanel() {
+        if (!this.elements.mobilePanel || !this.elements.mobileOverlay) return;
+
+        const isOpening = !this.elements.mobilePanel.classList.contains('show');
+
+        if (isOpening) {
+            this.elements.mobilePanel.classList.add('show');
+            this.elements.mobileOverlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        } else {
+            this.elements.mobilePanel.classList.remove('show');
+            this.elements.mobileOverlay.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        // Close profile menu when opening mobile panel
+        if (isOpening) {
+            this.closeProfileMenu();
+        }
+    }
+
+    toggleProfileMenu() {
+        if (!this.elements.profileMenu) return;
+
+        const isVisible = this.elements.profileMenu.style.display === 'block';
+        this.elements.profileMenu.style.display = isVisible ? 'none' : 'block';
+
+        if (this.elements.profileBtn) {
+            this.elements.profileBtn.setAttribute('aria-expanded', !isVisible);
+        }
+    }
+
+    closeProfileMenu() {
+        if (this.elements.profileMenu) {
+            this.elements.profileMenu.style.display = 'none';
+        }
+        if (this.elements.profileBtn) {
+            this.elements.profileBtn.setAttribute('aria-expanded', 'false');
+        }
+    }
+
+    async handleLogout() {
+        try {
+            await logout();
+        } catch (error) {
+            console.error('Logout error:', error);
+            this.showToast('Failed to sign out. Please try again.');
+        }
+    }
+
+    performSearch(type) {
+        let searchInput;
+        if (type === 'desktop') {
+            searchInput = this.elements.desktopSearch;
+        } else {
+            searchInput = this.elements.mobileSearch;
+        }
+
+        if (!searchInput || !searchInput.value.trim()) {
+            this.showToast('Please enter a search term');
+            return;
+        }
+
+        const query = encodeURIComponent(searchInput.value.trim());
+        window.location.href = `/index.html?search=${query}`;
+    }
+
+    navigateToCart() {
+        if (getIsUserLoggedIn()) {
+            window.location.href = '/pages/cart.html';
+        } else {
+            showAuthModal();
+        }
+    }
+
+    navigateToWishlist() {
+        if (getIsUserLoggedIn()) {
+            window.location.href = '/pages/wishlist.html';
+        } else {
+            showAuthModal();
+        }
+    }
+
+    updateCartBadge() {
+        if (!this.elements.cartCount) return;
+
+        const totalItems = this.cartData.reduce((sum, item) => sum + (item.quantity || 1), 0);
+        this.elements.cartCount.textContent = totalItems;
+
+        // Hide badge if no items
+        if (totalItems === 0) {
+            this.elements.cartCount.style.display = 'none';
+        } else {
+            this.elements.cartCount.style.display = 'flex';
+        }
+    }
+
+    showToast(message, duration = 3000) {
+        if (!this.elements.toast || !this.elements.toastMessage) return;
+
+        this.elements.toastMessage.textContent = message;
+        this.elements.toast.classList.add('show');
+
+        setTimeout(() => {
+            this.elements.toast.classList.remove('show');
+        }, duration);
+    }
+
+    async handleContactForm(e) {
+        e.preventDefault();
+
+        // Get form data
+        const formData = new FormData(e.target);
+        const formValues = Object.fromEntries(formData);
+
+        // Basic validation
+        if (!formValues.name || !formValues.email || !formValues.subject || !formValues.message) {
+            this.showToast('Please fill in all required fields');
+            return;
+        }
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formValues.email)) {
+            this.showToast('Please enter a valid email address');
+            return;
+        }
+
+        // Simulate form submission
+        this.showToast('✅ Message sent successfully! We\'ll get back to you soon.');
+
+        // Reset form
+        e.target.reset();
+
+        // In a real app, you would send the data to a server here
+        console.log('Contact form submitted:', formValues);
+    }
+
+    checkAuthRedirect() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const authRequired = urlParams.get('auth') === 'required';
+
+        if (authRequired && !getIsUserLoggedIn()) {
+            showAuthModal();
+
+            // Remove the query parameter
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+    }
+
+    // Helper method to update user info in mobile panel
+    updateUserInfo(user) {
+        if (!user) return;
+
+        const mobileUserAvatar = document.getElementById('mobileUserAvatar');
+        const mobileUserName = document.getElementById('mobileUserName');
+        const mobileUserEmail = document.getElementById('mobileUserEmail');
+
+        if (mobileUserAvatar) {
+            const initial = user.displayName ? user.displayName.charAt(0).toUpperCase() :
+                user.email ? user.email.charAt(0).toUpperCase() : 'U';
+            mobileUserAvatar.textContent = initial;
+        }
+
+        if (mobileUserName) {
+            mobileUserName.textContent = user.displayName || user.email?.split('@')[0] || 'Welcome Back!';
+        }
+
+        if (mobileUserEmail) {
+            mobileUserEmail.textContent = user.email || 'user@example.com';
+        }
+    }
+}
+
+// Initialize the contact page
+document.addEventListener('DOMContentLoaded', () => {
+    // Prevent horizontal scroll
+    document.body.style.overflowX = 'hidden';
+    document.documentElement.style.overflowX = 'hidden';
+
+    // Initialize the app
+    const contactPage = new ContactPage();
+
+    // Make it available globally for debugging
+    window.contactPage = contactPage;
+
+    // Listen for auth state changes to update UI
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            contactPage.updateUserInfo(user);
+        }
     });
-}
-
-// Cart Functions
-function updateCartBadge() {
-    if (!elements.cartCount) return;
-
-    try {
-        let cartData = JSON.parse(localStorage.getItem('cartData')) ||
-            JSON.parse(sessionStorage.getItem('cartData')) || [];
-        const totalItems = cartData.reduce((sum, item) => sum + (item.quantity || 1), 0);
-        elements.cartCount.textContent = totalItems > 99 ? '99+' : totalItems;
-        elements.cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
-    } catch (error) {
-        console.error('Error updating cart badge:', error);
-        elements.cartCount.style.display = 'none';
-    }
-}
-
-// Toast Notification
-function showToast(message, type = 'success') {
-    if (!elements.toast || !elements.toastMessage) return;
-
-    // Set message
-    elements.toastMessage.textContent = message;
-
-    // Set color based on type
-    if (type === 'error') {
-        elements.toast.style.background = '#ef4444';
-    } else if (type === 'warning') {
-        elements.toast.style.background = '#ffb300';
-    } else {
-        elements.toast.style.background = '#10b981';
-    }
-
-    // Show toast
-    elements.toast.classList.add('show');
-
-    // Auto hide after 3 seconds
-    setTimeout(() => {
-        elements.toast.classList.remove('show');
-    }, 3000);
-}
-
-// Contact Form Handler
-function handleContactSubmit(e) {
-    e.preventDefault();
-
-    // Get form data
-    const formData = {
-        name: document.getElementById('contactName')?.value.trim() || '',
-        email: document.getElementById('contactEmail')?.value.trim() || '',
-        phone: document.getElementById('contactPhone')?.value.trim() || '',
-        subject: document.getElementById('contactSubject')?.value.trim() || '',
-        message: document.getElementById('contactMessage')?.value.trim() || ''
-    };
-
-    // Simple validation
-    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
-        showToast('Please fill in all required fields', 'error');
-        return;
-    }
-
-    if (!validateEmail(formData.email)) {
-        showToast('Please enter a valid email address', 'error');
-        return;
-    }
-
-    // Simulate form submission
-    console.log('Contact form submitted:', formData);
-
-    // Show success message
-    showToast('✅ Message sent successfully! We\'ll get back to you soon.');
-
-    // Reset form
-    e.target.reset();
-}
-
-// Email validation helper
-function validateEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-}
-
-// Initialize when DOM is loaded
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-} else {
-    init();
-}
-
-// Export functions if needed by other modules
-export { showToast, updateCartBadge, handleContactSubmit };
+});
