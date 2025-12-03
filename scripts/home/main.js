@@ -430,6 +430,320 @@ function showToast(message, isError = false) {
     setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
+// Advanced Swipe Functionality for All Devices
+function initAdvancedSwipe() {
+    const track = document.getElementById('catTrack');
+    if (!track) return;
+
+    let startX = 0;
+    let endX = 0;
+    let startY = 0;
+    let isDragging = false;
+    let isHorizontalSwipe = false;
+    const slideWidth = 256; // 240px + 16px gap
+    let slideIndex = 0;
+    let velocity = 0;
+    let lastX = 0;
+    let lastTime = 0;
+    let animationFrameId = null;
+    let momentumAnimationId = null;
+
+    // Calculate max index
+    function getMaxIndex() {
+        return Math.max(0, track.children.length - Math.floor(track.parentElement.offsetWidth / slideWidth));
+    }
+
+    // Update slider position
+    function updateSliderPosition(instant = false) {
+        if (instant) {
+            track.style.transition = 'none';
+        } else {
+            track.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        }
+        track.style.transform = `translateX(${-slideIndex * slideWidth}px)`;
+    }
+
+    // Handle start of drag/swipe
+    function handleStart(clientX, clientY) {
+        startX = clientX;
+        startY = clientY;
+        lastX = clientX;
+        lastTime = Date.now();
+        isDragging = true;
+        isHorizontalSwipe = false;
+        track.style.transition = 'none';
+
+        // Cancel any ongoing animations
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+        if (momentumAnimationId) {
+            cancelAnimationFrame(momentumAnimationId);
+            momentumAnimationId = null;
+        }
+    }
+
+    // Handle move during drag/swipe
+    function handleMove(clientX, clientY) {
+        if (!isDragging) return;
+
+        const currentTime = Date.now();
+        const deltaTime = currentTime - lastTime;
+
+        if (deltaTime > 0) {
+            const deltaX = clientX - lastX;
+            velocity = deltaX / deltaTime;
+            lastX = clientX;
+            lastTime = currentTime;
+        }
+
+        const diffX = clientX - startX;
+        const diffY = clientY - startY;
+
+        // Determine if this is a horizontal swipe
+        if (!isHorizontalSwipe && Math.abs(diffX) > 10 && Math.abs(diffX) > Math.abs(diffY)) {
+            isHorizontalSwipe = true;
+        }
+
+        if (isHorizontalSwipe) {
+            const maxIndex = getMaxIndex();
+            const maxTranslate = -maxIndex * slideWidth;
+            const currentTranslate = -slideIndex * slideWidth;
+
+            // Calculate new position with elasticity
+            let translateX = currentTranslate + diffX;
+
+            // Add elastic effect at boundaries
+            if (translateX > 0) {
+                translateX = translateX * 0.3; // Elastic effect when trying to scroll past start
+            } else if (translateX < maxTranslate) {
+                const overshoot = maxTranslate - translateX;
+                translateX = maxTranslate - overshoot * 0.3; // Elastic effect when trying to scroll past end
+            }
+
+            track.style.transform = `translateX(${translateX}px)`;
+
+            // Prevent default behavior to avoid scrolling the page
+            return true;
+        }
+
+        return false;
+    }
+
+    // Handle end of drag/swipe
+    function handleEnd(clientX) {
+        if (!isDragging) return;
+        isDragging = false;
+
+        const diffX = clientX - startX;
+        const threshold = 50; // Minimum swipe distance
+        const maxIndex = getMaxIndex();
+
+        // Apply momentum if velocity is high
+        if (Math.abs(velocity) > 0.5 && isHorizontalSwipe) {
+            applyMomentum(velocity);
+            return;
+        }
+
+        // Regular swipe detection
+        if (isHorizontalSwipe && Math.abs(diffX) > threshold) {
+            if (diffX > 0) {
+                // Swipe right - go to previous slide
+                slideIndex = Math.max(0, slideIndex - 1);
+            } else {
+                // Swipe left - go to next slide
+                slideIndex = Math.min(maxIndex, slideIndex + 1);
+            }
+        } else if (isHorizontalSwipe) {
+            // If small movement, snap to nearest slide
+            const currentTranslate = -slideIndex * slideWidth;
+            const targetTranslate = -Math.round((-currentTranslate + diffX) / slideWidth) * slideWidth;
+            slideIndex = Math.max(0, Math.min(maxIndex, Math.round((-targetTranslate) / slideWidth)));
+        }
+
+        updateSliderPosition();
+    }
+
+    // Apply momentum scrolling
+    function applyMomentum(initialVelocity) {
+        const friction = 0.95;
+        const minVelocity = 0.01;
+        let currentVelocity = initialVelocity;
+        const maxIndex = getMaxIndex();
+
+        function momentumStep() {
+            if (Math.abs(currentVelocity) < minVelocity || !isHorizontalSwipe) {
+                // Snap to nearest slide
+                const currentTranslate = parseFloat(track.style.transform.replace('translateX(', '').replace('px)', ''));
+                slideIndex = Math.max(0, Math.min(maxIndex, Math.round((-currentTranslate) / slideWidth)));
+                updateSliderPosition();
+                return;
+            }
+
+            // Apply velocity
+            const currentTranslate = parseFloat(track.style.transform.replace('translateX(', '').replace('px)', '')) || 0;
+            let newTranslate = currentTranslate + currentVelocity * 16; // 16ms per frame
+
+            // Check boundaries with elasticity
+            if (newTranslate > 0) {
+                newTranslate = newTranslate * 0.5;
+                currentVelocity *= -0.5; // Bounce back
+            } else if (newTranslate < -maxIndex * slideWidth) {
+                const overshoot = -maxIndex * slideWidth - newTranslate;
+                newTranslate = -maxIndex * slideWidth - overshoot * 0.5;
+                currentVelocity *= -0.5; // Bounce back
+            }
+
+            track.style.transform = `translateX(${newTranslate}px)`;
+            currentVelocity *= friction;
+
+            momentumAnimationId = requestAnimationFrame(momentumStep);
+        }
+
+        momentumAnimationId = requestAnimationFrame(momentumStep);
+    }
+
+    // Touch Events
+    track.addEventListener('touchstart', (e) => {
+        handleStart(e.touches[0].clientX, e.touches[0].clientY);
+    });
+
+    track.addEventListener('touchmove', (e) => {
+        if (handleMove(e.touches[0].clientX, e.touches[0].clientY)) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    track.addEventListener('touchend', (e) => {
+        handleEnd(e.changedTouches[0].clientX);
+    });
+
+    // Mouse Events for Desktop
+    track.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        handleStart(e.clientX, e.clientY);
+
+        const handleMouseMove = (e) => {
+            if (handleMove(e.clientX, e.clientY)) {
+                e.preventDefault();
+            }
+        };
+
+        const handleMouseUp = (e) => {
+            handleEnd(e.clientX);
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+            document.body.style.cursor = 'default';
+        };
+
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+        document.body.style.cursor = 'grabbing';
+    });
+
+    // Mouse wheel for horizontal scrolling (desktop)
+    track.addEventListener('wheel', (e) => {
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+            e.preventDefault();
+            const maxIndex = getMaxIndex();
+
+            if (e.deltaX > 0) {
+                // Scroll right
+                slideIndex = Math.max(0, slideIndex - 1);
+            } else {
+                // Scroll left
+                slideIndex = Math.min(maxIndex, slideIndex + 1);
+            }
+
+            updateSliderPosition();
+        }
+    }, { passive: false });
+
+    // Make sure slideIndex stays in sync with button clicks
+    const prevBtn = document.getElementById('catPrev');
+    const nextBtn = document.getElementById('catNext');
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            slideIndex = Math.max(0, slideIndex - 1);
+            updateSliderPosition();
+            resetAutoSlide();
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            const maxIndex = getMaxIndex();
+            slideIndex = Math.min(maxIndex, slideIndex + 1);
+            updateSliderPosition();
+            resetAutoSlide();
+        });
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        const maxIndex = getMaxIndex();
+
+        if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            slideIndex = Math.max(0, slideIndex - 1);
+            updateSliderPosition();
+            resetAutoSlide();
+        } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            slideIndex = Math.min(maxIndex, slideIndex + 1);
+            updateSliderPosition();
+            resetAutoSlide();
+        }
+    });
+
+    // Auto-slide functionality
+    let autoInterval;
+
+    function resetAutoSlide() {
+        clearInterval(autoInterval);
+        if (window.innerWidth > 768) {
+            autoInterval = setInterval(() => {
+                const maxIndex = getMaxIndex();
+                slideIndex = slideIndex >= maxIndex ? 0 : slideIndex + 1;
+                updateSliderPosition();
+            }, 4000);
+        }
+    }
+
+    // Pause auto-slide on hover (desktop only)
+    if (window.innerWidth > 768) {
+        track.addEventListener('mouseenter', () => clearInterval(autoInterval));
+        track.addEventListener('mouseleave', resetAutoSlide);
+        resetAutoSlide();
+    }
+
+    // Handle window resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            const maxIndex = getMaxIndex();
+            if (slideIndex > maxIndex) {
+                slideIndex = maxIndex;
+                updateSliderPosition(true);
+            }
+
+            // Restart auto-slide if needed
+            if (window.innerWidth > 768 && !autoInterval) {
+                resetAutoSlide();
+            } else if (window.innerWidth <= 768) {
+                clearInterval(autoInterval);
+                autoInterval = null;
+            }
+        }, 250);
+    });
+
+    // Initial position
+    updateSliderPosition(true);
+}
+
 // Slider Functionality
 function initSlider() {
     const track = document.getElementById('catTrack');
@@ -441,44 +755,8 @@ function initSlider() {
         return;
     }
 
-    let slideIndex = 0;
-    const slideWidth = 256; // 240px + 16px gap
-    let autoInterval;
-
-    function updateSlider() {
-        track.style.transform = `translateX(${-slideIndex * slideWidth}px)`;
-    }
-
-    prevBtn.addEventListener('click', () => {
-        slideIndex = Math.max(0, slideIndex - 1);
-        updateSlider();
-        resetAutoSlide();
-    });
-
-    nextBtn.addEventListener('click', () => {
-        const maxIndex = Math.max(0, track.children.length - Math.floor(track.parentElement.offsetWidth / slideWidth));
-        slideIndex = Math.min(maxIndex, slideIndex + 1);
-        updateSlider();
-        resetAutoSlide();
-    });
-
-    function autoSlide() {
-        const maxIndex = Math.max(0, track.children.length - Math.floor(track.parentElement.offsetWidth / slideWidth));
-        slideIndex = slideIndex >= maxIndex ? 0 : slideIndex + 1;
-        updateSlider();
-    }
-
-    function resetAutoSlide() {
-        clearInterval(autoInterval);
-        autoInterval = setInterval(autoSlide, 4000);
-    }
-
-    // Only start auto-slide on desktop
-    if (window.innerWidth > 768) {
-        autoInterval = setInterval(autoSlide, 4000);
-        track.addEventListener('mouseenter', () => clearInterval(autoInterval));
-        track.addEventListener('mouseleave', resetAutoSlide);
-    }
+    // Initialize advanced swipe functionality
+    initAdvancedSwipe();
 }
 
 // Add click event listeners to category slides - redirect to category page

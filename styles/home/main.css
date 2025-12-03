@@ -381,6 +381,7 @@ a {
     box-shadow: var(--shadow-sm);
     margin-bottom: 40px;
     width: 100%;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .slider-track {
@@ -388,6 +389,8 @@ a {
     gap: 16px;
     transition: transform 0.5s cubic-bezier(0.2, 0.9, 0.2, 1);
     padding: 10px 0;
+    will-change: transform;
+    touch-action: pan-y pinch-zoom;
 }
 
 .slide {
@@ -400,6 +403,10 @@ a {
     transition: all 0.3s ease;
     border: 2px solid transparent;
     flex-shrink: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 .slide:hover {
@@ -484,6 +491,55 @@ a {
 }
 
 /* Toast is now in auth.css */
+
+/* ========== TOUCH/SWIPE STYLES ========== */
+/* Prevent text selection while swiping */
+.slider-track {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Add visual feedback during drag */
+.slider-track.dragging {
+    cursor: grabbing;
+    transition: none !important;
+}
+
+/* Active state for slides during interaction */
+.slide:active {
+    transform: scale(0.98);
+}
+
+/* Momentum scroll indicators */
+.slider::before,
+.slider::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 30px;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.slider::before {
+    left: 0;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.9), transparent);
+}
+
+.slider::after {
+    right: 0;
+    background: linear-gradient(to left, rgba(255, 255, 255, 0.9), transparent);
+}
+
+.slider.at-start::after,
+.slider.at-end::before {
+    opacity: 1;
+}
 
 /* ========== RESPONSIVE DESIGN ========== */
 @media (max-width: 1200px) {
@@ -580,6 +636,39 @@ a {
         padding: 14px 24px;
         font-size: 1rem;
     }
+
+    /* Mobile swipe optimization */
+    .slider {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        /* Smooth scrolling on iOS */
+        scrollbar-width: none;
+        /* Firefox */
+        -ms-overflow-style: none;
+        /* IE and Edge */
+    }
+
+    .slider::-webkit-scrollbar {
+        display: none;
+        /* Chrome, Safari, Opera */
+    }
+
+    .slider-track {
+        /* Ensure slides don't wrap on mobile */
+        flex-wrap: nowrap;
+        overflow: visible;
+        touch-action: pan-x pinch-zoom;
+    }
+
+    .slide {
+        /* Make slides a bit smaller on mobile */
+        min-width: 200px;
+    }
+
+    .slider-controls {
+        /* Hide navigation buttons on mobile for better touch experience */
+        display: none;
+    }
 }
 
 @media (max-width: 640px) {
@@ -644,7 +733,7 @@ a {
     }
 
     .slide {
-        min-width: 200px;
+        min-width: 180px;
         padding: 12px;
     }
 
@@ -695,5 +784,41 @@ a {
 
     .card img {
         height: 140px;
+    }
+}
+
+/* Desktop hover effects */
+@media (hover: hover) and (pointer: fine) {
+    .slide:hover {
+        transform: scale(1.05);
+        border-color: var(--primary);
+        box-shadow: var(--shadow-md);
+    }
+
+    .slider-controls button:hover {
+        background: #fff;
+        transform: scale(1.15);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+}
+
+/* High DPI screens optimization */
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+    .slider-track {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+
+    .slider-track,
+    .slide,
+    .card,
+    .fade-up {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
     }
 }
