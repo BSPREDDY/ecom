@@ -1,5 +1,6 @@
 // main.js for checkout.html
 import { initAuth, showAuthModal, hideAuthModal, logout, getIsUserLoggedIn } from '../auth.js';
+import { initMobilePanel } from '../mobile-panel.js'; // Import mobile panel functionality
 
 let cartData = JSON.parse(sessionStorage.getItem('cartData')) || [];
 let allProducts = [];
@@ -8,19 +9,12 @@ let allProducts = [];
 const getElement = (id) => document.getElementById(id);
 
 const elements = {
-    // Navigation elements
-    hamburger: getElement('hamburger'),
-    mobilePanel: getElement('mobilePanel'),
-    mobileOverlay: getElement('mobileOverlay'),
-    mobileClose: getElement('mobileClose'),
+    // Navigation elements - REMOVE mobile panel elements from here
     profileBtn: getElement('profileBtn'),
     profileMenu: getElement('profileMenu'),
     logoutBtn: getElement('logoutBtn'),
-    mobileLogoutBtn: getElement('mobileLogoutBtn'),
     searchBtn: getElement('searchBtn'),
     desktopSearch: getElement('desktopSearch'),
-    mobileSearchBtn: getElement('mobileSearchBtn'),
-    mobileSearch: getElement('mobileSearch'),
     cartBtn: getElement('cartBtn'),
     wishlistBtn: getElement('wishlistBtn'),
     cartCount: getElement('cartCount'),
@@ -31,9 +25,6 @@ const elements = {
 
     // User profile
     userAvatar: getElement('userAvatar'),
-    mobileUserAvatar: getElement('mobileUserAvatar'),
-    mobileUserEmail: getElement('mobileUserEmail'),
-    mobileUserName: getElement('mobileUserName'),
 
     // Authentication
     authModal: getElement('authModal'),
@@ -66,7 +57,10 @@ async function init() {
     console.log('Initializing checkout page...');
 
     try {
-        // Initialize authentication first
+        // Initialize mobile panel first (imported from mobile-panel.js)
+        initMobilePanel();
+
+        // Initialize authentication
         const isAuthenticated = await initAuth();
 
         setupEventListeners();
@@ -90,28 +84,6 @@ async function init() {
 
 // Setup Event Listeners
 function setupEventListeners() {
-    // Mobile panel
-    if (elements.hamburger) {
-        elements.hamburger.addEventListener('click', toggleMobilePanel);
-    }
-
-    if (elements.mobileClose) {
-        elements.mobileClose.addEventListener('click', toggleMobilePanel);
-    }
-
-    if (elements.mobileOverlay) {
-        elements.mobileOverlay.addEventListener('click', toggleMobilePanel);
-    }
-
-    // Close mobile panel on link click
-    if (elements.mobilePanel) {
-        elements.mobilePanel.querySelectorAll('a').forEach(link => {
-            if (!link.id.includes('logout')) {
-                link.addEventListener('click', toggleMobilePanel);
-            }
-        });
-    }
-
     // Profile dropdown
     if (elements.profileBtn) {
         elements.profileBtn.addEventListener('click', toggleProfileMenu);
@@ -125,30 +97,11 @@ function setupEventListeners() {
         });
     }
 
-    if (elements.mobileLogoutBtn) {
-        elements.mobileLogoutBtn.addEventListener('click', () => {
-            logout();
-        });
-    }
-
     // Search functionality
     if (elements.searchBtn && elements.desktopSearch) {
         elements.searchBtn.addEventListener('click', performSearch);
         elements.desktopSearch.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') performSearch();
-        });
-    }
-
-    if (elements.mobileSearchBtn && elements.mobileSearch) {
-        elements.mobileSearchBtn.addEventListener('click', () => {
-            performSearch();
-            toggleMobilePanel();
-        });
-        elements.mobileSearch.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                performSearch();
-                toggleMobilePanel();
-            }
         });
     }
 
@@ -197,19 +150,6 @@ function setupEventListeners() {
         });
     }
 
-    // Close mobile panel with Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            if (elements.mobilePanel && elements.mobilePanel.classList.contains('show')) {
-                toggleMobilePanel();
-            }
-            if (elements.authModal && elements.authModal.classList.contains('show')) {
-                hideAuthModal();
-            }
-            closeProfileMenu();
-        }
-    });
-
     // Radio button selection
     document.querySelectorAll('.radio-option').forEach(option => {
         option.addEventListener('click', function () {
@@ -228,22 +168,6 @@ function setupEventListeners() {
     // Form validation on input
     if (elements.checkoutForm) {
         elements.checkoutForm.addEventListener('input', validateForm);
-    }
-}
-
-// Mobile Panel Functions
-function toggleMobilePanel() {
-    if (!elements.mobilePanel || !elements.mobileOverlay) return;
-
-    const isOpening = !elements.mobilePanel.classList.contains('show');
-
-    elements.mobilePanel.classList.toggle('show');
-    elements.mobileOverlay.classList.toggle('show');
-
-    if (isOpening) {
-        document.body.style.overflow = 'hidden';
-    } else {
-        document.body.style.overflow = '';
     }
 }
 
@@ -274,8 +198,6 @@ function performSearch() {
     let query = '';
     if (elements.desktopSearch && elements.desktopSearch.value) {
         query = elements.desktopSearch.value.trim();
-    } else if (elements.mobileSearch && elements.mobileSearch.value) {
-        query = elements.mobileSearch.value.trim();
     }
 
     if (!query) {

@@ -1,28 +1,24 @@
-import { initAuth, logout, getIsUserLoggedIn } from '../auth.js';
+import { initAuth, logout, getIsUserLoggedIn, showAuthModal, hideAuthModal } from '../auth.js';
+import { initMobilePanel } from '../mobile-panel.js'; // Import the mobile panel functionality
 
 let allProducts = [];
 let currentCategory = 'all';
 
 // DOM Elements
 const elements = {
-    hamburger: document.getElementById('hamburger'),
-    mobilePanel: document.getElementById('mobilePanel'),
-    mobileOverlay: document.getElementById('mobileOverlay'),
-    mobileClose: document.getElementById('mobileClose'),
     profileBtn: document.getElementById('profileBtn'),
     profileMenu: document.getElementById('profileMenu'),
     logoutBtn: document.getElementById('logoutBtn'),
-    mobileLogoutBtn: document.getElementById('mobileLogoutBtn'),
     searchBtn: document.getElementById('searchBtn'),
     desktopSearch: document.getElementById('desktopSearch'),
-    mobileSearchBtn: document.getElementById('mobileSearchBtn'),
-    mobileSearch: document.getElementById('mobileSearch'),
     cartBtn: document.getElementById('cartBtn'),
     wishlistBtn: document.getElementById('wishlistBtn'),
     productsGrid: document.getElementById('productsGrid'),
     cartCount: document.getElementById('cartCount'),
     toast: document.getElementById('toast'),
-    toastMessage: document.getElementById('toastMessage')
+    toastMessage: document.getElementById('toastMessage'),
+    categoryTitle: document.getElementById('categoryTitle'),
+    categoryDesc: document.getElementById('categoryDesc')
 };
 
 // Professional Authentication Popup
@@ -46,9 +42,12 @@ function showProfessionalPopup() {
     document.body.style.overflow = 'hidden';
 
     // Event listeners
-    document.getElementById('popupLoginBtn').addEventListener('click', () => {
-        window.location.href = '/login_signup.html';
-    });
+    const popupLoginBtn = document.getElementById('popupLoginBtn');
+    if (popupLoginBtn) {
+        popupLoginBtn.addEventListener('click', () => {
+            window.location.href = '/login_signup.html';
+        });
+    }
 
     overlay.addEventListener('click', (e) => {
         if (e.target === overlay) {
@@ -57,44 +56,10 @@ function showProfessionalPopup() {
     });
 }
 
-// Mobile Panel Functions
-function toggleMobilePanel() {
-    elements.mobilePanel.classList.toggle('show');
-    elements.mobileOverlay.classList.toggle('show');
-    document.body.style.overflow = elements.mobilePanel.classList.contains('show') ? 'hidden' : '';
-}
-
 // Event Listeners
 function setupEventListeners() {
-    // Mobile panel
-    if (elements.hamburger) {
-        elements.hamburger.addEventListener('click', toggleMobilePanel);
-    }
-
-    if (elements.mobileClose) {
-        elements.mobileClose.addEventListener('click', toggleMobilePanel);
-    }
-
-    if (elements.mobileOverlay) {
-        elements.mobileOverlay.addEventListener('click', toggleMobilePanel);
-    }
-
-    // Close mobile panel on link click
-    if (elements.mobilePanel) {
-        elements.mobilePanel.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', toggleMobilePanel);
-        });
-    }
-
-    // Close mobile panel with Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && elements.mobilePanel && elements.mobilePanel.classList.contains('show')) {
-            toggleMobilePanel();
-        }
-    });
-
     // Profile dropdown
-    if (elements.profileBtn) {
+    if (elements.profileBtn && elements.profileMenu) {
         elements.profileBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             const isOpen = elements.profileMenu.style.display === 'block';
@@ -102,39 +67,25 @@ function setupEventListeners() {
             elements.profileBtn.setAttribute('aria-expanded', !isOpen);
         });
 
-        document.addEventListener('click', () => {
-            if (elements.profileMenu) {
+        document.addEventListener('click', (e) => {
+            if (!elements.profileBtn?.contains(e.target) &&
+                !elements.profileMenu?.contains(e.target)) {
                 elements.profileMenu.style.display = 'none';
-            }
-            if (elements.profileBtn) {
                 elements.profileBtn.setAttribute('aria-expanded', 'false');
             }
         });
     }
 
     // Logout
-    [elements.logoutBtn, elements.mobileLogoutBtn].forEach(btn => {
-        if (btn) btn.addEventListener('click', logout);
-    });
+    if (elements.logoutBtn) {
+        elements.logoutBtn.addEventListener('click', logout);
+    }
 
     // Search functionality
-    if (elements.searchBtn) {
+    if (elements.searchBtn && elements.desktopSearch) {
         elements.searchBtn.addEventListener('click', () => performSearch(elements.desktopSearch.value));
         elements.desktopSearch.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') performSearch(e.target.value);
-        });
-    }
-
-    if (elements.mobileSearchBtn) {
-        elements.mobileSearchBtn.addEventListener('click', () => {
-            performSearch(elements.mobileSearch.value);
-            toggleMobilePanel();
-        });
-        elements.mobileSearch.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                performSearch(e.target.value);
-                toggleMobilePanel();
-            }
         });
     }
 
@@ -179,11 +130,23 @@ function setupEventListeners() {
 
     // Navigation
     if (elements.cartBtn) {
-        elements.cartBtn.addEventListener('click', () => window.location.href = '/pages/cart.html');
+        elements.cartBtn.addEventListener('click', () => {
+            if (getIsUserLoggedIn()) {
+                window.location.href = '/pages/cart.html';
+            } else {
+                showAuthModal();
+            }
+        });
     }
 
     if (elements.wishlistBtn) {
-        elements.wishlistBtn.addEventListener('click', () => window.location.href = '/pages/wishlist.html');
+        elements.wishlistBtn.addEventListener('click', () => {
+            if (getIsUserLoggedIn()) {
+                window.location.href = '/pages/wishlist.html';
+            } else {
+                showAuthModal();
+            }
+        });
     }
 }
 
@@ -197,6 +160,9 @@ function performSearch(query) {
     displayProducts(filtered);
     showToast(`Found ${filtered.length} products for "${query}"`);
 }
+
+// Make performSearch available globally for mobile panel
+window.performSearch = performSearch;
 
 // Load products
 async function loadCategoryProducts() {
@@ -229,15 +195,12 @@ async function loadCategoryProducts() {
         const title = currentCategory === 'all' ? 'All Products' :
             currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1).replace(/-/g, ' ');
 
-        const categoryTitle = document.getElementById('categoryTitle');
-        const categoryDesc = document.getElementById('categoryDesc');
-
-        if (categoryTitle) {
-            categoryTitle.textContent = title;
+        if (elements.categoryTitle) {
+            elements.categoryTitle.textContent = title;
         }
 
-        if (categoryDesc) {
-            categoryDesc.textContent = `${allProducts.length} products available`;
+        if (elements.categoryDesc) {
+            elements.categoryDesc.textContent = `${allProducts.length} products available`;
         }
 
         displayProducts();
@@ -389,6 +352,9 @@ function showToast(message) {
 async function init() {
     try {
         console.log('Initializing category page...');
+
+        // Initialize mobile panel first
+        initMobilePanel();
 
         // Initialize authentication
         const authInitialized = await initAuth();

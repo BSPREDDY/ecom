@@ -31,6 +31,7 @@
 </head>
 
 <body>
+    <!-- Header -->
     <header class="site-header" id="mainHeader">
         <div class="wrap">
             <a class="brand" href="/pages/home.html">
@@ -38,11 +39,11 @@
             </a>
 
             <nav class="primary">
-                <a href="/pages/home.html">Home</a>
-                <a href="/pages/home.html#products">Products</a>
-                <a href="/pages/deals.html">Deals</a>
-                <a href="/pages/about.html">About</a>
-                <a href="/pages/contact.html" class="active">Contact</a>
+                <a href="/pages/home.html" class="nav-link">Home</a>
+                <a href="/pages/home.html#products" class="nav-link">Products</a>
+                <a href="/pages/deals.html" class="nav-link active">Deals</a>
+                <a href="/pages/about.html" class="nav-link">About</a>
+                <a href="/pages/contact.html" class="nav-link">Contact</a>
             </nav>
 
             <div class="search" role="search">
@@ -56,7 +57,6 @@
                     🛒 <span class="badge" id="cartCount">0</span>
                 </button>
 
-                <!-- Profile section - hidden on mobile -->
                 <div style="position:relative" class="d-none d-md-block">
                     <div class="profile" id="profileBtn" aria-haspopup="true" aria-expanded="false" role="button"
                         tabindex="0">
@@ -72,17 +72,16 @@
                     </div>
                 </div>
 
-                <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+                <button class="hamburger" id="mobileMenuBtn" aria-label="Menu">☰</button>
             </div>
         </div>
     </header>
 
-    <!-- Enhanced Mobile Panel as Left Sidebar -->
+    <!-- Mobile Navigation -->
     <div class="mobile-overlay" id="mobileOverlay"></div>
     <div class="mobile-panel" id="mobilePanel">
-        <button class="mobile-close" id="mobileClose">✕</button>
+        <button class="mobile-close" id="closeMobilePanel">✕</button>
 
-        <!-- Enhanced Profile section in mobile panel -->
         <div class="mobile-profile" id="mobileProfile">
             <div class="avatar" id="mobileUserAvatar">U</div>
             <div class="user-info">
@@ -92,24 +91,24 @@
         </div>
 
         <div class="mobile-search">
-            <input id="mobileSearch" placeholder="Search products..." aria-label="Search products" />
+            <input id="mobileSearchInput" placeholder="Search products..." aria-label="Search products" />
             <button id="mobileSearchBtn">🔍</button>
         </div>
 
         <div class="mobile-nav-section">
-            <a href="/pages/home.html">
+            <a href="/pages/home.html" class="mobile-nav-link">
                 <span class="nav-icon">🏠</span> Home
             </a>
-            <a href="/pages/home.html#products">
+            <a href="/pages/home.html#products" class="mobile-nav-link">
                 <span class="nav-icon">🛍️</span> Products
             </a>
-            <a href="/pages/deals.html">
+            <a href="/pages/deals.html" class="mobile-nav-link active">
                 <span class="nav-icon">🔥</span> Deals
             </a>
-            <a href="/pages/about.html">
+            <a href="/pages/about.html" class="mobile-nav-link">
                 <span class="nav-icon">ℹ️</span> About
             </a>
-            <a href="/pages/contact.html" class="active">
+            <a href="/pages/contact.html" class="mobile-nav-link">
                 <span class="nav-icon">📞</span> Contact
             </a>
         </div>
@@ -118,16 +117,16 @@
 
         <div class="mobile-nav-section">
             <div class="mobile-nav-title">Your Account</div>
-            <a href="#">
+            <a href="#" class="mobile-nav-link">
                 <span class="nav-icon">👤</span> Your Account
             </a>
-            <a href="#">
+            <a href="#" class="mobile-nav-link">
                 <span class="nav-icon">📦</span> Orders
             </a>
-            <a href="/pages/wishlist.html">
+            <a href="/pages/wishlist.html" class="mobile-nav-link">
                 <span class="nav-icon">❤️</span> Saved Items
             </a>
-            <a href="#" id="mobileLogoutBtn">
+            <a href="#" id="mobileLogoutBtn" class="mobile-nav-link">
                 <span class="nav-icon">🚪</span> Sign out
             </a>
         </div>
@@ -141,10 +140,15 @@
     <div class="auth-modal" id="authModal">
         <div class="auth-modal-content">
             <div class="auth-modal-icon">🔒</div>
-            <h2 class="auth-modal-title">Authentication Required</h2>
-            <p class="auth-modal-text">You need to be logged in to access this page. Please sign in to continue.</p>
+            <h2 class="auth-modal-title">Sign In Required</h2>
+            <p class="auth-modal-text">You need to sign in to access your account features.</p>
             <div class="auth-modal-buttons">
-                <button class="auth-modal-btn primary" id="loginRedirectBtn">Sign In</button>
+                <button class="auth-modal-btn primary" id="loginRedirectBtn">
+                    Sign In
+                </button>
+                <button class="auth-modal-btn secondary" id="closeAuthModal">
+                    Continue as Guest
+                </button>
             </div>
         </div>
     </div>
@@ -355,6 +359,7 @@
     <script type="module" src="/scripts/firebase-config.js" defer></script>
     <script type="module" src="/scripts/auth.js" defer></script>
     <script type="module" src="/scripts/contact/main.js" defer></script>
+    <script type="module" src="/scripts/mobile-panel.js" defer></script>
 
     <!-- Fallback for JavaScript disabled -->
     <noscript>

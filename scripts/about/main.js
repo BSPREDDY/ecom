@@ -1,4 +1,5 @@
 import { initAuth, logout, showAuthModal, hideAuthModal } from '../auth.js';
+import { initMobilePanel } from '../mobile-panel.js'; // Import mobile panel functionality
 
 // DOM Elements
 const getElement = (id) => document.getElementById(id);
@@ -8,6 +9,9 @@ async function initAboutPage() {
     console.log('Initializing About page...');
 
     try {
+        // Initialize mobile panel first
+        initMobilePanel();
+
         // Initialize authentication
         const isAuthenticated = await initAuth();
 
@@ -34,8 +38,6 @@ function setupEventListeners() {
     // Search functionality
     const desktopSearchBtn = getElement('searchBtn');
     const desktopSearchInput = getElement('desktopSearch');
-    const mobileSearchBtn = getElement('mobileSearchBtn');
-    const mobileSearchInput = getElement('mobileSearch');
 
     function performSearch(query) {
         if (!query.trim()) return;
@@ -50,46 +52,6 @@ function setupEventListeners() {
 
         desktopSearchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') performSearch(e.target.value);
-        });
-    }
-
-    if (mobileSearchBtn && mobileSearchInput) {
-        mobileSearchBtn.addEventListener('click', () => {
-            performSearch(mobileSearchInput.value);
-        });
-
-        mobileSearchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') performSearch(e.target.value);
-        });
-    }
-
-    // Mobile menu
-    const hamburger = getElement('hamburger');
-    const mobilePanel = getElement('mobilePanel');
-    const mobileOverlay = getElement('mobileOverlay');
-    const mobileClose = getElement('mobileClose');
-
-    if (hamburger && mobilePanel) {
-        function toggleMobilePanel() {
-            mobilePanel.classList.toggle('show');
-            mobileOverlay.classList.toggle('show');
-            document.body.style.overflow = mobilePanel.classList.contains('show') ? 'hidden' : '';
-        }
-
-        hamburger.addEventListener('click', toggleMobilePanel);
-        if (mobileClose) mobileClose.addEventListener('click', toggleMobilePanel);
-        if (mobileOverlay) mobileOverlay.addEventListener('click', toggleMobilePanel);
-
-        // Close mobile panel when clicking on links
-        mobilePanel.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', toggleMobilePanel);
-        });
-
-        // Close mobile panel with Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && mobilePanel.classList.contains('show')) {
-                toggleMobilePanel();
-            }
         });
     }
 
@@ -132,19 +94,11 @@ function setupEventListeners() {
 
     // Logout buttons
     const logoutBtn = getElement('logoutBtn');
-    const mobileLogoutBtn = getElement('mobileLogoutBtn');
     const closeAuthModal = getElement('closeAuthModal');
     const loginRedirectBtn = getElement('loginRedirectBtn');
 
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            await logout();
-        });
-    }
-
-    if (mobileLogoutBtn) {
-        mobileLogoutBtn.addEventListener('click', async (e) => {
             e.preventDefault();
             await logout();
         });
@@ -165,9 +119,8 @@ function setupEventListeners() {
 
     // Restore last search query if exists
     const lastSearch = sessionStorage.getItem('lastSearch');
-    if (lastSearch) {
-        if (desktopSearchInput) desktopSearchInput.value = lastSearch;
-        if (mobileSearchInput) mobileSearchInput.value = lastSearch;
+    if (lastSearch && desktopSearchInput) {
+        desktopSearchInput.value = lastSearch;
     }
 }
 
@@ -185,6 +138,13 @@ function updateCartBadge() {
         cartCountElement.textContent = '0';
     }
 }
+
+// Make performSearch available globally for mobile panel
+window.performSearch = function (query) {
+    if (!query.trim()) return;
+    sessionStorage.setItem('lastSearch', query);
+    window.location.href = `/pages/home.html?search=${encodeURIComponent(query)}`;
+};
 
 // Initialize when DOM is loaded
 if (document.readyState === 'loading') {

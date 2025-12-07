@@ -1,36 +1,27 @@
-// Main Wishlist JavaScript
+// /scripts/wishlist/main.js - Main Wishlist JavaScript
 import { auth, showAuthModal, hideAuthModal, logout, initAuth } from '/scripts/auth.js';
+import { initMobilePanel, updateMobileUserInfo } from '/scripts/mobile-panel.js'; // REMOVE toggleMobilePanel
 
 // Global variables
 let wishlistData = [];
 let allProducts = [];
 let isUserLoggedIn = false;
 
-// DOM Elements
+// DOM Elements (excluding mobile panel elements)
 const getElement = (id) => document.getElementById(id);
 
 const elements = {
-    hamburger: getElement('hamburger'),
-    mobilePanel: getElement('mobilePanel'),
-    mobileOverlay: getElement('mobileOverlay'),
-    mobileClose: getElement('mobileClose'),
     profileBtn: getElement('profileBtn'),
     profileMenu: getElement('profileMenu'),
     logoutBtn: getElement('logoutBtn'),
-    mobileLogoutBtn: getElement('mobileLogoutBtn'),
     searchBtn: getElement('searchBtn'),
     desktopSearch: getElement('desktopSearch'),
-    mobileSearchBtn: getElement('mobileSearchBtn'),
-    mobileSearch: getElement('mobileSearch'),
     cartBtn: getElement('cartBtn'),
     wishlistBtn: getElement('wishlistBtn'),
     cartCount: getElement('cartCount'),
     toast: getElement('toast'),
     toastMessage: getElement('toastMessage'),
     userAvatar: getElement('userAvatar'),
-    mobileUserAvatar: getElement('mobileUserAvatar'),
-    mobileUserEmail: getElement('mobileUserEmail'),
-    mobileUserName: getElement('mobileUserName'),
     authModal: getElement('authModal'),
     loginRedirectBtn: getElement('loginRedirectBtn'),
     closeAuthModal: getElement('closeAuthModal'),
@@ -89,44 +80,29 @@ function saveWishlistData() {
     localStorage.setItem('wishlistData', JSON.stringify(wishlistData));
 }
 
-// Mobile Panel Functions
-function toggleMobilePanel() {
-    if (!elements.mobilePanel || !elements.mobileOverlay) return;
+// Search functionality
+function performSearch(query) {
+    if (!query.trim()) {
+        loadWishlistDisplay();
+        return;
+    }
 
-    elements.mobilePanel.classList.toggle('show');
-    elements.mobileOverlay.classList.toggle('show');
-    document.body.style.overflow = elements.mobilePanel.classList.contains('show') ? 'hidden' : '';
+    const filtered = wishlistData.filter(product =>
+        product.title.toLowerCase().includes(query.toLowerCase()) ||
+        product.category.toLowerCase().includes(query.toLowerCase())
+    );
+
+    displayWishlist(filtered);
+    showToast(`Found ${filtered.length} products for "${query}"`);
 }
 
-// Event Listeners
+// Make search function available globally for mobile panel
+window.performSearch = performSearch;
+window.logout = logout;
+window.showToast = showToast;
+
+// Event Listeners (excluding mobile panel events)
 function setupEventListeners() {
-    // Mobile panel
-    if (elements.hamburger) {
-        elements.hamburger.addEventListener('click', toggleMobilePanel);
-    }
-
-    if (elements.mobileClose) {
-        elements.mobileClose.addEventListener('click', toggleMobilePanel);
-    }
-
-    if (elements.mobileOverlay) {
-        elements.mobileOverlay.addEventListener('click', toggleMobilePanel);
-    }
-
-    // Close mobile panel on link click
-    if (elements.mobilePanel) {
-        elements.mobilePanel.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', toggleMobilePanel);
-        });
-    }
-
-    // Close mobile panel with Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && elements.mobilePanel && elements.mobilePanel.classList.contains('show')) {
-            toggleMobilePanel();
-        }
-    });
-
     // Profile dropdown
     if (elements.profileBtn && elements.profileMenu) {
         elements.profileBtn.addEventListener('click', (e) => {
@@ -144,7 +120,7 @@ function setupEventListeners() {
         });
     }
 
-    // Logout
+    // Logout (desktop)
     if (elements.logoutBtn) {
         elements.logoutBtn.addEventListener('click', async () => {
             try {
@@ -157,52 +133,11 @@ function setupEventListeners() {
         });
     }
 
-    if (elements.mobileLogoutBtn) {
-        elements.mobileLogoutBtn.addEventListener('click', async () => {
-            try {
-                await logout();
-                window.location.href = '/login_signup.html';
-            } catch (error) {
-                console.error('Logout error:', error);
-                showToast('Logout failed. Please try again.', true);
-            }
-        });
-    }
-
-    // Search functionality
-    function performSearch(query) {
-        if (!query.trim()) {
-            loadWishlistDisplay();
-            return;
-        }
-
-        const filtered = wishlistData.filter(product =>
-            product.title.toLowerCase().includes(query.toLowerCase()) ||
-            product.category.toLowerCase().includes(query.toLowerCase())
-        );
-
-        displayWishlist(filtered);
-        showToast(`Found ${filtered.length} products for "${query}"`);
-    }
-
+    // Search functionality (desktop)
     if (elements.searchBtn && elements.desktopSearch) {
         elements.searchBtn.addEventListener('click', () => performSearch(elements.desktopSearch.value));
         elements.desktopSearch.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') performSearch(e.target.value);
-        });
-    }
-
-    if (elements.mobileSearchBtn && elements.mobileSearch) {
-        elements.mobileSearchBtn.addEventListener('click', () => {
-            performSearch(elements.mobileSearch.value);
-            toggleMobilePanel();
-        });
-
-        elements.mobileSearch.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                performSearch(e.target.value);
-                toggleMobilePanel();
-            }
         });
     }
 
@@ -440,20 +375,49 @@ function showToast(message, isError = false) {
     }, 3000);
 }
 
+// Initialize authentication and update UI
+async function initAuthAndUI() {
+    const isAuthenticated = await initAuth();
+    isUserLoggedIn = isAuthenticated;
+
+    if (isAuthenticated) {
+        // Get user info
+        let userInitial = localStorage.getItem('userInitial') || 'U';
+        let userEmail = localStorage.getItem('userEmail') || '';
+        let userName = localStorage.getItem('userName') || 'Welcome Back!';
+
+        // Update desktop avatar
+        if (elements.userAvatar) {
+            elements.userAvatar.textContent = userInitial;
+            elements.userAvatar.style.backgroundColor = '#2874f0';
+            elements.userAvatar.style.color = 'white';
+        }
+
+        // Update mobile user info
+        updateMobileUserInfo(userInitial, userEmail, userName);
+
+        return true;
+    } else {
+        return false;
+    }
+}
+
 // Initialize
 async function init() {
     console.log('Initializing Wishlist...');
 
     try {
-        // Setup event listeners first
+        // Initialize mobile panel
+        initMobilePanel();
+
+        // Setup event listeners
         setupEventListeners();
 
         // Update cart badge
         updateCartBadge();
 
-        // Initialize authentication
-        const isAuthenticated = await initAuth();
-        isUserLoggedIn = isAuthenticated;
+        // Initialize authentication and UI
+        const isAuthenticated = await initAuthAndUI();
 
         if (isAuthenticated) {
             // Load wishlist data

@@ -29,6 +29,7 @@
 </head>
 
 <body>
+    <!-- Header -->
     <header class="site-header" id="mainHeader">
         <div class="wrap">
             <a class="brand" href="/pages/home.html">
@@ -36,15 +37,15 @@
             </a>
 
             <nav class="primary">
-                <a href="/pages/home.html">Home</a>
-                <a href="/pages/home.html#products">Products</a>
-                <a href="/pages/deals.html">Deals</a>
-                <a href="/pages/about.html" class="active">About</a>
-                <a href="/pages/contact.html">Contact</a>
+                <a href="/pages/home.html" class="nav-link">Home</a>
+                <a href="/pages/home.html#products" class="nav-link">Products</a>
+                <a href="/pages/deals.html" class="nav-link active">Deals</a>
+                <a href="/pages/about.html" class="nav-link">About</a>
+                <a href="/pages/contact.html" class="nav-link">Contact</a>
             </nav>
 
             <div class="search" role="search">
-                <input id="desktopSearch" placeholder="Search products, brands and more" aria-label="Search products">
+                <input id="desktopSearch" placeholder="Search products, brands and more" aria-label="Search products" />
                 <button aria-label="Search" id="searchBtn">🔍</button>
             </div>
 
@@ -69,14 +70,16 @@
                     </div>
                 </div>
 
-                <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+                <button class="hamburger" id="mobileMenuBtn" aria-label="Menu">☰</button>
             </div>
         </div>
     </header>
 
+    <!-- Mobile Navigation -->
     <div class="mobile-overlay" id="mobileOverlay"></div>
     <div class="mobile-panel" id="mobilePanel">
-        <button class="mobile-close" id="mobileClose">✕</button>
+        <button class="mobile-close" id="closeMobilePanel">✕</button>
+
         <div class="mobile-profile" id="mobileProfile">
             <div class="avatar" id="mobileUserAvatar">U</div>
             <div class="user-info">
@@ -84,39 +87,63 @@
                 <div class="user-email" id="mobileUserEmail">user@example.com</div>
             </div>
         </div>
+
         <div class="mobile-search">
-            <input id="mobileSearch" placeholder="Search products..." aria-label="Search products">
+            <input id="mobileSearchInput" placeholder="Search products..." aria-label="Search products" />
             <button id="mobileSearchBtn">🔍</button>
         </div>
+
         <div class="mobile-nav-section">
-            <a href="/pages/home.html"><span class="nav-icon">🏠</span> Home</a>
-            <a href="/pages/home.html#products"><span class="nav-icon">🛍️</span> Products</a>
-            <a href="/pages/deals.html"><span class="nav-icon">🔥</span> Deals</a>
-            <a href="/pages/about.html" class="active"><span class="nav-icon">ℹ️</span> About</a>
-            <a href="/pages/contact.html"><span class="nav-icon">📞</span> Contact</a>
+            <a href="/pages/home.html" class="mobile-nav-link">
+                <span class="nav-icon">🏠</span> Home
+            </a>
+            <a href="/pages/home.html#products" class="mobile-nav-link">
+                <span class="nav-icon">🛍️</span> Products
+            </a>
+            <a href="/pages/deals.html" class="mobile-nav-link active">
+                <span class="nav-icon">🔥</span> Deals
+            </a>
+            <a href="/pages/about.html" class="mobile-nav-link">
+                <span class="nav-icon">ℹ️</span> About
+            </a>
+            <a href="/pages/contact.html" class="mobile-nav-link">
+                <span class="nav-icon">📞</span> Contact
+            </a>
         </div>
+
         <hr>
+
         <div class="mobile-nav-section">
             <div class="mobile-nav-title">Your Account</div>
-            <a href="#"><span class="nav-icon">👤</span> Your Account</a>
-            <a href="#"><span class="nav-icon">📦</span> Orders</a>
-            <a href="/pages/wishlist.html"><span class="nav-icon">❤️</span> Saved Items</a>
-            <a href="#" id="mobileLogoutBtn"><span class="nav-icon">🚪</span> Sign out</a>
+            <a href="#" class="mobile-nav-link">
+                <span class="nav-icon">👤</span> Your Account
+            </a>
+            <a href="#" class="mobile-nav-link">
+                <span class="nav-icon">📦</span> Orders
+            </a>
+            <a href="/pages/wishlist.html" class="mobile-nav-link">
+                <span class="nav-icon">❤️</span> Saved Items
+            </a>
+            <a href="#" id="mobileLogoutBtn" class="mobile-nav-link">
+                <span class="nav-icon">🚪</span> Sign out
+            </a>
         </div>
+
         <div class="mobile-footer">
             <p>© 2025 ShopMate<br>Your Ultimate Shopping Destination</p>
         </div>
     </div>
 
-    <!-- Add Auth Modal -->
+
+    <!-- Authentication Modal -->
     <div class="auth-modal" id="authModal">
         <div class="auth-modal-content">
-            <button class="mobile-close" id="closeAuthModal">✕</button>
-            <div class="auth-modal-icon">🔐</div>
+            <div class="auth-modal-icon">🔒</div>
             <h2 class="auth-modal-title">Authentication Required</h2>
-            <p class="auth-modal-text">Please sign in to access ShopMate features and enjoy personalized shopping.</p>
+            <p class="auth-modal-text">You need to be logged in to access your wishlist. Please sign in to continue.</p>
             <div class="auth-modal-buttons">
                 <button class="auth-modal-btn primary" id="loginRedirectBtn">Sign In</button>
+                <button class="auth-modal-btn secondary" id="closeAuthModal">Continue as Guest</button>
             </div>
         </div>
     </div>
@@ -310,6 +337,7 @@
     <script type="module" src="/scripts/firebase-config.js" defer></script>
     <script type="module" src="/scripts/auth.js" defer></script>
     <script type="module" src="/scripts/about/main.js" defer></script>
+    <script type="module" src="/scripts/mobile-panel.js" defer></script>
 </body>
 
 </html>

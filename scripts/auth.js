@@ -170,7 +170,7 @@ export async function logout() {
         window.location.href = '../login_signup.html';
     } catch (error) {
         console.error('Logout error:', error);
-        alert('Failed to sign out. Please try again.');
+        throw error; // Re-throw the error so the caller can handle it
     }
 }
 

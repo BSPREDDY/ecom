@@ -1,5 +1,6 @@
 // scripts/contact/main.js - Contact page specific functionality
 import { auth, checkAuthentication, showAuthModal, hideAuthModal, logout, getIsUserLoggedIn } from '../auth.js';
+import { initMobilePanel } from '../mobile-panel.js'; // Import the mobile panel functionality
 
 class ContactPage {
     constructor() {
@@ -9,6 +10,9 @@ class ContactPage {
     }
 
     async init() {
+        // Initialize mobile panel first (imported from mobile-panel.js)
+        initMobilePanel();
+
         // Check authentication
         await checkAuthentication();
 
@@ -21,29 +25,23 @@ class ContactPage {
 
         // Check if user needs to be redirected from auth modal
         this.checkAuthRedirect();
+
+        // Update user info from storage
+        this.updateUserInfoFromStorage();
     }
 
     cacheElements() {
         this.elements = {
-            // Mobile navigation
-            hamburger: document.getElementById('hamburger'),
-            mobilePanel: document.getElementById('mobilePanel'),
-            mobileOverlay: document.getElementById('mobileOverlay'),
-            mobileClose: document.getElementById('mobileClose'),
-
             // Profile and auth
             profileBtn: document.getElementById('profileBtn'),
             profileMenu: document.getElementById('profileMenu'),
             logoutBtn: document.getElementById('logoutBtn'),
-            mobileLogoutBtn: document.getElementById('mobileLogoutBtn'),
             authModal: document.getElementById('authModal'),
             loginRedirectBtn: document.getElementById('loginRedirectBtn'),
 
             // Search functionality
             searchBtn: document.getElementById('searchBtn'),
             desktopSearch: document.getElementById('desktopSearch'),
-            mobileSearchBtn: document.getElementById('mobileSearchBtn'),
-            mobileSearch: document.getElementById('mobileSearch'),
 
             // Cart and wishlist
             cartBtn: document.getElementById('cartBtn'),
@@ -61,27 +59,14 @@ class ContactPage {
             header: document.getElementById('mainHeader'),
 
             // FAQ elements
-            faqItems: document.querySelectorAll('.faq-item')
+            faqItems: document.querySelectorAll('.faq-item'),
+
+            // User info elements
+            userAvatar: document.getElementById('userAvatar')
         };
     }
 
     setupEventListeners() {
-        // Mobile panel toggle
-        if (this.elements.hamburger) {
-            this.elements.hamburger.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.toggleMobilePanel();
-            });
-        }
-
-        if (this.elements.mobileClose) {
-            this.elements.mobileClose.addEventListener('click', () => this.toggleMobilePanel());
-        }
-
-        if (this.elements.mobileOverlay) {
-            this.elements.mobileOverlay.addEventListener('click', () => this.toggleMobilePanel());
-        }
-
         // Profile dropdown
         if (this.elements.profileBtn) {
             this.elements.profileBtn.addEventListener('click', (e) => {
@@ -106,37 +91,14 @@ class ContactPage {
             });
         }
 
-        if (this.elements.mobileLogoutBtn) {
-            this.elements.mobileLogoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.handleLogout();
-            });
-        }
-
         // Search functionality
         if (this.elements.searchBtn) {
-            this.elements.searchBtn.addEventListener('click', () => this.performSearch('desktop'));
+            this.elements.searchBtn.addEventListener('click', () => this.performSearch());
         }
 
         if (this.elements.desktopSearch) {
             this.elements.desktopSearch.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') this.performSearch('desktop');
-            });
-        }
-
-        if (this.elements.mobileSearchBtn) {
-            this.elements.mobileSearchBtn.addEventListener('click', () => {
-                this.performSearch('mobile');
-                this.toggleMobilePanel();
-            });
-        }
-
-        if (this.elements.mobileSearch) {
-            this.elements.mobileSearch.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    this.performSearch('mobile');
-                    this.toggleMobilePanel();
-                }
+                if (e.key === 'Enter') this.performSearch();
             });
         }
 
@@ -171,29 +133,14 @@ class ContactPage {
             });
         }
 
-        // Close mobile panel on escape key
+        // Close auth modal on escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                if (this.elements.mobilePanel?.classList.contains('show')) {
-                    this.toggleMobilePanel();
-                }
                 if (this.elements.authModal?.classList.contains('show')) {
                     hideAuthModal();
                 }
             }
         });
-
-        // Close mobile panel when clicking on links (except logout)
-        const mobileLinks = this.elements.mobilePanel?.querySelectorAll('a:not(#mobileLogoutBtn)');
-        if (mobileLinks) {
-            mobileLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    if (this.elements.mobilePanel.classList.contains('show')) {
-                        this.toggleMobilePanel();
-                    }
-                });
-            });
-        }
     }
 
     setupScrollEffects() {
@@ -242,27 +189,6 @@ class ContactPage {
         }
     }
 
-    toggleMobilePanel() {
-        if (!this.elements.mobilePanel || !this.elements.mobileOverlay) return;
-
-        const isOpening = !this.elements.mobilePanel.classList.contains('show');
-
-        if (isOpening) {
-            this.elements.mobilePanel.classList.add('show');
-            this.elements.mobileOverlay.classList.add('show');
-            document.body.style.overflow = 'hidden';
-        } else {
-            this.elements.mobilePanel.classList.remove('show');
-            this.elements.mobileOverlay.classList.remove('show');
-            document.body.style.overflow = '';
-        }
-
-        // Close profile menu when opening mobile panel
-        if (isOpening) {
-            this.closeProfileMenu();
-        }
-    }
-
     toggleProfileMenu() {
         if (!this.elements.profileMenu) return;
 
@@ -292,20 +218,13 @@ class ContactPage {
         }
     }
 
-    performSearch(type) {
-        let searchInput;
-        if (type === 'desktop') {
-            searchInput = this.elements.desktopSearch;
-        } else {
-            searchInput = this.elements.mobileSearch;
-        }
-
-        if (!searchInput || !searchInput.value.trim()) {
+    performSearch() {
+        if (!this.elements.desktopSearch || !this.elements.desktopSearch.value.trim()) {
             this.showToast('Please enter a search term');
             return;
         }
 
-        const query = encodeURIComponent(searchInput.value.trim());
+        const query = encodeURIComponent(this.elements.desktopSearch.value.trim());
         window.location.href = `/index.html?search=${query}`;
     }
 
@@ -336,6 +255,18 @@ class ContactPage {
             this.elements.cartCount.style.display = 'none';
         } else {
             this.elements.cartCount.style.display = 'flex';
+        }
+    }
+
+    updateUserInfoFromStorage() {
+        // Update desktop avatar from localStorage
+        const userInitial = localStorage.getItem('userInitial');
+        if (this.elements.userAvatar && userInitial) {
+            this.elements.userAvatar.textContent = userInitial;
+            if (userInitial !== 'U') {
+                this.elements.userAvatar.style.backgroundColor = '#2874f0';
+                this.elements.userAvatar.style.color = 'white';
+            }
         }
     }
 
@@ -392,29 +323,6 @@ class ContactPage {
             window.history.replaceState({}, document.title, newUrl);
         }
     }
-
-    // Helper method to update user info in mobile panel
-    updateUserInfo(user) {
-        if (!user) return;
-
-        const mobileUserAvatar = document.getElementById('mobileUserAvatar');
-        const mobileUserName = document.getElementById('mobileUserName');
-        const mobileUserEmail = document.getElementById('mobileUserEmail');
-
-        if (mobileUserAvatar) {
-            const initial = user.displayName ? user.displayName.charAt(0).toUpperCase() :
-                user.email ? user.email.charAt(0).toUpperCase() : 'U';
-            mobileUserAvatar.textContent = initial;
-        }
-
-        if (mobileUserName) {
-            mobileUserName.textContent = user.displayName || user.email?.split('@')[0] || 'Welcome Back!';
-        }
-
-        if (mobileUserEmail) {
-            mobileUserEmail.textContent = user.email || 'user@example.com';
-        }
-    }
 }
 
 // Initialize the contact page
@@ -428,11 +336,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Make it available globally for debugging
     window.contactPage = contactPage;
-
-    // Listen for auth state changes to update UI
-    auth.onAuthStateChanged((user) => {
-        if (user) {
-            contactPage.updateUserInfo(user);
-        }
-    });
 });
+
+// Make performSearch available globally for mobile panel
+window.performSearch = function (query) {
+    const encodedQuery = encodeURIComponent(query);
+    window.location.href = `/index.html?search=${encodedQuery}`;
+};

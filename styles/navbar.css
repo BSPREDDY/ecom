@@ -1,4 +1,18 @@
+/* navbar.css */
 /* ========== NAVBAR STYLES ========== */
+:root {
+    --primary: #2874f0;
+    --primary-dark: #1a5fd0;
+    --accent: #ffb300;
+    --accent-dark: #ff9800;
+    --danger: #ef4444;
+    --success: #10b981;
+    --muted: #64748b;
+    --max-width: 1400px;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.1);
+}
+
 .site-header {
     background: linear-gradient(90deg, var(--primary), var(--primary-dark));
     position: fixed;
@@ -10,17 +24,19 @@
     box-shadow: 0 4px 20px rgba(16, 24, 40, 0.1);
     transition: all 0.3s ease;
     width: 100%;
+    box-sizing: border-box;
 }
 
 .site-header .wrap {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: 0 20px;
+    margin: 0;
+    padding: 0 24px;
     display: flex;
     align-items: center;
-    gap: 15px;
+    justify-content: space-between;
+    gap: 20px;
     flex-wrap: nowrap;
     width: 100%;
+    box-sizing: border-box;
 }
 
 .brand {
@@ -33,6 +49,7 @@
     transition: transform 0.3s ease;
     min-width: max-content;
     flex-shrink: 0;
+    margin-right: auto;
 }
 
 .brand:hover {
@@ -51,29 +68,37 @@
 
 nav.primary {
     display: flex;
-    gap: 8px;
+    gap: 4px;
     align-items: center;
     flex-wrap: nowrap;
-    margin: 0 15px;
-    flex: 1;
-    justify-content: center;
-    padding: 7px;
+    margin: 0 auto;
+    flex: 0 1 auto;
+    justify-content: space-between;
+    padding: 0 15px;
+    max-width: 600px;
 }
 
 nav.primary a {
     color: rgba(255, 255, 255, 0.9);
-    padding: 10px 16px;
+    padding: 10px 14px;
     border-radius: 10px;
     font-weight: 600;
     font-size: 0.95rem;
     transition: all 0.3s ease;
     position: relative;
     white-space: nowrap;
+    text-align: center;
 }
 
 nav.primary a:hover {
     background: rgba(255, 255, 255, 0.15);
     color: #fff;
+}
+
+nav.primary a.active {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-weight: 700;
 }
 
 .search {
@@ -85,9 +110,9 @@ nav.primary a:hover {
     overflow: hidden;
     box-shadow: 0 6px 24px rgba(2, 6, 23, 0.1);
     transition: all 0.3s ease;
-    flex: 1;
-    max-width: 400px;
-    min-width: 200px;
+    flex: 0 1 400px;
+    min-width: 250px;
+    margin-right: 15px;
 }
 
 .search:focus-within {
@@ -102,6 +127,8 @@ nav.primary a:hover {
     width: 100%;
     font-size: 14px;
     background: transparent;
+    flex: 1;
+    min-width: 0;
 }
 
 .search button {
@@ -112,6 +139,7 @@ nav.primary a:hover {
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 1.1rem;
+    flex-shrink: 0;
 }
 
 .search button:hover {
@@ -123,7 +151,6 @@ nav.primary a:hover {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-left: auto;
     flex-wrap: nowrap;
     flex-shrink: 0;
 }
@@ -143,6 +170,7 @@ nav.primary a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .icon-btn:hover {
@@ -173,6 +201,7 @@ nav.primary a:hover {
     border-radius: 12px;
     transition: all 0.3s ease;
     min-width: max-content;
+    flex-shrink: 0;
 }
 
 .profile:hover {
@@ -246,6 +275,7 @@ nav.primary a:hover {
     height: 44px;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .hamburger:hover {
@@ -507,31 +537,59 @@ nav.primary a:hover {
 }
 
 /* ========== RESPONSIVE NAVBAR ========== */
-@media (max-width: 880px) {
+@media (max-width: 1200px) {
+    nav.primary {
+        gap: 2px;
+    }
 
-    nav.primary,
-    .search,
+    nav.primary a {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .search {
+        display: none;
+    }
+
+    .site-header .wrap {
+        padding: 0 20px;
+        gap: 15px;
+    }
+
+    nav.primary {
+        display: none;
+    }
+
     .profile {
         display: none;
     }
 
     .hamburger {
         display: flex;
-    }
-
-    .site-header .wrap {
-        justify-content: space-between;
+        order: 3;
     }
 
     .actions {
+        order: 2;
         margin-left: 0;
+    }
+
+    .brand {
+        order: 1;
+        margin-right: 0;
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
     .site-header .wrap {
         padding: 0 16px;
-        gap: 10px;
+        gap: 12px;
+    }
+
+    .search {
+        display: none;
     }
 
     .brand {
@@ -542,25 +600,107 @@ nav.primary a:hover {
         padding: 6px 8px;
         font-size: 0.9rem;
     }
-}
 
-@media (max-width: 480px) {
+    .icon-btn {
+        min-width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+
+    .hamburger {
+        min-width: 40px;
+        height: 40px;
+        font-size: 1.4rem;
+    }
+
+    .mobile-panel {
+        width: 300px;
+    }
+
     .mobile-profile {
         padding: 25px 20px 15px;
-        margin-bottom: 5px;
     }
 
     .mobile-search {
-        margin: 15px 20px;
+        margin: 15px 12px;
+    }
+
+    .mobile-search input {
+        margin-left: -8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .site-header .wrap {
+        padding: 0 12px;
+        gap: 8px;
+    }
+
+    .brand {
+        font-size: 1.1rem;
+    }
+
+    .brand .logo-mark {
+        padding: 5px 7px;
+        font-size: 0.85rem;
+        margin-right: 6px;
+    }
+
+    .icon-btn {
+        min-width: 36px;
+        height: 36px;
+        font-size: 1rem;
+        padding: 6px;
+    }
+
+    .hamburger {
+        min-width: 36px;
+        height: 36px;
+        font-size: 1.2rem;
+    }
+
+    .mobile-panel {
+        width: 280px;
+    }
+
+    .mobile-profile {
+        padding: 20px 16px 12px;
+    }
+
+    .mobile-profile .avatar {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+
+    .mobile-profile .user-name {
+        font-size: 1.1rem;
+    }
+
+    .mobile-search {
+        margin: 12px 8px;
+        width: calc(100% - 32px);
+    }
+
+    .mobile-search input {
+        padding: 12px 16px;
+        min-height: 48px;
+        min-width: 40px;
+        margin-left: 10px;
+    }
+
+    .mobile-search button {
+        padding: 10px 16px;
+        min-height: 48px;
+        min-width: 50px;
     }
 
     .mobile-nav-section {
-        padding: 5px 0;
-        margin: 0 20px;
+        margin: 0 16px;
     }
 
     .mobile-footer {
-        padding: 15px;
+        padding: 16px;
     }
 }
 
@@ -574,24 +714,72 @@ nav.primary a:hover {
     }
 
     .brand .logo-mark {
-        padding: 5px 7px;
+        padding: 4px 6px;
         font-size: 0.8rem;
-        margin-right: 6px;
+        margin-right: 4px;
     }
 
     .icon-btn {
-        min-width: 36px;
-        height: 36px;
-        font-size: 1rem;
+        min-width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
     }
 
     .hamburger {
-        min-width: 36px;
-        height: 36px;
-        font-size: 1.3rem;
+        min-width: 32px;
+        height: 32px;
+        font-size: 1.1rem;
     }
 
     .mobile-panel {
-        width: 280px;
+        width: 260px;
+    }
+
+    .mobile-profile {
+        padding: 18px 14px 10px;
+    }
+
+    .mobile-profile .avatar {
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
+
+    .mobile-profile .user-name {
+        font-size: 1rem;
+    }
+
+    .mobile-search {
+        margin: 10px 14px;
+        width: calc(100% - 28px);
+    }
+
+    .mobile-search input {
+        padding: 12px 16px;
+        min-height: 48px;
+    }
+
+    .mobile-search button {
+        padding: 12px 16px;
+        min-height: 48px;
+        min-width: 50px;
+    }
+
+    .mobile-nav-section {
+        margin: 0 14px;
+    }
+
+    .mobile-panel a {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+    }
+
+    .nav-icon {
+        margin-right: 12px;
+        font-size: 1.1rem;
+    }
+
+    .mobile-footer {
+        padding: 12px;
     }
 }

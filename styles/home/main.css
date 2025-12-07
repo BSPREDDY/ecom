@@ -54,8 +54,7 @@ a {
     overflow: hidden;
     text-align: center;
     width: 100%;
-    margin-top: 0;
-    /* Remove margin since we have body padding */
+    margin-top: -5px;
 }
 
 .hero-inner {
@@ -554,6 +553,10 @@ a {
         grid-template-columns: repeat(3, 1fr);
         gap: 20px;
     }
+
+    .hero {
+        margin-top: -7px;
+    }
 }
 
 @media (max-width: 880px) {
@@ -594,7 +597,7 @@ a {
     }
 
     .card img {
-        height: 200px;
+        height: 320px;
     }
 
     .slider-controls button {
@@ -604,6 +607,7 @@ a {
 }
 
 @media (max-width: 767px) {
+
     .hero-cats {
         grid-template-columns: repeat(2, 1fr);
         gap: 8px;
@@ -680,7 +684,7 @@ a {
         min-height: calc(50vh - 64px);
         padding: 30px 16px;
         background-attachment: scroll;
-        margin-top: 0;
+        margin-top: -4px;
     }
 
     .hero h1 {
@@ -721,7 +725,7 @@ a {
     }
 
     .card img {
-        height: 160px;
+        height: 210px;
     }
 
     .section {
@@ -771,6 +775,10 @@ a {
     .hero-cats {
         grid-template-columns: repeat(2, 1fr);
         gap: 6px;
+    }
+
+    .hero {
+        margin-top: -8px;
     }
 
     .grid {

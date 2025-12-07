@@ -1,4 +1,5 @@
 import { initAuth, showAuthModal, hideAuthModal, logout, getIsUserLoggedIn } from '../auth.js';
+import { initMobilePanel } from '../mobile-panel.js'; // Import mobile panel
 
 let cartData = JSON.parse(sessionStorage.getItem('cartData')) || [];
 let allProducts = [];
@@ -7,27 +8,18 @@ let allProducts = [];
 const getElement = (id) => document.getElementById(id);
 
 const elements = {
-    hamburger: getElement('hamburger'),
-    mobilePanel: getElement('mobilePanel'),
-    mobileOverlay: getElement('mobileOverlay'),
-    mobileClose: getElement('mobileClose'),
     profileBtn: getElement('profileBtn'),
     profileMenu: getElement('profileMenu'),
     logoutBtn: getElement('logoutBtn'),
     mobileLogoutBtn: getElement('mobileLogoutBtn'),
     searchBtn: getElement('searchBtn'),
     desktopSearch: getElement('desktopSearch'),
-    mobileSearchBtn: getElement('mobileSearchBtn'),
-    mobileSearch: getElement('mobileSearch'),
     cartBtn: getElement('cartBtn'),
     wishlistBtn: getElement('wishlistBtn'),
     cartCount: getElement('cartCount'),
     toast: getElement('toast'),
     toastMessage: getElement('toastMessage'),
     userAvatar: getElement('userAvatar'),
-    mobileUserAvatar: getElement('mobileUserAvatar'),
-    mobileUserEmail: getElement('mobileUserEmail'),
-    mobileUserName: getElement('mobileUserName'),
     authModal: getElement('authModal'),
     closeAuthModal: getElement('closeAuthModal'),
     loginRedirectBtn: getElement('loginRedirectBtn'),
@@ -40,7 +32,10 @@ async function init() {
     console.log('Initializing cart page...');
 
     try {
-        // Initialize authentication first
+        // Initialize mobile panel
+        initMobilePanel();
+
+        // Initialize authentication
         const isAuthenticated = await initAuth();
 
         if (!isAuthenticated) {
@@ -63,43 +58,24 @@ async function init() {
 
 // Setup Event Listeners
 function setupEventListeners() {
-    // Mobile panel
-    if (elements.hamburger) {
-        elements.hamburger.addEventListener('click', toggleMobilePanel);
-    }
+    // Profile dropdown
+    if (elements.profileBtn && elements.profileMenu) {
+        elements.profileBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleProfileMenu();
+        });
 
-    if (elements.mobileClose) {
-        elements.mobileClose.addEventListener('click', toggleMobilePanel);
-    }
-
-    if (elements.mobileOverlay) {
-        elements.mobileOverlay.addEventListener('click', toggleMobilePanel);
-    }
-
-    // Close mobile panel on link click
-    if (elements.mobilePanel) {
-        elements.mobilePanel.querySelectorAll('a').forEach(link => {
-            if (!link.id.includes('logout')) {
-                link.addEventListener('click', toggleMobilePanel);
+        document.addEventListener('click', (e) => {
+            if (!elements.profileBtn.contains(e.target) && !elements.profileMenu.contains(e.target)) {
+                closeProfileMenu();
             }
         });
     }
 
-    // Profile dropdown
-    if (elements.profileBtn) {
-        elements.profileBtn.addEventListener('click', toggleProfileMenu);
-        document.addEventListener('click', closeProfileMenu);
-    }
-
     // Logout buttons
     if (elements.logoutBtn) {
-        elements.logoutBtn.addEventListener('click', () => {
-            logout();
-        });
-    }
-
-    if (elements.mobileLogoutBtn) {
-        elements.mobileLogoutBtn.addEventListener('click', () => {
+        elements.logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             logout();
         });
     }
@@ -109,19 +85,6 @@ function setupEventListeners() {
         elements.searchBtn.addEventListener('click', performSearch);
         elements.desktopSearch.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') performSearch();
-        });
-    }
-
-    if (elements.mobileSearchBtn && elements.mobileSearch) {
-        elements.mobileSearchBtn.addEventListener('click', () => {
-            performSearch();
-            toggleMobilePanel();
-        });
-        elements.mobileSearch.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                performSearch();
-                toggleMobilePanel();
-            }
         });
     }
 
@@ -159,12 +122,9 @@ function setupEventListeners() {
         });
     }
 
-    // Close mobile panel with Escape key
+    // Close with Escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            if (elements.mobilePanel && elements.mobilePanel.classList.contains('show')) {
-                toggleMobilePanel();
-            }
             if (elements.authModal && elements.authModal.classList.contains('show')) {
                 hideAuthModal();
             }
@@ -173,26 +133,8 @@ function setupEventListeners() {
     });
 }
 
-// Mobile Panel Functions
-function toggleMobilePanel() {
-    if (!elements.mobilePanel || !elements.mobileOverlay) return;
-
-    const isOpening = !elements.mobilePanel.classList.contains('show');
-
-    elements.mobilePanel.classList.toggle('show');
-    elements.mobileOverlay.classList.toggle('show');
-
-    if (isOpening) {
-        document.body.style.overflow = 'hidden';
-    } else {
-        document.body.style.overflow = '';
-    }
-}
-
 // Profile Menu Functions
-function toggleProfileMenu(e) {
-    if (e) e.stopPropagation();
-
+function toggleProfileMenu() {
     if (!elements.profileMenu) return;
 
     const isOpen = elements.profileMenu.style.display === 'block';
@@ -216,8 +158,6 @@ function performSearch() {
     let query = '';
     if (elements.desktopSearch && elements.desktopSearch.value) {
         query = elements.desktopSearch.value.trim();
-    } else if (elements.mobileSearch && elements.mobileSearch.value) {
-        query = elements.mobileSearch.value.trim();
     }
 
     if (!query) {
@@ -228,6 +168,9 @@ function performSearch() {
     sessionStorage.setItem('lastSearch', query);
     window.location.href = `/pages/home.html?search=${encodeURIComponent(query)}`;
 }
+
+// Make performSearch available globally for mobile panel
+window.performSearch = performSearch;
 
 // Load products
 async function loadProducts() {

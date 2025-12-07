@@ -1,48 +1,12 @@
 import { auth } from '/scripts/firebase-config.js';
 import { signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { initMobilePanel } from '/scripts/mobile-panel.js';
 
 let products = [];
 
 // Fix for right side white space
 document.body.style.overflowX = 'hidden';
 document.documentElement.style.overflowX = 'hidden';
-
-// Mobile Panel Toggle
-function initMobilePanel() {
-    const hamburger = document.getElementById('hamburger');
-    const mobilePanel = document.getElementById('mobilePanel');
-    const mobileOverlay = document.getElementById('mobileOverlay');
-    const mobileClose = document.getElementById('mobileClose');
-
-    if (!hamburger || !mobilePanel) {
-        console.error('Mobile panel elements not found');
-        return;
-    }
-
-    function toggleMobilePanel() {
-        mobilePanel.classList.toggle('show');
-        mobileOverlay.classList.toggle('show');
-        document.body.style.overflow = mobilePanel.classList.contains('show') ? 'hidden' : '';
-    }
-
-    hamburger.addEventListener('click', toggleMobilePanel);
-    mobileClose.addEventListener('click', toggleMobilePanel);
-    mobileOverlay.addEventListener('click', toggleMobilePanel);
-
-    // Close mobile panel when clicking on links
-    mobilePanel.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            toggleMobilePanel();
-        });
-    });
-
-    // Close mobile panel with Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && mobilePanel.classList.contains('show')) {
-            toggleMobilePanel();
-        }
-    });
-}
 
 // Profile Dropdown
 function initProfileDropdown() {
@@ -72,23 +36,9 @@ function initProfileDropdown() {
 // Logout functionality
 function initLogout() {
     const logoutBtn = document.getElementById('logoutBtn');
-    const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
 
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            try {
-                await signOut(auth);
-                window.location.href = '/login_signup.html';
-            } catch (error) {
-                console.error('Logout error:', error);
-                showToast('Logout failed. Please try again.', true);
-            }
-        });
-    }
-
-    if (mobileLogoutBtn) {
-        mobileLogoutBtn.addEventListener('click', async (e) => {
             e.preventDefault();
             try {
                 await signOut(auth);
@@ -914,7 +864,7 @@ function init() {
     console.log('Initializing ShopMate Home Page...');
 
     // Initialize all components
-    initMobilePanel();
+    initMobilePanel(); // Imported from mobile-panel.js
     initProfileDropdown();
     initLogout();
     initSearch();

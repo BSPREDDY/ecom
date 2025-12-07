@@ -1,5 +1,6 @@
 // Main Application Logic
 import { initAuth, logout, showAuthModal, hideAuthModal } from '../auth.js';
+import { initMobilePanel, updateMobileUserInfo } from '../mobile-panel.js';
 
 // Global variables
 let currentProduct = null;
@@ -8,55 +9,27 @@ let reviews = [];
 let displayedReviews = 3;
 
 // DOM Elements
-const elements = {
-    hamburger: document.getElementById('hamburger'),
-    mobilePanel: document.getElementById('mobilePanel'),
-    mobileOverlay: document.getElementById('mobileOverlay'),
-    mobileClose: document.getElementById('mobileClose'),
-    profileBtn: document.getElementById('profileBtn'),
-    profileMenu: document.getElementById('profileMenu'),
-    logoutBtn: document.getElementById('logoutBtn'),
-    mobileLogoutBtn: document.getElementById('mobileLogoutBtn'),
-    cartBtn: document.getElementById('cartBtn'),
-    wishlistBtn: document.getElementById('wishlistBtn'),
-    cartCount: document.getElementById('cartCount'),
-    searchBtn: document.getElementById('searchBtn'),
-    desktopSearch: document.getElementById('desktopSearch'),
-    mobileSearchBtn: document.getElementById('mobileSearchBtn'),
-    mobileSearch: document.getElementById('mobileSearch'),
-    toast: document.getElementById('toast'),
-    toastMessage: document.getElementById('toastMessage'),
-    authModal: document.getElementById('authModal'),
-    loginRedirectBtn: document.getElementById('loginRedirectBtn'),
-    closeAuthModal: document.getElementById('closeAuthModal')
-};
+const getElement = (id) => document.getElementById(id);
 
-// Mobile Panel Functionality
-function toggleMobilePanel() {
-    elements.mobilePanel.classList.toggle('show');
-    elements.mobileOverlay.classList.toggle('show');
-    document.body.style.overflow = elements.mobilePanel.classList.contains('show') ? 'hidden' : '';
-}
+const elements = {
+    profileBtn: getElement('profileBtn'),
+    profileMenu: getElement('profileMenu'),
+    logoutBtn: getElement('logoutBtn'),
+    cartBtn: getElement('cartBtn'),
+    wishlistBtn: getElement('wishlistBtn'),
+    cartCount: getElement('cartCount'),
+    searchBtn: getElement('searchBtn'),
+    desktopSearch: getElement('desktopSearch'),
+    toast: getElement('toast'),
+    toastMessage: getElement('toastMessage'),
+    authModal: getElement('authModal'),
+    loginRedirectBtn: getElement('loginRedirectBtn'),
+    closeAuthModal: getElement('closeAuthModal'),
+    userAvatar: getElement('userAvatar')
+};
 
 // Event Listeners Setup
 function setupEventListeners() {
-    // Mobile panel
-    if (elements.hamburger) elements.hamburger.addEventListener('click', toggleMobilePanel);
-    if (elements.mobileClose) elements.mobileClose.addEventListener('click', toggleMobilePanel);
-    if (elements.mobileOverlay) elements.mobileOverlay.addEventListener('click', toggleMobilePanel);
-
-    // Close mobile panel when clicking on links
-    elements.mobilePanel.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', toggleMobilePanel);
-    });
-
-    // Close mobile panel with Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && elements.mobilePanel.classList.contains('show')) {
-            toggleMobilePanel();
-        }
-    });
-
     // Profile dropdown
     if (elements.profileBtn && elements.profileMenu) {
         elements.profileBtn.addEventListener('click', (e) => {
@@ -67,16 +40,28 @@ function setupEventListeners() {
         });
 
         document.addEventListener('click', (e) => {
-            if (!elements.profileBtn.contains(e.target) && !elements.profileMenu.contains(e.target)) {
-                elements.profileMenu.style.display = 'none';
-                elements.profileBtn.setAttribute('aria-expanded', 'false');
+            if (elements.profileMenu && elements.profileMenu.style.display === 'block') {
+                if (!elements.profileBtn.contains(e.target) && !elements.profileMenu.contains(e.target)) {
+                    elements.profileMenu.style.display = 'none';
+                    elements.profileBtn.setAttribute('aria-expanded', 'false');
+                }
             }
         });
     }
 
-    // Logout functionality
-    if (elements.logoutBtn) elements.logoutBtn.addEventListener('click', logout);
-    if (elements.mobileLogoutBtn) elements.mobileLogoutBtn.addEventListener('click', logout);
+    // Logout functionality (desktop only)
+    if (elements.logoutBtn) {
+        elements.logoutBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                await logout();
+                window.location.href = '../login_signup.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+                showToast('Logout failed. Please try again.', true);
+            }
+        });
+    }
 
     // Auth modal buttons
     if (elements.loginRedirectBtn) {
@@ -94,16 +79,19 @@ function setupEventListeners() {
     setupSearchFunctionality();
 
     // Cart and wishlist buttons
-    if (elements.cartBtn) elements.cartBtn.addEventListener('click', () => window.location.href = '../pages/cart.html');
-    if (elements.wishlistBtn) elements.wishlistBtn.addEventListener('click', () => window.location.href = '../pages/wishlist.html');
+    if (elements.cartBtn) elements.cartBtn.addEventListener('click', () => window.location.href = 'cart.html');
+    if (elements.wishlistBtn) elements.wishlistBtn.addEventListener('click', () => window.location.href = 'wishlist.html');
 }
 
 // Search Functionality
 function setupSearchFunctionality() {
     function performSearch(query) {
         if (!query.trim()) return;
-        window.location.href = `../pages/home.html?search=${encodeURIComponent(query)}`;
+        window.location.href = `home.html?search=${encodeURIComponent(query)}`;
     }
+
+    // Make search function available globally for mobile panel
+    window.performSearch = performSearch;
 
     // Desktop search
     if (elements.searchBtn && elements.desktopSearch) {
@@ -117,26 +105,12 @@ function setupSearchFunctionality() {
             }
         });
     }
-
-    // Mobile search
-    if (elements.mobileSearchBtn && elements.mobileSearch) {
-        elements.mobileSearchBtn.addEventListener('click', () => {
-            performSearch(elements.mobileSearch.value);
-            toggleMobilePanel();
-        });
-
-        elements.mobileSearch.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                performSearch(e.target.value);
-                toggleMobilePanel();
-            }
-        });
-    }
 }
 
 // Product Functions
 function getProductId() {
-    return new URLSearchParams(window.location.search).get('id') || '1';
+    const params = new URLSearchParams(window.location.search);
+    return params.get('id') || '1';
 }
 
 async function loadProductDetails() {
@@ -153,20 +127,24 @@ async function loadProductDetails() {
         loadRelatedProducts(currentProduct.category);
         loadReviews(currentProduct.id);
     } catch (error) {
-        container.innerHTML = `
-            <div class="loading" style="color:var(--danger)">
-                ⚠️ Failed to load product details.<br><br>
-                <a href="../pages/home.html" style="color:var(--primary);text-decoration:underline">
-                    Return to Shop
-                </a>
-            </div>
-        `;
+        if (container) {
+            container.innerHTML = `
+                <div class="loading" style="color:var(--danger)">
+                    ⚠️ Failed to load product details.<br><br>
+                    <a href="home.html" style="color:var(--primary);text-decoration:underline">
+                        Return to Shop
+                    </a>
+                </div>
+            `;
+        }
         console.error('Error loading product:', error);
     }
 }
 
 function displayProductDetails(product) {
     const container = document.getElementById('productContainer');
+    if (!container) return;
+
     const discount = Math.round(product.discountPercentage || 15);
     const originalPrice = Math.round(product.price * 83);
     const currentPrice = Math.round(originalPrice * (1 - discount / 100));
@@ -175,9 +153,16 @@ function displayProductDetails(product) {
     // Generate proper star rating display
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
-    let starsHTML = '★'.repeat(fullStars);
-    if (hasHalfStar) starsHTML += '☆';
-    starsHTML += '☆'.repeat(5 - Math.ceil(rating));
+    let starsHTML = '';
+    for (let i = 1; i <= 5; i++) {
+        if (i <= fullStars) {
+            starsHTML += '★';
+        } else if (i === fullStars + 1 && hasHalfStar) {
+            starsHTML += '☆';
+        } else {
+            starsHTML += '☆';
+        }
+    }
 
     const images = product.images || [product.thumbnail];
 
@@ -197,7 +182,7 @@ function displayProductDetails(product) {
                 <h1 class="product-title">${product.title}</h1>
                 <div class="product-rating">
                     <span class="stars">${starsHTML}</span>
-                    <span class="rating-text">${rating.toFixed(1)} (${Math.floor(Math.random() * 500) + 100} reviews)</span>
+                    <span class="rating-text">${rating.toFixed(1)} (${Math.floor(Math.random() * 500)} reviews)</span>
                 </div>
                 <div class="product-price">
                     <span class="current-price">₹${currentPrice.toLocaleString()}</span>
@@ -250,36 +235,50 @@ function displayProductDetails(product) {
 
 function setupProductEventListeners() {
     // Thumbnail click events
-    document.querySelectorAll('.thumbnail').forEach(thumbnail => {
-        thumbnail.addEventListener('click', function () {
-            const imageSrc = this.getAttribute('data-image');
-            document.getElementById('mainImage').src = imageSrc;
-            document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
-            this.classList.add('active');
+    const thumbnails = document.querySelectorAll('.thumbnail');
+    if (thumbnails.length > 0) {
+        thumbnails.forEach(thumbnail => {
+            thumbnail.addEventListener('click', function () {
+                const imageSrc = this.getAttribute('data-image');
+                const mainImage = document.getElementById('mainImage');
+                if (mainImage) mainImage.src = imageSrc;
+
+                document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
         });
-    });
+    }
 
     // Quantity buttons
-    document.getElementById('decrementBtn').addEventListener('click', decrementQty);
-    document.getElementById('incrementBtn').addEventListener('click', incrementQty);
+    const decrementBtn = document.getElementById('decrementBtn');
+    const incrementBtn = document.getElementById('incrementBtn');
+
+    if (decrementBtn) decrementBtn.addEventListener('click', decrementQty);
+    if (incrementBtn) incrementBtn.addEventListener('click', incrementQty);
 
     // Action buttons
-    document.getElementById('addToCartBtn').addEventListener('click', addToCart);
-    document.getElementById('buyNowBtn').addEventListener('click', buyNow);
-    document.getElementById('wishlistBtnProduct').addEventListener('click', addToWishlist);
+    const addToCartBtn = document.getElementById('addToCartBtn');
+    const buyNowBtn = document.getElementById('buyNowBtn');
+    const wishlistBtn = document.getElementById('wishlistBtnProduct');
+
+    if (addToCartBtn) addToCartBtn.addEventListener('click', addToCart);
+    if (buyNowBtn) buyNowBtn.addEventListener('click', buyNow);
+    if (wishlistBtn) wishlistBtn.addEventListener('click', addToWishlist);
 }
 
 function incrementQty() {
     if (currentProduct && quantity < currentProduct.stock) {
         quantity++;
-        document.getElementById('qtyValue').textContent = quantity;
+        const qtyValue = document.getElementById('qtyValue');
+        if (qtyValue) qtyValue.textContent = quantity;
     }
 }
 
 function decrementQty() {
     if (quantity > 1) {
         quantity--;
-        document.getElementById('qtyValue').textContent = quantity;
+        const qtyValue = document.getElementById('qtyValue');
+        if (qtyValue) qtyValue.textContent = quantity;
     }
 }
 
@@ -307,13 +306,15 @@ function addToCart() {
     updateCartBadge();
     showToast(`${quantity} × ${currentProduct.title} added to cart!`);
     quantity = 1;
-    document.getElementById('qtyValue').textContent = '1';
+
+    const qtyValue = document.getElementById('qtyValue');
+    if (qtyValue) qtyValue.textContent = '1';
 }
 
 function buyNow() {
     addToCart();
     setTimeout(() => {
-        window.location.href = '../pages/checkout.html';
+        window.location.href = 'checkout.html';
     }, 500);
 }
 
@@ -458,6 +459,8 @@ function displayReviews() {
     const reviewsList = document.getElementById('reviewsList');
     const loadMoreContainer = document.getElementById('loadMoreContainer');
 
+    if (!reviewsSection || !reviewsList) return;
+
     // Calculate review statistics
     const totalReviews = reviews.length;
     const averageRating = reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews;
@@ -468,34 +471,54 @@ function displayReviews() {
     });
 
     // Update review summary
-    const productRating = currentProduct ? currentProduct.rating : averageRating;
-    document.getElementById('overallRating').textContent = productRating.toFixed(1);
-    document.getElementById('reviewCount').textContent = `Based on ${totalReviews} reviews`;
+    const overallRating = document.getElementById('overallRating');
+    const reviewCount = document.getElementById('reviewCount');
+    const overallStars = document.getElementById('overallStars');
+
+    if (overallRating) {
+        const productRating = currentProduct ? currentProduct.rating : averageRating;
+        overallRating.textContent = productRating.toFixed(1);
+    }
+
+    if (reviewCount) {
+        reviewCount.textContent = `Based on ${averageRating.toFixed(1)} (${reviews.length} reviews)`;
+    }
 
     // Update star rating display
-    const fullStars = Math.floor(productRating);
-    const hasHalfStar = productRating % 1 >= 0.5;
-    let starsHTML = '★'.repeat(fullStars);
-    if (hasHalfStar) starsHTML += '☆';
-    starsHTML += '☆'.repeat(5 - Math.ceil(productRating));
-    document.getElementById('overallStars').innerHTML = starsHTML;
+    if (overallStars) {
+        const fullStars = Math.floor(averageRating);
+        const hasHalfStar = averageRating % 1 >= 0.5;
+        let starsHTML = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= fullStars) {
+                starsHTML += '★';
+            } else if (i === fullStars + 1 && hasHalfStar) {
+                starsHTML += '☆';
+            } else {
+                starsHTML += '☆';
+            }
+        }
+        overallStars.innerHTML = starsHTML;
+    }
 
     // Update rating breakdown
     const ratingBreakdown = document.getElementById('ratingBreakdown');
-    ratingBreakdown.innerHTML = '';
+    if (ratingBreakdown) {
+        ratingBreakdown.innerHTML = '';
 
-    for (let i = 5; i >= 1; i--) {
-        const percentage = totalReviews > 0 ? (ratingCounts[i] / totalReviews) * 100 : 0;
-        const bar = document.createElement('div');
-        bar.className = 'rating-bar';
-        bar.innerHTML = `
-            <span class="rating-label">${i}★</span>
-            <div class="rating-progress">
-                <div class="rating-progress-fill" style="width: ${percentage}%"></div>
-            </div>
-            <span class="rating-percentage">${Math.round(percentage)}%</span>
-        `;
-        ratingBreakdown.appendChild(bar);
+        for (let i = 5; i >= 1; i--) {
+            const percentage = totalReviews > 0 ? (ratingCounts[i] / totalReviews) * 100 : 0;
+            const bar = document.createElement('div');
+            bar.className = 'rating-bar';
+            bar.innerHTML = `
+                <span class="rating-label">${i}★</span>
+                <div class="rating-progress">
+                    <div class="rating-progress-fill" style="width: ${percentage}%"></div>
+                </div>
+                <span class="rating-percentage">${Math.round(percentage)}%</span>
+            `;
+            ratingBreakdown.appendChild(bar);
+        }
     }
 
     // Display reviews
@@ -507,17 +530,19 @@ function displayReviews() {
                 <p>Be the first to review this product!</p>
             </div>
         `;
-        loadMoreContainer.style.display = 'none';
+        if (loadMoreContainer) loadMoreContainer.style.display = 'none';
     } else {
         // Sort reviews by date (newest first)
         reviews.sort((a, b) => new Date(b.date) - new Date(a.date));
         displayReviewBatch();
 
         // Show/hide load more button
-        if (displayedReviews >= totalReviews) {
-            loadMoreContainer.style.display = 'none';
-        } else {
-            loadMoreContainer.style.display = 'block';
+        if (loadMoreContainer) {
+            if (displayedReviews >= totalReviews) {
+                loadMoreContainer.style.display = 'none';
+            } else {
+                loadMoreContainer.style.display = 'block';
+            }
         }
     }
 
@@ -527,6 +552,8 @@ function displayReviews() {
 
 function displayReviewBatch() {
     const reviewsList = document.getElementById('reviewsList');
+    if (!reviewsList) return;
+
     reviewsList.innerHTML = '';
 
     const reviewsToShow = reviews.slice(0, displayedReviews);
@@ -538,9 +565,16 @@ function displayReviewBatch() {
         // Generate proper star rating
         const fullStars = Math.floor(review.rating);
         const hasHalfStar = review.rating % 1 >= 0.5;
-        let starsHTML = '★'.repeat(fullStars);
-        if (hasHalfStar) starsHTML += '☆';
-        starsHTML += '☆'.repeat(5 - Math.ceil(review.rating));
+        let starsHTML = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= fullStars) {
+                starsHTML += '★';
+            } else if (i === fullStars + 1 && hasHalfStar) {
+                starsHTML += '☆';
+            } else {
+                starsHTML += '☆';
+            }
+        }
 
         // Format date
         const date = new Date(review.date);
@@ -602,8 +636,9 @@ function loadMoreReviews() {
     displayReviewBatch();
 
     // Hide load more button if all reviews are displayed
-    if (displayedReviews >= reviews.length) {
-        document.getElementById('loadMoreContainer').style.display = 'none';
+    const loadMoreContainer = document.getElementById('loadMoreContainer');
+    if (loadMoreContainer && displayedReviews >= reviews.length) {
+        loadMoreContainer.style.display = 'none';
     }
 }
 
@@ -612,8 +647,13 @@ function handleReviewSubmit(e) {
     e.preventDefault();
 
     const ratingInput = document.querySelector('input[name="rating"]:checked');
-    const title = document.getElementById('reviewTitle').value.trim();
-    const content = document.getElementById('reviewContent').value.trim();
+    const titleInput = document.getElementById('reviewTitle');
+    const contentInput = document.getElementById('reviewContent');
+
+    if (!ratingInput || !titleInput || !contentInput) return;
+
+    const title = titleInput.value.trim();
+    const content = contentInput.value.trim();
 
     if (!ratingInput) {
         showToast('Please select a rating');
@@ -644,7 +684,8 @@ function handleReviewSubmit(e) {
     reviews.unshift(newReview);
 
     // Reset form
-    document.getElementById('reviewForm').reset();
+    const reviewForm = document.getElementById('reviewForm');
+    if (reviewForm) reviewForm.reset();
 
     // Reset star rating display
     document.querySelectorAll('.star-label').forEach(label => {
@@ -659,8 +700,8 @@ function handleReviewSubmit(e) {
 }
 
 function initializeStarRating() {
-    const starInputs = document.querySelectorAll('.star-input');
     const starLabels = document.querySelectorAll('.star-label');
+    const reviewForm = document.getElementById('reviewForm');
 
     starLabels.forEach((label, index) => {
         label.addEventListener('click', () => {
@@ -676,17 +717,23 @@ function initializeStarRating() {
     });
 
     // Reset stars when form is reset
-    document.getElementById('reviewForm').addEventListener('reset', () => {
-        starLabels.forEach(label => {
-            label.style.color = '#ddd';
+    if (reviewForm) {
+        reviewForm.addEventListener('reset', () => {
+            starLabels.forEach(label => {
+                label.style.color = '#ddd';
+            });
         });
-    });
+    }
 }
 
 // Related Products Functions
 async function loadRelatedProducts(category) {
+    if (!currentProduct) return;
+
     try {
         const response = await fetch(`https://dummyjson.com/products/category/${encodeURIComponent(category)}`);
+        if (!response.ok) throw new Error('Failed to load related products');
+
         const data = await response.json();
         const relatedProducts = data.products.filter(p => p.id !== currentProduct.id).slice(0, 4);
         if (relatedProducts.length > 0) displayRelatedProducts(relatedProducts);
@@ -699,6 +746,8 @@ function displayRelatedProducts(products) {
     const grid = document.getElementById('relatedGrid');
     const section = document.getElementById('relatedSection');
 
+    if (!grid || !section) return;
+
     grid.innerHTML = '';
     products.forEach(product => {
         const discount = Math.round(product.discountPercentage || 15);
@@ -707,12 +756,12 @@ function displayRelatedProducts(products) {
         const card = document.createElement('div');
         card.className = 'related-card';
         card.innerHTML = `
-            <img src="${product.thumbnail}" alt="${product.title}">
+            <img src="${product.thumbnail}" alt="${product.title}" loading="lazy">
             <div class="related-title">${product.title}</div>
             <div class="related-price">₹${price.toLocaleString()}</div>
         `;
         card.addEventListener('click', () => {
-            window.location.href = `../pages/product.html?id=${product.id}`;
+            window.location.href = `product.html?id=${product.id}`;
         });
         grid.appendChild(card);
     });
@@ -720,59 +769,87 @@ function displayRelatedProducts(products) {
 }
 
 // Utility Functions
-function showToast(message) {
+function showToast(message, isError = false) {
     if (elements.toastMessage && elements.toast) {
         elements.toastMessage.textContent = message;
-        elements.toast.classList.add('show');
+        elements.toast.className = 'toast show';
+        elements.toast.style.background = isError ? '#ef4444' : '#10b981';
         setTimeout(() => {
             elements.toast.classList.remove('show');
         }, 3000);
     }
 }
 
+// Make showToast available globally for mobile panel
+window.showToast = showToast;
+
 function updateBreadcrumb(product) {
-    document.getElementById('breadcrumbCategory').textContent = product.category;
-    const title = product.title.length > 30 ? product.title.substring(0, 30) + '...' : product.title;
-    document.getElementById('breadcrumbProduct').textContent = title;
-    document.title = `${title} — ShopMate`;
+    const breadcrumbCategory = document.getElementById('breadcrumbCategory');
+    const breadcrumbProduct = document.getElementById('breadcrumbProduct');
+
+    if (breadcrumbCategory) breadcrumbCategory.textContent = product.category;
+    if (breadcrumbProduct) {
+        const title = product.title.length > 30 ? product.title.substring(0, 30) + '...' : product.title;
+        breadcrumbProduct.textContent = title;
+    }
+    document.title = `${product.title} — ShopMate`;
+}
+
+// Initialize authentication and update UI
+async function initAuthAndUI() {
+    try {
+        const isAuthenticated = await initAuth();
+        return isAuthenticated;
+    } catch (error) {
+        console.error('Error in auth initialization:', error);
+        return false;
+    }
 }
 
 // Initialize Application
 async function init() {
-    // Setup event listeners
-    setupEventListeners();
+    try {
+        // Initialize mobile panel
+        initMobilePanel();
 
-    // Update cart badge
-    updateCartBadge();
+        // Setup event listeners
+        setupEventListeners();
 
-    // Initialize auth
-    const isAuthenticated = await initAuth();
+        // Update cart badge
+        updateCartBadge();
 
-    // Load product details (regardless of authentication)
-    await loadProductDetails();
+        // Initialize auth and UI
+        await initAuthAndUI();
 
-    // Add event listeners for reviews
-    const reviewForm = document.getElementById('reviewForm');
-    const loadMoreBtn = document.getElementById('loadMoreReviews');
+        // Load product details (regardless of authentication)
+        await loadProductDetails();
 
-    if (reviewForm) {
-        reviewForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (!isAuthenticated) {
-                showToast('Please sign in to submit a review');
-                showAuthModal();
-                return;
-            }
-            handleReviewSubmit(e);
-        });
+        // Add event listeners for reviews
+        const reviewForm = document.getElementById('reviewForm');
+        const loadMoreBtn = document.getElementById('loadMoreReviews');
+
+        if (reviewForm) {
+            reviewForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const isAuthenticated = await initAuth();
+                if (!isAuthenticated) {
+                    showToast('Please sign in to submit a review');
+                    showAuthModal();
+                    return;
+                }
+                handleReviewSubmit(e);
+            });
+        }
+
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', loadMoreReviews);
+        }
+
+        // Initialize star rating functionality
+        initializeStarRating();
+    } catch (error) {
+        console.error('Error in application initialization:', error);
     }
-
-    if (loadMoreBtn) {
-        loadMoreBtn.addEventListener('click', loadMoreReviews);
-    }
-
-    // Initialize star rating functionality
-    initializeStarRating();
 }
 
 // Start the application when DOM is loaded

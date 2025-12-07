@@ -1,5 +1,6 @@
 // Deals Page JavaScript
-import { initAuth, logout, showAuthModal, hideAuthModal } from '../auth.js';
+import { initAuth, logout, showAuthModal, hideAuthModal, getCurrentUser, getUserEmail, getUserName } from '../auth.js';
+import { initMobilePanel } from '../mobile-panel.js'; // Remove updateMobileUserInfoFromStorage import
 
 // Global variables
 let allProducts = [];
@@ -7,18 +8,11 @@ let currentFilter = 'all';
 
 // DOM Elements
 const elements = {
-    hamburger: document.getElementById('hamburger'),
-    mobilePanel: document.getElementById('mobilePanel'),
-    mobileOverlay: document.getElementById('mobileOverlay'),
-    mobileClose: document.getElementById('mobileClose'),
     profileBtn: document.getElementById('profileBtn'),
     profileMenu: document.getElementById('profileMenu'),
     logoutBtn: document.getElementById('logoutBtn'),
-    mobileLogoutBtn: document.getElementById('mobileLogoutBtn'),
     searchBtn: document.getElementById('searchBtn'),
     desktopSearch: document.getElementById('desktopSearch'),
-    mobileSearchBtn: document.getElementById('mobileSearchBtn'),
-    mobileSearch: document.getElementById('mobileSearch'),
     priceSortBtn: document.getElementById('priceSortBtn'),
     cartBtn: document.getElementById('cartBtn'),
     wishlistBtn: document.getElementById('wishlistBtn'),
@@ -28,15 +22,9 @@ const elements = {
     toastMessage: document.getElementById('toastMessage'),
     hours: document.getElementById('hours'),
     minutes: document.getElementById('minutes'),
-    seconds: document.getElementById('seconds')
+    seconds: document.getElementById('seconds'),
+    mobileMenuBtn: document.getElementById('mobileMenuBtn')
 };
-
-// Mobile Panel Functions
-function toggleMobilePanel() {
-    elements.mobilePanel.classList.toggle('show');
-    elements.mobileOverlay.classList.toggle('show');
-    document.body.style.overflow = elements.mobilePanel.classList.contains('show') ? 'hidden' : '';
-}
 
 // Initialize Profile Dropdown
 function initProfileDropdown() {
@@ -92,44 +80,19 @@ function initAuthModal() {
 
 // Event Listeners
 function setupEventListeners() {
-    // Mobile panel
-    if (elements.hamburger) {
-        elements.hamburger.addEventListener('click', toggleMobilePanel);
-    }
-
-    if (elements.mobileClose) {
-        elements.mobileClose.addEventListener('click', toggleMobilePanel);
-    }
-
-    if (elements.mobileOverlay) {
-        elements.mobileOverlay.addEventListener('click', toggleMobilePanel);
-    }
-
-    // Close mobile panel on link click
-    if (elements.mobilePanel) {
-        elements.mobilePanel.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', toggleMobilePanel);
-        });
-    }
-
-    // Close mobile panel with Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && elements.mobilePanel && elements.mobilePanel.classList.contains('show')) {
-            toggleMobilePanel();
-        }
-    });
+    // Initialize mobile panel
+    initMobilePanel();
 
     // Profile dropdown
     initProfileDropdown();
 
-    // Logout
+    // Logout - make it available globally for mobile panel
     if (elements.logoutBtn) {
         elements.logoutBtn.addEventListener('click', logout);
     }
 
-    if (elements.mobileLogoutBtn) {
-        elements.mobileLogoutBtn.addEventListener('click', logout);
-    }
+    // Make logout available globally for mobile panel
+    window.logout = logout;
 
     // Auth modal initialization
     initAuthModal();
@@ -139,20 +102,6 @@ function setupEventListeners() {
         elements.searchBtn.addEventListener('click', () => performSearch(elements.desktopSearch.value));
         elements.desktopSearch.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') performSearch(e.target.value);
-        });
-    }
-
-    if (elements.mobileSearchBtn && elements.mobileSearch) {
-        elements.mobileSearchBtn.addEventListener('click', () => {
-            performSearch(elements.mobileSearch.value);
-            toggleMobilePanel();
-        });
-
-        elements.mobileSearch.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                performSearch(e.target.value);
-                toggleMobilePanel();
-            }
         });
     }
 
@@ -250,6 +199,9 @@ function performSearch(query) {
     displayDeals(filtered);
     showToast(`Found ${filtered.length} deal${filtered.length !== 1 ? 's' : ''} for "${query}"`);
 }
+
+// Make performSearch available globally for mobile panel
+window.performSearch = performSearch;
 
 // Countdown timer
 function startCountdown() {
@@ -479,6 +431,9 @@ function showToast(message) {
     }
 }
 
+// Make showToast available globally for mobile panel
+window.showToast = showToast;
+
 // Initialize
 async function init() {
     // Setup event listeners
@@ -495,6 +450,43 @@ async function init() {
 
     // Initialize authentication
     await initAuth();
+
+    // Update user info from localStorage after auth initialization
+    const userInitial = localStorage.getItem('userInitial');
+    const userEmail = localStorage.getItem('userEmail');
+    const userName = localStorage.getItem('userName');
+
+    // Update desktop avatar
+    const userAvatar = document.getElementById('userAvatar');
+    if (userAvatar && userInitial && userInitial !== 'U') {
+        userAvatar.textContent = userInitial;
+        userAvatar.style.backgroundColor = '#2874f0';
+        userAvatar.style.color = 'white';
+    }
+
+    // Update mobile panel info directly
+    const mobileUserAvatar = document.getElementById('mobileUserAvatar');
+    const mobileUserEmail = document.getElementById('mobileUserEmail');
+    const mobileUserName = document.getElementById('mobileUserName');
+
+    if (mobileUserAvatar && userInitial) {
+        mobileUserAvatar.textContent = userInitial;
+        if (userInitial !== 'U') {
+            mobileUserAvatar.style.backgroundColor = '#2874f0';
+            mobileUserAvatar.style.color = 'white';
+        } else {
+            mobileUserAvatar.style.backgroundColor = '#f1f5f9';
+            mobileUserAvatar.style.color = '#64748b';
+        }
+    }
+
+    if (mobileUserEmail && userEmail) {
+        mobileUserEmail.textContent = userEmail;
+    }
+
+    if (mobileUserName && userName) {
+        mobileUserName.textContent = userName;
+    }
 }
 
 // Start the application when DOM is loaded

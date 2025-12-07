@@ -47,14 +47,13 @@ button {
     background: #fff;
     padding: 16px 0;
     box-shadow: var(--shadow-sm);
-    margin-top: 80px;
     position: relative;
     z-index: 1;
 }
 
 .breadcrumb-wrap {
     max-width: var(--max-width);
-    margin: 0 auto;
+    margin: 10px auto;
     padding: 0 20px
 }
 
@@ -120,7 +119,7 @@ button {
     display: flex;
     gap: 12px;
     overflow-x: auto;
-    padding: 8px 0;
+    padding: 20px 0;
     scrollbar-width: thin;
 }
 
@@ -146,7 +145,8 @@ button {
     cursor: pointer;
     border: 2px solid transparent;
     transition: all 0.3s;
-    flex-shrink: 0
+    flex-shrink: 0;
+    margin-left: 5px;
 }
 
 .thumbnail:hover {
@@ -485,7 +485,7 @@ button {
 }
 
 .review-form-title {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 700;
     margin-bottom: 20px;
     color: #111;
@@ -834,9 +834,17 @@ button {
     .main-image {
         height: 400px;
     }
+
+    .breadcrumb-section {
+        margin-top: -5px;
+    }
 }
 
 @media(max-width: 880px) {
+    .breadcrumb-section {
+        margin-top: -15px;
+    }
+
     .product-container {
         grid-template-columns: 1fr;
         gap: 30px;
@@ -907,11 +915,11 @@ button {
 
 @media(max-width: 520px) {
     body {
-        padding-top: 70px;
+        padding-top: 60px;
     }
 
-    .breadcrumb-section {
-        margin-top: 70px;
+    .breadcrumb {
+        font-size: 0.7rem
     }
 
     .product-section {
@@ -975,7 +983,7 @@ button {
     }
 }
 
-@media(max-width: 380px) {
+@media(max-width: 480px) {
 
     /* Smaller cards for very small screens */
     .related-card {
@@ -986,4 +994,97 @@ button {
     .related-card img {
         height: 130px;
     }
+
+    .breadcrumb-section {
+        margin-top: -5px;
+    }
+
+
+
+    /**/
+    .reviews-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .reviews-title {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #111;
+    }
+
+    .reviews-summary {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .overall-rating {
+        text-align: center;
+    }
+
+    .rating-number {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--primary);
+        line-height: 1;
+    }
+
+    .rating-stars {
+        color: #fbbf24;
+        font-size: 1.2rem;
+        margin: 5px 0;
+    }
+
+    .rating-count {
+        color: var(--muted);
+        font-size: 0.9rem;
+    }
+
+    .rating-breakdown {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 200px;
+    }
+
+    .rating-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .rating-label {
+        font-size: 0.9rem;
+        color: var(--muted);
+        width: 20px;
+    }
+
+    .rating-progress {
+        flex: 1;
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .rating-progress-fill {
+        height: 100%;
+        background: var(--accent);
+        border-radius: 4px;
+        transition: width 0.5s ease;
+    }
+
+    .rating-percentage {
+        font-size: 0.9rem;
+        color: var(--muted);
+        width: 30px;
+    }
+
 }
