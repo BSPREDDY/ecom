@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PassKart | Premium Shopping Experience</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="/styles/index/main.css">
+    <link rel="stylesheet" href="/styles/navbar.css">
+    <link rel="stylesheet" href="/styles/footer.css">
+
+</head>
+
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Welcome to PassKart</div>
+    </div>
+
+    <!-- Header -->
+    <header class="main-header">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="container">
+                <div class="top-bar-content">
+                    <div class="top-offers">
+                        <div class="offer-badge">
+                            <i class="fas fa-shipping-fast"></i>
+                            <span>Free Shipping on Orders Over $50</span>
+                        </div>
+                        <div class="offer-badge">
+                            <i class="fas fa-undo-alt"></i>
+                            <span>30-Day Return Policy</span>
+                        </div>
+                    </div>
+                    <div class="user-utils">
+                        <a href="#"><i class="fas fa-question-circle"></i> Help Center</a>
+                        <a href="#"><i class="fas fa-headset"></i> 24/7 Support</a>
+                        <select style="background: transparent; color: white; border: none;">
+                            <option value="USD">USD $</option>
+                            <option value="EUR">EUR €</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navigation -->
+        <nav class="nav-main">
+            <div class="container">
+                <div class="nav-container">
+                    <!-- Logo -->
+                    <a href="#" class="logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="logo-text">
+                            <div class="logo-main">PassKart</div>
+                            <div class="logo-tagline">Shop Smart, Live Better</div>
+                        </div>
+                    </a>
+
+                    <!-- Category Selector -->
+                    <div class="category-selector">
+                        <button class="category-btn">
+                            <i class="fas fa-th-large"></i>
+                            <span>All Categories</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+
+                    <!-- Search Bar -->
+                    <div class="search-container">
+                        <div class="search-wrapper">
+                            <input type="text" class="search-input"
+                                placeholder="Search for products, brands and more...">
+                            <button class="search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Actions -->
+                    <div class="nav-actions">
+                        <a href="#" class="nav-action" id="account-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="action-text">Account</div>
+                        </a>
+
+                        <a href="/pages/wishlist.html" class="nav-action" id="wishlist-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-heart"></i>
+                                <span class="action-badge">0</span>
+                            </div>
+                            <div class="action-text">Wishlist</div>
+                        </a>
+
+                        <a href="/pages/cart.html" class="nav-action" id="cart-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span class="action-badge">0</span>
+                                <span class="cart-amount">$0</span>
+                            </div>
+                            <div class="action-text">Cart</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Navigation Menu -->
+        <div class="nav-menu">
+            <div class="container">
+                <div class="menu-container">
+                    <ul class="nav-links">
+                        <li><a href="/index.html" class="active"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="/pages/products.html"><i class="fas fa-store"></i> Shop</a></li>
+                        <li><a href="/pages/deals.html"><i class="fas fa-tag"></i> Deals</a></li>
+                        <li><a href="#"><i class="fas fa-star"></i> New Arrivals</a></li>
+                        <li><a href="/pages/about.html"><i class="fas fa-info-circle"></i> About</a></li>
+                        <li><a href="/pages/contact.html"><i class="fas fa-phone"></i> Contact</a></li>
+                    </ul>
+
+                    <a href="#" class="special-offer">
+                        <span class="offer-percent">60% OFF</span>
+                        <span>Summer Sale</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-bg"></div>
+        <div class="container">
+            <div class="hero-content">
+                <!-- Hero Text Content -->
+                <div class="hero-text">
+                    <span class="hero-badge">Limited Time Offer</span>
+                    <h1 class="hero-title">Biggest Sale of the Year!</h1>
+                    <h2 class="hero-subtitle">Up to 70% OFF on Premium Brands</h2>
+                    <p class="hero-description">
+                        Discover amazing deals on electronics, fashion, home appliances, and more.
+                        Don't miss out on our exclusive flash sales!
+                    </p>
+
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">2,500+</div>
+                            <div class="stat-label">Products</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">50K+</div>
+                            <div class="stat-label">Happy Customers</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-label">Support</div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Buttons -->
+                    <div class="hero-cta">
+                        <a href="/pages/products.html" class="cta-btn cta-primary">
+                            <i class="fas fa-shopping-bag"></i>
+                            Shop Now
+                        </a>
+                        <a href="#" class="cta-btn cta-secondary">
+                            <i class="fas fa-bolt"></i>
+                            View Deals
+                        </a>
+                    </div>
+
+                    <!-- Countdown Timer -->
+                    <div class="countdown-container">
+                        <div class="countdown-label">Offer ends in:</div>
+                        <div class="countdown-timer">
+                            <div class="countdown-unit">
+                                <span class="countdown-number" id="days">07</span>
+                                <span class="countdown-text">Days</span>
+                            </div>
+                            <div class="countdown-unit">
+                                <span class="countdown-number" id="hours">09</span>
+                                <span class="countdown-text">Hours</span>
+                            </div>
+                            <div class="countdown-unit">
+                                <span class="countdown-number" id="minutes">41</span>
+                                <span class="countdown-text">Minutes</span>
+                            </div>
+                            <div class="countdown-unit">
+                                <span class="countdown-number" id="seconds">11</span>
+                                <span class="countdown-text">Seconds</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Products -->
+                <div class="hero-products">
+                    <!-- Featured Product -->
+                    <div class="product-card featured">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                            alt="Premium Wireless Headphones" class="product-image">
+                        <div class="product-badge badge-best">Best Seller</div>
+                        <div class="product-info">
+                            <h3 class="product-title">Premium Wireless Headphones</h3>
+                            <div class="product-price">
+                                <span class="price-current">$99.99</span>
+                                <span class="price-original">$149.99</span>
+                                <span class="discount-badge">33% OFF</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 2 -->
+                    <div class="product-card regular">
+                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
+                            alt="Smart Watch" class="product-image">
+                        <div class="product-badge badge-new">New</div>
+                        <div class="product-info">
+                            <h3 class="product-title">Smart Watch Series 7</h3>
+                            <div class="product-price">
+                                <span class="price-current">$199.99</span>
+                                <span class="price-original">$299.99</span>
+                                <span class="discount-badge">33% OFF</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 3 -->
+                    <div class="product-card regular">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
+                            alt="Running Shoes" class="product-image">
+                        <div class="product-badge badge-trending">Trending</div>
+                        <div class="product-info">
+                            <h3 class="product-title">Pro Running Shoes</h3>
+                            <div class="product-price">
+                                <span class="price-current">$79.99</span>
+                                <span class="price-original">$129.99</span>
+                                <span class="discount-badge">38% OFF</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Categories -->
+    <section class="categories-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Shop by Category</h2>
+                <a href="#" class="section-link">
+                    View All
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="categories-grid">
+                <a href="#" class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="category-name">Electronics</h3>
+                    <div class="category-count">1,200+ Products</div>
+                </a>
+                <a href="#" class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                    <h3 class="category-name">Fashion</h3>
+                    <div class="category-count">850+ Products</div>
+                </a>
+                <a href="#" class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3 class="category-name">Home & Kitchen</h3>
+                    <div class="category-count">650+ Products</div>
+                </a>
+                <a href="#" class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-dumbbell"></i>
+                    </div>
+                    <h3 class="category-name">Sports</h3>
+                    <div class="category-count">450+ Products</div>
+                </a>
+                <a href="#" class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3 class="category-name">Books</h3>
+                    <div class="category-count">300+ Products</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Flash Deals -->
+    <section class="flash-deals-section">
+        <div class="container">
+            <div class="deals-header">
+                <div class="deals-title-badge">
+                    <h2 class="section-title">Flash Deals</h2>
+                    <span class="deals-badge">Limited Time</span>
+                </div>
+                <div class="deals-timer">
+                    <i class="fas fa-clock timer-icon"></i>
+                    <span class="timer-text">Ends in: <span class="timer-value">02:15:33</span></span>
+                </div>
+            </div>
+            <div class="products-grid">
+                <!-- Product 1 -->
+                <div class="product-card-grid">
+                    <div class="product-image-container">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
+                            alt="Product" class="product-image-grid">
+                        <div class="product-overlay">
+                            <button class="quick-view-btn">Quick View</button>
+                            <button class="quick-view-btn">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-title-grid">Wireless Bluetooth Headphones</h3>
+                        <div class="product-price-grid">
+                            <span class="price-current-grid">$89.99</span>
+                            <span class="price-original-grid">$129.99</span>
+                            <span class="discount-badge-grid">31% OFF</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star-half-alt star"></i>
+                            <span class="rating-count">(1,234)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="product-card-grid">
+                    <div class="product-image-container">
+                        <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
+                            alt="Product" class="product-image-grid">
+                        <div class="product-overlay">
+                            <button class="quick-view-btn">Quick View</button>
+                            <button class="quick-view-btn">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-title-grid">Smart Watch Series 6</h3>
+                        <div class="product-price-grid">
+                            <span class="price-current-grid">$249.99</span>
+                            <span class="price-original-grid">$349.99</span>
+                            <span class="discount-badge-grid">29% OFF</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <span class="rating-count">(2,456)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="product-card-grid">
+                    <div class="product-image-container">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
+                            alt="Product" class="product-image-grid">
+                        <div class="product-overlay">
+                            <button class="quick-view-btn">Quick View</button>
+                            <button class="quick-view-btn">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-title-grid">Running Shoes Pro</h3>
+                        <div class="product-price-grid">
+                            <span class="price-current-grid">$79.99</span>
+                            <span class="price-original-grid">$129.99</span>
+                            <span class="discount-badge-grid">38% OFF</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <span class="rating-count">(3,789)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="product-card-grid">
+                    <div class="product-image-container">
+                        <img src="https://images.unsplash.com/photo-1503602642458-232111445657?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
+                            alt="Product" class="product-image-grid">
+                        <div class="product-overlay">
+                            <button class="quick-view-btn">Quick View</button>
+                            <button class="quick-view-btn">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-title-grid">Gaming Laptop Pro</h3>
+                        <div class="product-price-grid">
+                            <span class="price-current-grid">$1,299.99</span>
+                            <span class="price-original-grid">$1,799.99</span>
+                            <span class="discount-badge-grid">28% OFF</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star-half-alt star"></i>
+                            <span class="rating-count">(876)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>PassKart</h3>
+                    <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 20px;">
+                        Your ultimate shopping destination. Quality products, amazing deals, and exceptional service.
+                    </p>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Shop</a></li>
+                        <li><a href="#">Deals</a></li>
+                        <li><a href="#">New Arrivals</a></li>
+                        <li><a href="#">Categories</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Customer Service</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Track Your Order</a></li>
+                        <li><a href="#">Returns & Refunds</a></li>
+                        <li><a href="#">Shipping Info</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Shopping Street</li>
+                        <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-envelope"></i> support@passkart.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 PassKart. All rights reserved. | Shop Smart, Live Better</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/scripts/index/header.js"></script>
+    <script src="/scripts/index/hero.js"></script>
+    <script src="/scripts/index/main.js"></script>
+    <script>
+        // Loading Animation
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loadingOverlay = document.getElementById('loading-overlay');
+                loadingOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+
+                    // Show welcome notification
+                    showNotification('Welcome to PassKart! Enjoy your shopping experience.', 'success');
+                }, 500);
+            }, 1500);
+        });
+
+        // Countdown Timer
+        function updateCountdown() {
+            const now = new Date();
+            const endDate = new Date(now);
+            endDate.setDate(now.getDate() + 7);
+
+            const timeDiff = endDate - now;
+
+            const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+
+            // Flash deals timer
+            const flashTimer = document.querySelector('.timer-value');
+            if (flashTimer) {
+                flashTimer.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // Show Notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            if (type === 'error') icon = 'exclamation-circle';
+
+            notification.innerHTML = `
+                <i class="fas fa-${icon}"></i>
+                <span>${message}</span>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideIn 0.5s ease reverse forwards';
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
+            }, 4000);
+        }
+
+        // Add to Cart Animation
+        const cartButtons = document.querySelectorAll('.quick-view-btn:nth-child(2)');
+        cartButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const productTitle = this.closest('.product-card-grid').querySelector('.product-title-grid').textContent;
+                const productPrice = this.closest('.product-card-grid').querySelector('.price-current-grid').textContent;
+
+                // Animate the cart icon
+                const cartIcon = document.querySelector('#cart-btn .action-icon');
+                cartIcon.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    cartIcon.style.transform = 'scale(1)';
+                }, 300);
+
+                // Update cart badge
+                const cartBadge = document.querySelector('#cart-btn .action-badge');
+                let currentCount = parseInt(cartBadge.textContent);
+                cartBadge.textContent = currentCount + 1;
+
+                // Show notification
+                showNotification(`Added "${productTitle}" to cart for ${productPrice}`, 'success');
+            });
+        });
+
+        // Quick View
+        const quickViewButtons = document.querySelectorAll('.quick-view-btn:first-child');
+        quickViewButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const productTitle = this.closest('.product-card-grid').querySelector('.product-title-grid').textContent;
+                showNotification(`Opening quick view for "${productTitle}"...`, 'info');
+            });
+        });
+
+        // Search Functionality
+        const searchInput = document.querySelector('.search-input');
+        const searchBtn = document.querySelector('.search-btn');
+
+        searchBtn.addEventListener('click', () => {
+            if (searchInput.value.trim()) {
+                showNotification(`Searching for "${searchInput.value}"...`, 'info');
+                searchInput.value = '';
+            }
+        });
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && searchInput.value.trim()) {
+                showNotification(`Searching for "${searchInput.value}"...`, 'info');
+                searchInput.value = '';
+            }
+        });
+
+        // Hover Effects for Cards
+        const cards = document.querySelectorAll('.category-card, .product-card-grid, .stat-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.zIndex = '10';
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.zIndex = '1';
+            });
+        });
+
+        // Scroll Animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for scroll animations
+        document.querySelectorAll('.category-card, .product-card-grid').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+
+</html>

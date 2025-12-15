@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PASSKART | Hot Deals</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/styles/footer.css">
+    <link rel="stylesheet" href="/styles/navbar.css">
+    <style>
+        /* Deals Hero Section */
+        .deals-hero {
+            background: linear-gradient(135deg, #f72585 0%, #7209b7 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .deals-hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .deals-hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .deals-hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        /* Timer Section */
+        .flash-sale-timer {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .timer-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .timer-display {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            font-family: monospace;
+        }
+
+        .timer-unit {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.8rem 1.2rem;
+            border-radius: 10px;
+            min-width: 80px;
+        }
+
+        .timer-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .timer-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 0.3rem;
+        }
+
+        /* Real-time Stats */
+        .real-time-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Main Container */
+        .main-container {
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 0 2rem 2rem;
+        }
+
+        /* Deals Filter */
+        .deals-filter {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .filter-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.6rem 1.2rem;
+            border: 2px solid var(--light-gray);
+            background: white;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Deals Grid */
+        .deals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Deal Card */
+        .deal-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .deal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .deal-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--danger);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 5px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            z-index: 2;
+        }
+
+        .deal-hot {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--warning);
+            color: var(--dark);
+            padding: 0.3rem 0.8rem;
+            border-radius: 5px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            z-index: 2;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .deal-image {
+            height: 200px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .deal-timer-small {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        .deal-info {
+            padding: 1.5rem;
+        }
+
+        .deal-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .deal-category {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .deal-price {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .current-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            color: var(--gray);
+            font-size: 1rem;
+        }
+
+        .discount {
+            color: var(--danger);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .deal-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .deal-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: #ffbe0b;
+        }
+
+        .sold-count {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .deal-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light-gray);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e6146d;
+        }
+
+        /* Live Activity Feed */
+        .activity-feed {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .activity-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .activity-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .activity-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-size: 0.95rem;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-top: 0.3rem;
+        }
+
+        /* Progress Bar */
+        .stock-progress {
+            margin: 1rem 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--light-gray);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: auto;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: slideInRight 0.3s ease;
+            min-width: 300px;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .toast-success .toast-icon {
+            background: rgba(56, 176, 0, 0.1);
+            color: var(--success);
+        }
+
+        .toast-warning .toast-icon {
+            background: rgba(255, 190, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .toast-info .toast-icon {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .toast-message {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1100px) {
+            .nav-container {
+                flex-wrap: wrap;
+            }
+
+            .search-container {
+                order: 3;
+                width: 100%;
+                max-width: 100%;
+                margin-top: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .deals-hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .timer-unit {
+                min-width: 60px;
+                padding: 0.6rem 0.8rem;
+            }
+
+            .timer-value {
+                font-size: 2rem;
+            }
+
+            .deals-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+
+            .main-container {
+                padding: 0 1rem 1rem;
+            }
+
+            .nav-links {
+                overflow-x: auto;
+                padding: 0.5rem 0;
+            }
+
+            .special-offer {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .deals-hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .timer-display {
+                gap: 0.8rem;
+            }
+
+            .timer-unit {
+                min-width: 50px;
+                padding: 0.5rem 0.6rem;
+            }
+
+            .timer-value {
+                font-size: 1.5rem;
+            }
+
+            .real-time-stats {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .deals-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-buttons {
+                justify-content: center;
+            }
+
+            .top-bar-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Header -->
+    <header class="main-header">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="container">
+                <div class="top-bar-content">
+                    <div class="top-offers">
+                        <div class="offer-badge">
+                            <i class="fas fa-shipping-fast"></i>
+                            <span>Free Shipping on Orders Over $50</span>
+                        </div>
+                        <div class="offer-badge">
+                            <i class="fas fa-undo-alt"></i>
+                            <span>30-Day Return Policy</span>
+                        </div>
+                    </div>
+                    <div class="user-utils">
+                        <a href="#"><i class="fas fa-question-circle"></i> Help Center</a>
+                        <a href="#"><i class="fas fa-headset"></i> 24/7 Support</a>
+                        <select>
+                            <option value="USD">USD $</option>
+                            <option value="EUR">EUR €</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navigation -->
+        <nav class="nav-main">
+            <div class="container">
+                <div class="nav-container">
+                    <!-- Logo -->
+                    <a href="/index.html" class="logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="logo-text">
+                            <div class="logo-main">PassKart</div>
+                            <div class="logo-tagline">Shop Smart, Live Better</div>
+                        </div>
+                    </a>
+
+                    <!-- Category Selector -->
+                    <div class="category-selector">
+                        <button class="category-btn">
+                            <i class="fas fa-th-large"></i>
+                            <span>All Categories</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+
+                    <!-- Search Bar -->
+                    <div class="search-container">
+                        <div class="search-wrapper">
+                            <input type="text" class="search-input"
+                                placeholder="Search for products, brands and more...">
+                            <button class="search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Actions -->
+                    <div class="nav-actions">
+                        <a href="/pages/login.html" class="nav-action" id="account-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="action-text">Account</div>
+                        </a>
+
+                        <a href="/pages/wishlist.html" class="nav-action" id="wishlist-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-heart"></i>
+                                <span class="action-badge" id="wishlist-badge">0</span>
+                            </div>
+                            <div class="action-text">Wishlist</div>
+                        </a>
+
+                        <a href="/pages/cart.html" class="nav-action" id="cart-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span class="action-badge" id="cart-badge">0</span>
+                                <span class="cart-amount">$0</span>
+                            </div>
+                            <div class="action-text">Cart</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Navigation Menu -->
+        <div class="nav-menu">
+            <div class="container">
+                <div class="menu-container">
+                    <ul class="nav-links">
+                        <li><a href="/index.html"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="/pages/products.html"><i class="fas fa-store"></i> Shop</a></li>
+                        <li><a href="/pages/deals.html" class="active"><i class="fas fa-tag"></i> Deals</a></li>
+                        <li><a href="#"><i class="fas fa-star"></i> New Arrivals</a></li>
+                        <li><a href="/pages/about.html"><i class="fas fa-info-circle"></i> About</a></li>
+                        <li><a href="/pages/contact.html"><i class="fas fa-phone"></i> Contact</a></li>
+                    </ul>
+
+                    <a href="#" class="special-offer">
+                        <span class="offer-percent">60% OFF</span>
+                        <span>Summer Sale</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Deals Hero Section -->
+    <section class="deals-hero">
+        <div class="deals-hero-content">
+            <h1>🔥 FLASH SALE 🔥</h1>
+            <p>Limited time offers! Grab these exclusive deals before they're gone forever.</p>
+
+            <!-- Flash Sale Timer -->
+            <div class="flash-sale-timer">
+                <div class="timer-title">
+                    <i class="fas fa-clock"></i>
+                    Flash Sale Ends In:
+                </div>
+                <div class="timer-display" id="flash-timer">
+                    <div class="timer-unit">
+                        <span class="timer-value" id="hours">24</span>
+                        <span class="timer-label">Hours</span>
+                    </div>
+                    <div class="timer-unit">
+                        <span class="timer-value" id="minutes">00</span>
+                        <span class="timer-label">Minutes</span>
+                    </div>
+                    <div class="timer-unit">
+                        <span class="timer-value" id="seconds">00</span>
+                        <span class="timer-label">Seconds</span>
+                    </div>
+                </div>
+
+                <!-- Real-time Stats -->
+                <div class="real-time-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-users stat-icon"></i>
+                        <div>
+                            <div class="stat-value" id="active-users">1247</div>
+                            <div class="stat-label">Active Users</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-shopping-cart stat-icon"></i>
+                        <div>
+                            <div class="stat-value" id="items-sold">589</div>
+                            <div class="stat-label">Items Sold</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-bolt stat-icon"></i>
+                        <div>
+                            <div class="stat-value" id="deals-left">23</div>
+                            <div class="stat-label">Deals Left</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Deals Filter -->
+        <div class="deals-filter">
+            <div class="filter-title">
+                <i class="fas fa-filter"></i>
+                Filter Deals
+            </div>
+            <div class="filter-buttons" id="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All Deals</button>
+                <button class="filter-btn" data-filter="flash">Flash Sale</button>
+                <button class="filter-btn" data-filter="today">Today Only</button>
+                <button class="filter-btn" data-filter="hot">Hot Deals</button>
+                <button class="filter-btn" data-filter="ending">Ending Soon</button>
+            </div>
+        </div>
+
+        <!-- Live Activity Feed -->
+        <div class="activity-feed">
+            <div class="activity-title">
+                <i class="fas fa-broadcast-tower"></i>
+                Live Activity Feed
+            </div>
+            <div class="activity-list" id="activity-list">
+                <!-- Activities will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Deals Grid -->
+        <div class="deals-grid" id="deals-grid">
+            <!-- Deals will be populated by JavaScript -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2023 PASSKART. All rights reserved. | Real-time deals and flash sales</p>
+    </footer>
+
+    <script>
+        // Real-time User Experience Implementation
+
+        // Sample Deals Data with Real-time Properties
+        const deals = [
+            {
+                id: 1,
+                title: "Wireless Bluetooth Headphones",
+                category: "Electronics",
+                originalPrice: 2999,
+                currentPrice: 1299,
+                discount: 57,
+                rating: 4.5,
+                soldCount: 245,
+                stockLeft: 12,
+                image: "🎧",
+                badge: "FLASH SALE",
+                isHot: true,
+                type: "flash",
+                endTime: Date.now() + (2 * 60 * 60 * 1000) // 2 hours from now
+            },
+            {
+                id: 2,
+                title: "Smart Watch Series 5",
+                category: "Wearables",
+                originalPrice: 8999,
+                currentPrice: 3999,
+                discount: 56,
+                rating: 4.7,
+                soldCount: 189,
+                stockLeft: 8,
+                image: "⌚",
+                badge: "TODAY ONLY",
+                isHot: true,
+                type: "today",
+                endTime: Date.now() + (24 * 60 * 60 * 1000) // 24 hours from now
+            },
+            {
+                id: 3,
+                title: "Premium Leather Jacket",
+                category: "Fashion",
+                originalPrice: 5999,
+                currentPrice: 2999,
+                discount: 50,
+                rating: 4.3,
+                soldCount: 156,
+                stockLeft: 15,
+                image: "🧥",
+                badge: "HOT DEAL",
+                isHot: false,
+                type: "hot",
+                endTime: Date.now() + (3 * 24 * 60 * 60 * 1000) // 3 days from now
+            },
+            {
+                id: 4,
+                title: "Running Shoes Pro",
+                category: "Sports",
+                originalPrice: 3999,
+                currentPrice: 1999,
+                discount: 50,
+                rating: 4.6,
+                soldCount: 312,
+                stockLeft: 5,
+                image: "👟",
+                badge: "ENDING SOON",
+                isHot: true,
+                type: "ending",
+                endTime: Date.now() + (30 * 60 * 1000) // 30 minutes from now
+            },
+            {
+                id: 5,
+                title: "Gaming Keyboard RGB",
+                category: "Gaming",
+                originalPrice: 2999,
+                currentPrice: 1599,
+                discount: 47,
+                rating: 4.8,
+                soldCount: 198,
+                stockLeft: 10,
+                image: "⌨️",
+                badge: "FLASH SALE",
+                isHot: true,
+                type: "flash",
+                endTime: Date.now() + (1.5 * 60 * 60 * 1000) // 1.5 hours from now
+            },
+            {
+                id: 6,
+                title: "4K Ultra HD TV 55\"",
+                category: "Electronics",
+                originalPrice: 45999,
+                currentPrice: 29999,
+                discount: 35,
+                rating: 4.9,
+                soldCount: 87,
+                stockLeft: 3,
+                image: "📺",
+                badge: "TODAY ONLY",
+                isHot: false,
+                type: "today",
+                endTime: Date.now() + (12 * 60 * 60 * 1000) // 12 hours from now
+            },
+            {
+                id: 7,
+                title: "Yoga Mat Premium",
+                category: "Fitness",
+                originalPrice: 1499,
+                currentPrice: 799,
+                discount: 47,
+                rating: 4.4,
+                soldCount: 234,
+                stockLeft: 20,
+                image: "🧘",
+                badge: "HOT DEAL",
+                isHot: true,
+                type: "hot",
+                endTime: Date.now() + (2 * 24 * 60 * 60 * 1000) // 2 days from now
+            },
+            {
+                id: 8,
+                title: "Smartphone Pro Max",
+                category: "Electronics",
+                originalPrice: 89999,
+                currentPrice: 69999,
+                discount: 22,
+                rating: 4.8,
+                soldCount: 156,
+                stockLeft: 7,
+                image: "📱",
+                badge: "ENDING SOON",
+                isHot: true,
+                type: "ending",
+                endTime: Date.now() + (45 * 60 * 1000) // 45 minutes from now
+            }
+        ];
+
+        // Live Activity Data
+        const activities = [
+            { user: "Alex", action: "purchased", item: "Wireless Headphones", time: "2 minutes ago", avatar: "A" },
+            { user: "Sarah", action: "added to cart", item: "Smart Watch", time: "3 minutes ago", avatar: "S" },
+            { user: "Mike", action: "purchased", item: "Leather Jacket", time: "5 minutes ago", avatar: "M" },
+            { user: "Emma", action: "wishlisted", item: "Running Shoes", time: "7 minutes ago", avatar: "E" },
+            { user: "David", action: "purchased", item: "Gaming Keyboard", time: "10 minutes ago", avatar: "D" }
+        ];
+
+        // DOM Elements
+        const flashTimer = document.getElementById('flash-timer');
+        const hoursElement = document.getElementById('hours');
+        const minutesElement = document.getElementById('minutes');
+        const secondsElement = document.getElementById('seconds');
+        const activeUsersElement = document.getElementById('active-users');
+        const itemsSoldElement = document.getElementById('items-sold');
+        const dealsLeftElement = document.getElementById('deals-left');
+        const filterButtons = document.getElementById('filter-buttons');
+        const dealsGrid = document.getElementById('deals-grid');
+        const activityList = document.getElementById('activity-list');
+        const toastContainer = document.getElementById('toast-container');
+        const cartBadge = document.getElementById('cart-badge');
+        const wishlistBadge = document.getElementById('wishlist-badge');
+
+        // Flash Sale Timer
+        function updateFlashTimer() {
+            const endTime = new Date();
+            endTime.setHours(endTime.getHours() + 24); // 24 hours from now
+
+            function update() {
+                const now = new Date();
+                const timeLeft = endTime - now;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    flashTimer.innerHTML = '<div class="timer-unit"><span class="timer-value">00</span><span class="timer-label">Sale Ended</span></div>';
+                    return;
+                }
+
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+                hoursElement.textContent = hours.toString().padStart(2, '0');
+                minutesElement.textContent = minutes.toString().padStart(2, '0');
+                secondsElement.textContent = seconds.toString().padStart(2, '0');
+            }
+
+            update();
+            const timerInterval = setInterval(update, 1000);
+        }
+
+        // Update Real-time Stats
+        function updateRealTimeStats() {
+            // Simulate real-time user activity
+            setInterval(() => {
+                const activeUsers = Math.floor(1200 + Math.random() * 100);
+                const itemsSold = Math.floor(580 + Math.random() * 20);
+                const dealsLeft = Math.floor(20 + Math.random() * 5);
+
+                activeUsersElement.textContent = activeUsers;
+                itemsSoldElement.textContent = itemsSold;
+                dealsLeftElement.textContent = dealsLeft;
+
+                // Occasionally add new activity
+                if (Math.random() > 0.7) {
+                    addRandomActivity();
+                }
+            }, 3000);
+        }
+
+        // Add Random Activity
+        function addRandomActivity() {
+            const users = ['John', 'Alice', 'Bob', 'Carol', 'David', 'Eve', 'Frank', 'Grace'];
+            const actions = ['purchased', 'added to cart', 'wishlisted', 'reviewed'];
+            const items = ['Wireless Headphones', 'Smart Watch', 'Leather Jacket', 'Running Shoes', 'Gaming Keyboard', '4K TV', 'Yoga Mat', 'Smartphone'];
+
+            const user = users[Math.floor(Math.random() * users.length)];
+            const action = actions[Math.floor(Math.random() * actions.length)];
+            const item = items[Math.floor(Math.random() * items.length)];
+
+            const activity = {
+                user,
+                action,
+                item,
+                time: 'Just now',
+                avatar: user.charAt(0)
+            };
+
+            addActivityToFeed(activity);
+
+            // Show toast notification for major activities
+            if (action === 'purchased') {
+                showToast(`${user} just purchased ${item}`, 'success');
+            }
+        }
+
+        // Add Activity to Feed
+        function addActivityToFeed(activity) {
+            const activityItem = document.createElement('div');
+            activityItem.className = 'activity-item';
+            activityItem.innerHTML = `
+                <div class="activity-avatar">${activity.avatar}</div>
+                <div class="activity-content">
+                    <div class="activity-text">
+                        <strong>${activity.user}</strong> ${activity.action} <strong>${activity.item}</strong>
+                    </div>
+                    <div class="activity-time">${activity.time}</div>
+                </div>
+            `;
+
+            activityList.insertBefore(activityItem, activityList.firstChild);
+
+            // Remove old activities if too many
+            if (activityList.children.length > 10) {
+                activityList.removeChild(activityList.lastChild);
+            }
+        }
+
+        // Initialize Activity Feed
+        function initActivityFeed() {
+            activities.forEach(activity => {
+                addActivityToFeed(activity);
+            });
+        }
+
+        // Show Toast Notification
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">Live Update</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close">&times;</button>
+            `;
+
+            toastContainer.appendChild(toast);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+
+            // Close button
+            toast.querySelector('.toast-close').addEventListener('click', () => {
+                toast.remove();
+            });
+        }
+
+        // Create Deal Card
+        function createDealCard(deal) {
+            const card = document.createElement('div');
+            card.className = 'deal-card';
+            card.dataset.type = deal.type;
+
+            // Calculate time left
+            const timeLeft = deal.endTime - Date.now();
+            const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
+            const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+
+            let timeText = '';
+            if (hoursLeft > 0) {
+                timeText = `${hoursLeft}h ${minutesLeft}m left`;
+            } else {
+                timeText = `${minutesLeft}m left`;
+            }
+
+            // Calculate stock percentage
+            const totalStock = deal.soldCount + deal.stockLeft;
+            const stockPercentage = (deal.stockLeft / totalStock) * 100;
+
+            card.innerHTML = `
+                ${deal.badge ? `<div class="deal-badge">${deal.badge}</div>` : ''}
+                ${deal.isHot ? `<div class="deal-hot">🔥 HOT</div>` : ''}
+                
+                <div class="deal-image">
+                    ${deal.image}
+                    <div class="deal-timer-small">${timeText}</div>
+                </div>
+                
+                <div class="deal-info">
+                    <h3 class="deal-title">${deal.title}</h3>
+                    <div class="deal-category">
+                        <i class="fas fa-tag"></i> ${deal.category}
+                    </div>
+                    
+                    <div class="deal-price">
+                        <div class="current-price">₹${deal.currentPrice.toLocaleString()}</div>
+                        <div class="original-price">₹${deal.originalPrice.toLocaleString()}</div>
+                        <div class="discount">${deal.discount}% OFF</div>
+                    </div>
+                    
+                    <div class="stock-progress">
+                        <div class="progress-label">
+                            <span>Stock Left: ${deal.stockLeft}</span>
+                            <span>Sold: ${deal.soldCount}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${stockPercentage}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="deal-stats">
+                        <div class="deal-rating">
+                            ${'★'.repeat(Math.floor(deal.rating))}${'☆'.repeat(5 - Math.floor(deal.rating))}
+                            <span style="color: var(--gray); margin-left: 5px;">${deal.rating}</span>
+                        </div>
+                        <div class="sold-count">
+                            <i class="fas fa-fire"></i> ${deal.soldCount} sold
+                        </div>
+                    </div>
+                    
+                    <div class="deal-actions">
+                        <button class="btn btn-primary add-to-cart-btn" data-id="${deal.id}">
+                            <i class="fas fa-cart-plus"></i>
+                            Add to Cart
+                        </button>
+                        <button class="btn btn-secondary wishlist-btn" data-id="${deal.id}">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <button class="btn btn-danger buy-now-btn" data-id="${deal.id}">
+                            Buy Now
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // Populate Deals Grid
+        function populateDealsGrid(filter = 'all') {
+            dealsGrid.innerHTML = '';
+
+            const filteredDeals = filter === 'all'
+                ? deals
+                : deals.filter(deal => deal.type === filter);
+
+            filteredDeals.forEach(deal => {
+                const dealCard = createDealCard(deal);
+                dealsGrid.appendChild(dealCard);
+            });
+        }
+
+        // Update Deal Timers
+        function updateDealTimers() {
+            setInterval(() => {
+                const dealCards = document.querySelectorAll('.deal-card');
+                dealCards.forEach((card, index) => {
+                    const deal = deals[index];
+                    if (deal) {
+                        const timeLeft = deal.endTime - Date.now();
+
+                        if (timeLeft <= 0) {
+                            // Deal expired
+                            const timerElement = card.querySelector('.deal-timer-small');
+                            if (timerElement) {
+                                timerElement.textContent = 'DEAL ENDED';
+                                timerElement.style.background = 'var(--danger)';
+                            }
+
+                            // Disable buttons
+                            const buttons = card.querySelectorAll('button');
+                            buttons.forEach(btn => {
+                                btn.disabled = true;
+                                btn.style.opacity = '0.5';
+                                btn.style.cursor = 'not-allowed';
+                            });
+                        } else {
+                            // Update timer
+                            const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
+                            const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+
+                            let timeText = '';
+                            if (hoursLeft > 0) {
+                                timeText = `${hoursLeft}h ${minutesLeft}m left`;
+                            } else {
+                                timeText = `${minutesLeft}m left`;
+                            }
+
+                            const timerElement = card.querySelector('.deal-timer-small');
+                            if (timerElement) {
+                                timerElement.textContent = timeText;
+
+                                // Change color when less than 30 minutes left
+                                if (timeLeft < 30 * 60 * 1000) {
+                                    timerElement.style.background = 'var(--danger)';
+                                    timerElement.style.animation = 'pulse 1s infinite';
+                                }
+                            }
+                        }
+                    }
+                });
+            }, 1000);
+        }
+
+        // Initialize Filter Buttons
+        function initFilterButtons() {
+            filterButtons.addEventListener('click', (e) => {
+                if (e.target.classList.contains('filter-btn')) {
+                    // Remove active class from all buttons
+                    document.querySelectorAll('.filter-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+
+                    // Add active class to clicked button
+                    e.target.classList.add('active');
+
+                    // Filter deals
+                    const filter = e.target.dataset.filter;
+                    populateDealsGrid(filter);
+                }
+            });
+        }
+
+        // Handle Deal Interactions
+        function initDealInteractions() {
+            document.addEventListener('click', (e) => {
+                // Add to Cart
+                if (e.target.closest('.add-to-cart-btn')) {
+                    const dealId = e.target.closest('.add-to-cart-btn').dataset.id;
+                    const deal = deals.find(d => d.id == dealId);
+
+                    if (deal) {
+                        // Update sold count in UI
+                        deal.soldCount += 1;
+                        deal.stockLeft = Math.max(0, deal.stockLeft - 1);
+
+                        // Update cart badge
+                        cartBadge.textContent = parseInt(cartBadge.textContent) + 1;
+
+                        // Show success message
+                        showToast(`Added "${deal.title}" to your cart!`, 'success');
+
+                        // Update the specific deal card
+                        const dealCard = e.target.closest('.deal-card');
+                        if (dealCard) {
+                            const stockLeftElement = dealCard.querySelector('.progress-label span:first-child');
+                            const soldElement = dealCard.querySelector('.progress-label span:last-child');
+                            const progressFill = dealCard.querySelector('.progress-fill');
+
+                            if (stockLeftElement) stockLeftElement.textContent = `Stock Left: ${deal.stockLeft}`;
+                            if (soldElement) soldElement.textContent = `Sold: ${deal.soldCount}`;
+
+                            const totalStock = deal.soldCount + deal.stockLeft;
+                            const stockPercentage = (deal.stockLeft / totalStock) * 100;
+                            if (progressFill) progressFill.style.width = `${stockPercentage}%`;
+                        }
+
+                        // Add activity
+                        addActivityToFeed({
+                            user: "You",
+                            action: 'added to cart',
+                            item: deal.title,
+                            time: 'Just now',
+                            avatar: "Y"
+                        });
+                    }
+                }
+
+                // Add to Wishlist
+                if (e.target.closest('.wishlist-btn')) {
+                    const dealId = e.target.closest('.wishlist-btn').dataset.id;
+                    const deal = deals.find(d => d.id == dealId);
+
+                    if (deal) {
+                        // Update wishlist badge
+                        wishlistBadge.textContent = parseInt(wishlistBadge.textContent) + 1;
+
+                        // Show success message
+                        showToast(`Added "${deal.title}" to your wishlist!`, 'info');
+
+                        // Add activity
+                        addActivityToFeed({
+                            user: "You",
+                            action: 'wishlisted',
+                            item: deal.title,
+                            time: 'Just now',
+                            avatar: "Y"
+                        });
+                    }
+                }
+
+                // Buy Now
+                if (e.target.closest('.buy-now-btn')) {
+                    const dealId = e.target.closest('.buy-now-btn').dataset.id;
+                    const deal = deals.find(d => d.id == dealId);
+
+                    if (deal) {
+                        if (deal.stockLeft > 0) {
+                            // Update sold count
+                            deal.soldCount += 1;
+                            deal.stockLeft = Math.max(0, deal.stockLeft - 1);
+
+                            // Update items sold
+                            itemsSoldElement.textContent = parseInt(itemsSoldElement.textContent) + 1;
+
+                            // Show purchase modal
+                            showToast(`Successfully purchased "${deal.title}"!`, 'success');
+
+                            // Add activity
+                            addActivityToFeed({
+                                user: "You",
+                                action: 'purchased',
+                                item: deal.title,
+                                time: 'Just now',
+                                avatar: "Y"
+                            });
+
+                            // Update the specific deal card
+                            const dealCard = e.target.closest('.deal-card');
+                            if (dealCard) {
+                                const stockLeftElement = dealCard.querySelector('.progress-label span:first-child');
+                                const soldElement = dealCard.querySelector('.progress-label span:last-child');
+                                const progressFill = dealCard.querySelector('.progress-fill');
+
+                                if (stockLeftElement) stockLeftElement.textContent = `Stock Left: ${deal.stockLeft}`;
+                                if (soldElement) soldElement.textContent = `Sold: ${deal.soldCount}`;
+
+                                const totalStock = deal.soldCount + deal.stockLeft;
+                                const stockPercentage = (deal.stockLeft / totalStock) * 100;
+                                if (progressFill) progressFill.style.width = `${stockPercentage}%`;
+                            }
+                        } else {
+                            showToast(`Sorry, "${deal.title}" is out of stock!`, 'warning');
+                        }
+                    }
+                }
+            });
+        }
+
+        // Simulate User Activity
+        function simulateUserActivity() {
+            // Periodically update user counts
+            setInterval(() => {
+                const currentCount = parseInt(activeUsersElement.textContent);
+                const change = Math.floor(Math.random() * 20) - 10; // -10 to +10
+                const newCount = Math.max(1000, currentCount + change);
+                activeUsersElement.textContent = newCount;
+            }, 10000);
+
+            // Periodically update deal stock
+            setInterval(() => {
+                // Randomly reduce stock for a random deal
+                const randomIndex = Math.floor(Math.random() * deals.length);
+                const deal = deals[randomIndex];
+
+                if (deal.stockLeft > 0) {
+                    // Randomly sell 1-3 items
+                    const sold = Math.floor(Math.random() * 3) + 1;
+                    deal.soldCount += sold;
+                    deal.stockLeft = Math.max(0, deal.stockLeft - sold);
+
+                    // Update items sold count
+                    itemsSoldElement.textContent = parseInt(itemsSoldElement.textContent) + sold;
+
+                    // Update UI if this deal is currently displayed
+                    const dealCard = document.querySelector(`[data-id="${deal.id}"]`);
+                    if (dealCard) {
+                        const stockLeftElement = dealCard.closest('.deal-card').querySelector('.progress-label span:first-child');
+                        const soldElement = dealCard.closest('.deal-card').querySelector('.progress-label span:last-child');
+                        const progressFill = dealCard.closest('.deal-card').querySelector('.progress-fill');
+
+                        if (stockLeftElement) stockLeftElement.textContent = `Stock Left: ${deal.stockLeft}`;
+                        if (soldElement) soldElement.textContent = `Sold: ${deal.soldCount}`;
+
+                        const totalStock = deal.soldCount + deal.stockLeft;
+                        const stockPercentage = (deal.stockLeft / totalStock) * 100;
+                        if (progressFill) progressFill.style.width = `${stockPercentage}%`;
+                    }
+                }
+            }, 15000);
+        }
+
+        // Initialize Page
+        function initPage() {
+            updateFlashTimer();
+            updateRealTimeStats();
+            initActivityFeed();
+            populateDealsGrid();
+            initFilterButtons();
+            updateDealTimers();
+            initDealInteractions();
+            simulateUserActivity();
+
+            // Demo: Show welcome toast
+            setTimeout(() => {
+                showToast('Welcome to PASSKART Deals! Real-time updates are active.', 'info');
+            }, 1000);
+
+            // Demo: Show stock update toast after 5 seconds
+            setTimeout(() => {
+                showToast('🔥 Hot deal! Smartphone Pro Max stock is running low!', 'warning');
+            }, 5000);
+        }
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', initPage);
+
+        // Demo: Double-click to test real-time features
+        document.addEventListener('dblclick', (e) => {
+            if (e.target.tagName === 'BODY') {
+                showToast('Test notification: Real-time features are working!', 'success');
+            }
+        });
+    </script>
+</body>
+
+</html>

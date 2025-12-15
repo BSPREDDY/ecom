@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - PassKart | Premium Shopping Experience</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="/styles/navbar.css">
+    <link rel="stylesheet" href="/styles/footer.css">
+    <style>
+        /* About Page Specific Styles */
+        .about-hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            padding: 100px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" preserveAspectRatio="none"><path d="M500,50L506,60L512,50L518,60L524,50L530,60L536,50L542,60L548,50L554,60L560,50L566,60L572,50L578,60L584,50L590,60L596,50L602,60L608,50L614,60L620,50L626,60L632,50L638,60L644,50L650,60L656,50L662,60L668,50L674,60L680,50L686,60L692,50L698,60L704,50L710,60L716,50L722,60L728,50L734,60L740,50L746,60L752,50L758,60L764,50L770,60L776,50L782,60L788,50L794,60L800,50L806,60L812,50L818,60L824,50L830,60L836,50L842,60L848,50L854,60L860,50L866,60L872,50L878,60L884,50L890,60L896,50L902,60L908,50L914,60L920,50L926,60L932,50L938,60L944,50L950,60L956,50L962,60L968,50L974,60L980,50L986,60L992,50L998,60L1000,50L1000,100L0,100L0,50Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: 100% 100px;
+            background-position: bottom;
+            background-repeat: no-repeat;
+        }
+
+        .about-hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about-hero h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .about-hero p {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease 0.3s both;
+        }
+
+        .breadcrumb {
+            background: var(--light);
+            padding: 15px 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .breadcrumb-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: var(--medium-gray);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+
+        .breadcrumb a:hover {
+            color: var(--primary);
+        }
+
+        .breadcrumb .separator {
+            color: var(--light-gray);
+        }
+
+        .breadcrumb .current {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .story-section {
+            padding: 80px 0;
+            background: var(--white);
+        }
+
+        .story-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .story-content h2 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .story-content p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--dark-gray);
+            margin-bottom: 20px;
+        }
+
+        .story-image {
+            position: relative;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .story-image img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            transition: transform var(--transition-slow);
+        }
+
+        .story-image:hover img {
+            transform: scale(1.05);
+        }
+
+        .stats-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-normal);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 24px;
+            margin: 0 auto 20px;
+        }
+
+        .stat-number {
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 10px;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 16px;
+            color: var(--dark-gray);
+            font-weight: 600;
+        }
+
+        .team-section {
+            padding: 80px 0;
+            background: var(--white);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: var(--medium-gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+
+        .team-member {
+            background: var(--light);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-normal);
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .member-image {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+        }
+
+        .member-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--transition-slow);
+        }
+
+        .team-member:hover .member-image img {
+            transform: scale(1.1);
+        }
+
+        .member-info {
+            padding: 25px;
+            text-align: center;
+        }
+
+        .member-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+
+        .member-role {
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .member-desc {
+            font-size: 14px;
+            color: var(--medium-gray);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .member-social {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .member-social a {
+            width: 36px;
+            height: 36px;
+            background: var(--light-gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all var(--transition-fast);
+        }
+
+        .member-social a:hover {
+            background: var(--primary);
+            color: var(--white);
+            transform: translateY(-3px);
+        }
+
+        .values-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #fdfcfb 0%, #f3f4f6 100%);
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+
+        .value-card {
+            text-align: center;
+            padding: 40px 30px;
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .value-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: translateX(-100%);
+            transition: transform var(--transition-normal);
+        }
+
+        .value-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .value-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .value-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 28px;
+            margin: 0 auto 25px;
+        }
+
+        .value-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .value-desc {
+            font-size: 15px;
+            color: var(--dark-gray);
+            line-height: 1.7;
+        }
+
+        .cta-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" preserveAspectRatio="none"><path d="M0,0L1000,100L1000,0Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: 100% 100px;
+            background-position: top;
+            background-repeat: no-repeat;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-content h2 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .cta-content p {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .cta-btn {
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: var(--radius-full);
+            text-decoration: none;
+            transition: all var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cta-btn.primary {
+            background: var(--white);
+            color: var(--primary);
+        }
+
+        .cta-btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-btn.secondary {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .cta-btn.secondary:hover {
+            background: var(--white);
+            color: var(--primary);
+            border-color: var(--white);
+            transform: translateY(-3px);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+
+            .stats-grid,
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .values-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .story-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .story-image {
+                order: -1;
+            }
+
+            .about-hero h1 {
+                font-size: 36px;
+            }
+
+            .cta-content h2 {
+                font-size: 32px;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            .stats-grid,
+            .team-grid,
+            .values-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .cta-btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+
+            .about-hero {
+                padding: 80px 0;
+            }
+
+            .section-header h2 {
+                font-size: 28px;
+            }
+
+            .stat-number {
+                font-size: 36px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .about-hero h1 {
+                font-size: 28px;
+            }
+
+            .story-content h2 {
+                font-size: 28px;
+            }
+
+            .cta-content h2 {
+                font-size: 24px;
+            }
+
+            .cta-content p {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading About Page</div>
+    </div>
+
+    <!-- Header -->
+    <header class="main-header">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="container">
+                <div class="top-bar-content">
+                    <div class="top-offers">
+                        <div class="offer-badge">
+                            <i class="fas fa-shipping-fast"></i>
+                            <span>Free Shipping on Orders Over $50</span>
+                        </div>
+                        <div class="offer-badge">
+                            <i class="fas fa-undo-alt"></i>
+                            <span>30-Day Return Policy</span>
+                        </div>
+                    </div>
+                    <div class="user-utils">
+                        <a href="#"><i class="fas fa-question-circle"></i> Help Center</a>
+                        <a href="#"><i class="fas fa-headset"></i> 24/7 Support</a>
+                        <select style="background: transparent; color: white; border: none;">
+                            <option value="USD">USD $</option>
+                            <option value="EUR">EUR €</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navigation -->
+        <nav class="nav-main">
+            <div class="container">
+                <div class="nav-container">
+                    <!-- Logo -->
+                    <a href="#" class="logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="logo-text">
+                            <div class="logo-main">PassKart</div>
+                            <div class="logo-tagline">Shop Smart, Live Better</div>
+                        </div>
+                    </a>
+
+                    <!-- Category Selector -->
+                    <div class="category-selector">
+                        <button class="category-btn">
+                            <i class="fas fa-th-large"></i>
+                            <span>All Categories</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+
+                    <!-- Search Bar -->
+                    <div class="search-container">
+                        <div class="search-wrapper">
+                            <input type="text" class="search-input"
+                                placeholder="Search for products, brands and more...">
+                            <button class="search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Actions -->
+                    <div class="nav-actions">
+                        <a href="#" class="nav-action" id="account-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="action-text">Account</div>
+                        </a>
+
+                        <a href="#" class="nav-action" id="wishlist-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-heart"></i>
+                                <span class="action-badge">3</span>
+                            </div>
+                            <div class="action-text">Wishlist</div>
+                        </a>
+
+                        <a href="#" class="nav-action" id="cart-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span class="action-badge">5</span>
+                                <span class="cart-amount">$248.99</span>
+                            </div>
+                            <div class="action-text">Cart</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Navigation Menu -->
+        <div class="nav-menu">
+            <div class="container">
+                <div class="menu-container">
+                    <ul class="nav-links">
+                        <li><a href="/index.html" class="active"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="/pages/products.html"><i class="fas fa-store"></i> Shop</a></li>
+                        <li><a href="#"><i class="fas fa-tag"></i> Deals</a></li>
+                        <li><a href="#"><i class="fas fa-star"></i> New Arrivals</a></li>
+                        <li><a href="/pages/about.html"><i class="fas fa-info-circle"></i> About</a></li>
+                        <li><a href="/pages/contact.html"><i class="fas fa-phone"></i> Contact</a></li>
+                    </ul>
+
+                    <a href="#" class="special-offer">
+                        <span class="offer-percent">60% OFF</span>
+                        <span>Summer Sale</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-content">
+                <a href="/index.html"><i class="fas fa-home"></i> Home</a>
+                <span class="separator"><i class="fas fa-chevron-right"></i></span>
+                <span class="current">About Us</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="about-hero">
+        <div class="container">
+            <div class="about-hero-content">
+                <h1>Our Story</h1>
+                <p>Founded with a vision to revolutionize online shopping, PassKart has grown from a small startup to a
+                    leading e-commerce platform, serving millions of satisfied customers worldwide.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Story Section -->
+    <section class="story-section">
+        <div class="container">
+            <div class="story-grid">
+                <div class="story-content">
+                    <h2>Who We Are</h2>
+                    <p>PassKart was founded in 2015 with a simple mission: to make premium shopping accessible to
+                        everyone. What started as a small online marketplace has grown into one of the most trusted
+                        e-commerce platforms in the industry.</p>
+                    <p>We believe that shopping should be more than just a transaction—it should be an experience.
+                        That's why we've built a platform that combines cutting-edge technology with personalized
+                        service to deliver exceptional value to our customers.</p>
+                    <p>Our team of dedicated professionals works tirelessly to curate the best products, negotiate the
+                        best prices, and provide the best customer service in the industry.</p>
+                </div>
+                <div class="story-image">
+                    <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                        alt="Our Story">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-number">2.5M+</div>
+                    <div class="stat-label">Happy Customers</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <div class="stat-number">50K+</div>
+                    <div class="stat-label">Products</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <div class="stat-number">150+</div>
+                    <div class="stat-label">Countries Served</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">Satisfaction Rate</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Meet Our Leadership</h2>
+                <p>The passionate individuals who drive innovation and excellence at PassKart</p>
+            </div>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                            alt="CEO">
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">Alex Johnson</h3>
+                        <p class="member-role">CEO & Founder</p>
+                        <p class="member-desc">Visionary leader with 15+ years of experience in e-commerce and
+                            technology.</p>
+                        <div class="member-social">
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                            alt="CTO">
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">Sarah Williams</h3>
+                        <p class="member-role">Chief Technology Officer</p>
+                        <p class="member-desc">Tech innovator specializing in scalable e-commerce solutions.</p>
+                        <div class="member-social">
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                            alt="CMO">
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">Michael Chen</h3>
+                        <p class="member-role">Chief Marketing Officer</p>
+                        <p class="member-desc">Marketing expert with a passion for building brand communities.</p>
+                        <div class="member-social">
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                            alt="COO">
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">Emma Rodriguez</h3>
+                        <p class="member-role">Chief Operations Officer</p>
+                        <p class="member-desc">Operations specialist ensuring seamless customer experiences.</p>
+                        <div class="member-social">
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values Section -->
+    <section class="values-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Core Values</h2>
+                <p>The principles that guide everything we do at PassKart</p>
+            </div>
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3 class="value-title">Customer First</h3>
+                    <p class="value-desc">Our customers are at the heart of everything we do. We strive to exceed
+                        expectations and build lasting relationships.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="value-title">Innovation</h3>
+                    <p class="value-desc">We constantly push boundaries and embrace new technologies to improve our
+                        platform and services.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="value-title">Integrity</h3>
+                    <p class="value-desc">We conduct our business with honesty, transparency, and the highest ethical
+                        standards.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3 class="value-title">Collaboration</h3>
+                    <p class="value-desc">We believe in the power of teamwork and work closely with partners, suppliers,
+                        and our community.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3 class="value-title">Sustainability</h3>
+                    <p class="value-desc">We're committed to environmentally friendly practices and sustainable business
+                        operations.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3 class="value-title">Excellence</h3>
+                    <p class="value-desc">We pursue excellence in every aspect of our business, from product quality to
+                        customer service.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Join Our Journey</h2>
+                <p>Whether you're a customer, partner, or potential team member, we'd love to have you be part of our
+                    story.</p>
+                <div class="cta-buttons">
+                    <a href="/pages/contact.html" class="cta-btn primary">
+                        <i class="fas fa-envelope"></i>
+                        Get In Touch
+                    </a>
+                    <a href="#" class="cta-btn secondary">
+                        <i class="fas fa-briefcase"></i>
+                        Careers
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>PassKart</h3>
+                    <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 20px;">
+                        Your ultimate shopping destination. Quality products, amazing deals, and exceptional service.
+                    </p>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="/index.html">Home</a></li>
+                        <li><a href="#">Shop</a></li>
+                        <li><a href="#">Deals</a></li>
+                        <li><a href="#">New Arrivals</a></li>
+                        <li><a href="/pages/about.html">About</a></li>
+                        <li><a href="/pages/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Customer Service</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Track Your Order</a></li>
+                        <li><a href="#">Returns & Refunds</a></li>
+                        <li><a href="#">Shipping Info</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Shopping Street</li>
+                        <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-envelope"></i> support@passkart.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 PassKart. All rights reserved. | Shop Smart, Live Better</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/scripts/index/header.js"></script>
+    <script src="/scripts/index/main.js"></script>
+    <script>
+        // Loading Animation
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loadingOverlay = document.getElementById('loading-overlay');
+                loadingOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 500);
+            }, 1000);
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for scroll animations
+        document.querySelectorAll('.stat-item, .team-member, .value-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+
+</html>

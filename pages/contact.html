@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - PassKart | Premium Shopping Experience</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="/styles/navbar.css">
+    <link rel="stylesheet" href="/styles/footer.css">
+    <style>
+        /* Contact Page Specific Styles */
+        .contact-hero {
+            background: linear-gradient(135deg, var(--accent) 0%, #0891B2 100%);
+            color: var(--white);
+            padding: 100px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" preserveAspectRatio="none"><path d="M500,50L506,60L512,50L518,60L524,50L530,60L536,50L542,60L548,50L554,60L560,50L566,60L572,50L578,60L584,50L590,60L596,50L602,60L608,50L614,60L620,50L626,60L632,50L638,60L644,50L650,60L656,50L662,60L668,50L674,60L680,50L686,60L692,50L698,60L704,50L710,60L716,50L722,60L728,50L734,60L740,50L746,60L752,50L758,60L764,50L770,60L776,50L782,60L788,50L794,60L800,50L806,60L812,50L818,60L824,50L830,60L836,50L842,60L848,50L854,60L860,50L866,60L872,50L878,60L884,50L890,60L896,50L902,60L908,50L914,60L920,50L926,60L932,50L938,60L944,50L950,60L956,50L962,60L968,50L974,60L980,50L986,60L992,50L998,60L1000,50L1000,100L0,100L0,50Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: 100% 100px;
+            background-position: bottom;
+            background-repeat: no-repeat;
+        }
+
+        .contact-hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-hero h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .contact-hero p {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease 0.3s both;
+        }
+
+        .breadcrumb {
+            background: var(--light);
+            padding: 15px 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .breadcrumb-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: var(--medium-gray);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+
+        .breadcrumb a:hover {
+            color: var(--accent);
+        }
+
+        .breadcrumb .separator {
+            color: var(--light-gray);
+        }
+
+        .breadcrumb .current {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .contact-section {
+            padding: 80px 0;
+            background: var(--white);
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .contact-info h2 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .contact-info p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--dark-gray);
+            margin-bottom: 30px;
+        }
+
+        .info-cards {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .info-card {
+            background: var(--light);
+            padding: 25px;
+            border-radius: var(--radius-lg);
+            border-left: 4px solid var(--accent);
+            transition: all var(--transition-normal);
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            background: var(--white);
+        }
+
+        .info-card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .info-card-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 20px;
+        }
+
+        .info-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .info-card-content {
+            color: var(--dark-gray);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .info-card-content a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+
+        .info-card-content a:hover {
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-link {
+            width: 45px;
+            height: 45px;
+            background: var(--light-gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all var(--transition-fast);
+        }
+
+        .social-link:hover {
+            transform: translateY(-3px);
+            color: var(--white);
+        }
+
+        .social-link.facebook:hover {
+            background: #1877F2;
+        }
+
+        .social-link.twitter:hover {
+            background: #1DA1F2;
+        }
+
+        .social-link.instagram:hover {
+            background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
+        }
+
+        .social-link.linkedin:hover {
+            background: #0A66C2;
+        }
+
+        .contact-form-container {
+            background: var(--light);
+            padding: 40px;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .contact-form-container h3 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--dark);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--light-gray);
+            border-radius: var(--radius-md);
+            font-family: var(--font-body);
+            font-size: 15px;
+            color: var(--dark);
+            background: var(--white);
+            transition: all var(--transition-fast);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+
+        .form-control.textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .form-check-input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent);
+        }
+
+        .form-check-label {
+            font-size: 14px;
+            color: var(--dark-gray);
+        }
+
+        .form-check-label a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .form-check-label a:hover {
+            text-decoration: underline;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--gradient-accent);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .faq-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: var(--medium-gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-normal);
+        }
+
+        .faq-item:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .faq-question {
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background: var(--white);
+        }
+
+        .faq-question h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+            margin: 0;
+            flex: 1;
+        }
+
+        .faq-icon {
+            color: var(--accent);
+            font-size: 20px;
+            transition: transform var(--transition-normal);
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            padding: 0 30px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all var(--transition-normal);
+            background: var(--white);
+        }
+
+        .faq-item.active .faq-answer {
+            padding: 0 30px 25px;
+            max-height: 500px;
+        }
+
+        .faq-answer p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--dark-gray);
+            margin: 0;
+        }
+
+        .map-section {
+            padding: 80px 0;
+            background: var(--white);
+        }
+
+        .map-container {
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+            height: 400px;
+            position: relative;
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: var(--white);
+            padding: 25px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            max-width: 300px;
+        }
+
+        .map-overlay h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .map-overlay p {
+            font-size: 14px;
+            color: var(--dark-gray);
+            margin-bottom: 5px;
+        }
+
+        .map-overlay i {
+            color: var(--accent);
+            margin-right: 10px;
+            width: 16px;
+        }
+
+        .response-time {
+            background: var(--accent);
+            color: var(--white);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .response-time h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .response-time p {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 0;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .contact-grid {
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 60px;
+            }
+
+            .contact-hero h1 {
+                font-size: 36px;
+            }
+
+            .map-overlay {
+                position: relative;
+                top: auto;
+                left: auto;
+                max-width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .contact-hero {
+                padding: 80px 0;
+            }
+
+            .contact-form-container {
+                padding: 30px;
+            }
+
+            .section-header h2 {
+                font-size: 28px;
+            }
+
+            .contact-info h2 {
+                font-size: 28px;
+            }
+
+            .response-time h2 {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .contact-hero h1 {
+                font-size: 28px;
+            }
+
+            .contact-hero p {
+                font-size: 16px;
+            }
+
+            .info-card {
+                padding: 20px;
+            }
+
+            .contact-form-container {
+                padding: 20px;
+            }
+
+            .faq-question {
+                padding: 20px;
+            }
+
+            .faq-question h3 {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading Contact Page</div>
+    </div>
+
+    <!-- Header -->
+    <header class="main-header">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="container">
+                <div class="top-bar-content">
+                    <div class="top-offers">
+                        <div class="offer-badge">
+                            <i class="fas fa-shipping-fast"></i>
+                            <span>Free Shipping on Orders Over $50</span>
+                        </div>
+                        <div class="offer-badge">
+                            <i class="fas fa-undo-alt"></i>
+                            <span>30-Day Return Policy</span>
+                        </div>
+                    </div>
+                    <div class="user-utils">
+                        <a href="#"><i class="fas fa-question-circle"></i> Help Center</a>
+                        <a href="#"><i class="fas fa-headset"></i> 24/7 Support</a>
+                        <select style="background: transparent; color: white; border: none;">
+                            <option value="USD">USD $</option>
+                            <option value="EUR">EUR €</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navigation -->
+        <nav class="nav-main">
+            <div class="container">
+                <div class="nav-container">
+                    <!-- Logo -->
+                    <a href="#" class="logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="logo-text">
+                            <div class="logo-main">PassKart</div>
+                            <div class="logo-tagline">Shop Smart, Live Better</div>
+                        </div>
+                    </a>
+
+                    <!-- Category Selector -->
+                    <div class="category-selector">
+                        <button class="category-btn">
+                            <i class="fas fa-th-large"></i>
+                            <span>All Categories</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+
+                    <!-- Search Bar -->
+                    <div class="search-container">
+                        <div class="search-wrapper">
+                            <input type="text" class="search-input"
+                                placeholder="Search for products, brands and more...">
+                            <button class="search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Actions -->
+                    <div class="nav-actions">
+                        <a href="#" class="nav-action" id="account-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="action-text">Account</div>
+                        </a>
+
+                        <a href="#" class="nav-action" id="wishlist-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-heart"></i>
+                                <span class="action-badge">3</span>
+                            </div>
+                            <div class="action-text">Wishlist</div>
+                        </a>
+
+                        <a href="#" class="nav-action" id="cart-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span class="action-badge">5</span>
+                                <span class="cart-amount">$248.99</span>
+                            </div>
+                            <div class="action-text">Cart</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Navigation Menu -->
+        <div class="nav-menu">
+            <div class="container">
+                <div class="menu-container">
+                    <ul class="nav-links">
+                        <li><a href="/index.html" class="active"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="/pages/products.html"><i class="fas fa-store"></i> Shop</a></li>
+                        <li><a href="#"><i class="fas fa-tag"></i> Deals</a></li>
+                        <li><a href="#"><i class="fas fa-star"></i> New Arrivals</a></li>
+                        <li><a href="/pages/about.html"><i class="fas fa-info-circle"></i> About</a></li>
+                        <li><a href="/pages/contact.html"><i class="fas fa-phone"></i> Contact</a></li>
+                    </ul>
+
+                    <a href="#" class="special-offer">
+                        <span class="offer-percent">60% OFF</span>
+                        <span>Summer Sale</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-content">
+                <a href="/index.html"><i class="fas fa-home"></i> Home</a>
+                <span class="separator"><i class="fas fa-chevron-right"></i></span>
+                <span class="current">Contact Us</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="contact-hero">
+        <div class="container">
+            <div class="contact-hero-content">
+                <h1>Get In Touch</h1>
+                <p>We're here to help! Whether you have questions about our products, need support with an order, or
+                    just want to say hello, we'd love to hear from you.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <div class="contact-grid">
+                <!-- Contact Information -->
+                <div class="contact-info">
+                    <h2>Contact Information</h2>
+                    <p>Feel free to reach out to us through any of the following channels. Our dedicated support team is
+                        available 24/7 to assist you with any questions or concerns.</p>
+
+                    <div class="info-cards">
+                        <div class="info-card">
+                            <div class="info-card-header">
+                                <div class="info-card-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="info-card-title">Visit Our Office</div>
+                            </div>
+                            <div class="info-card-content">
+                                123 Shopping Street<br>
+                                New York, NY 10001<br>
+                                United States
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="info-card-header">
+                                <div class="info-card-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="info-card-title">Call Us</div>
+                            </div>
+                            <div class="info-card-content">
+                                <a href="tel:+15551234567">+1 (555) 123-4567</a><br>
+                                Monday - Friday: 9AM - 6PM EST<br>
+                                Saturday - Sunday: 10AM - 4PM EST
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="info-card-header">
+                                <div class="info-card-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="info-card-title">Email Us</div>
+                            </div>
+                            <div class="info-card-content">
+                                <a href="mailto:support@passkart.com">support@passkart.com</a><br>
+                                General Inquiries: <a href="mailto:info@passkart.com">info@passkart.com</a><br>
+                                Business: <a href="mailto:business@passkart.com">business@passkart.com</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-bottom: 20px;">Follow Us</h3>
+                    <div class="social-links">
+                        <a href="#" class="social-link facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link linkedin">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="contact-form-container">
+                    <h3>Send us a Message</h3>
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="name" class="form-label">Full Name *</label>
+                            <input type="text" id="name" name="name" class="form-control"
+                                placeholder="Enter your full name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email Address *</label>
+                            <input type="email" id="email" name="email" class="form-control"
+                                placeholder="Enter your email address" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" class="form-control"
+                                placeholder="Enter your phone number">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject" class="form-label">Subject *</label>
+                            <select id="subject" name="subject" class="form-control" required>
+                                <option value="">Select a subject</option>
+                                <option value="general">General Inquiry</option>
+                                <option value="order">Order Support</option>
+                                <option value="returns">Returns & Refunds</option>
+                                <option value="shipping">Shipping & Delivery</option>
+                                <option value="product">Product Information</option>
+                                <option value="business">Business Partnership</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message" class="form-label">Message *</label>
+                            <textarea id="message" name="message" class="form-control textarea"
+                                placeholder="How can we help you?" required></textarea>
+                        </div>
+
+                        <div class="form-check">
+                            <input type="checkbox" id="newsletter" name="newsletter" class="form-check-input">
+                            <label for="newsletter" class="form-check-label">
+                                I'd like to receive updates, promotions, and news from PassKart
+                            </label>
+                        </div>
+
+                        <button type="submit" class="submit-btn" id="submitBtn">
+                            <i class="fas fa-paper-plane"></i>
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Frequently Asked Questions</h2>
+                <p>Find quick answers to common questions</p>
+            </div>
+
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What are your shipping options and delivery times?</h3>
+                        <i class="fas fa-plus faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We offer several shipping options: Standard (5-7 business days, free on orders over $50),
+                            Express (2-3 business days, $9.99), and Overnight (next business day, $19.99). Delivery
+                            times may vary based on location and product availability.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How do I return or exchange an item?</h3>
+                        <i class="fas fa-plus faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>You can initiate a return or exchange within 30 days of delivery. Items must be in original
+                            condition with tags attached. Visit your account's order history to start the process, or
+                            contact our support team for assistance.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Do you ship internationally?</h3>
+                        <i class="fas fa-plus faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! We ship to over 150 countries worldwide. International shipping rates and delivery times
+                            vary by destination. You'll see the exact cost at checkout based on your location and
+                            selected items.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How can I track my order?</h3>
+                        <i class="fas fa-plus faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Once your order ships, you'll receive a confirmation email with a tracking number and link.
+                            You can also track your order by logging into your account and visiting the "Order History"
+                            section.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What payment methods do you accept?</h3>
+                        <i class="fas fa-plus faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We accept all major credit cards (Visa, MasterCard, American Express, Discover), PayPal,
+                            Apple Pay, Google Pay, and Shop Pay. All transactions are secured with 256-bit SSL
+                            encryption.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section">
+        <div class="container">
+            <div class="map-container">
+                <!-- Map Placeholder - In a real implementation, you would embed Google Maps here -->
+                <div
+                    style="width: 100%; height: 400px; background: #e5e7eb; display: flex; align-items: center; justify-content: center; color: var(--dark-gray);">
+                    <div style="text-align: center;">
+                        <i class="fas fa-map-marker-alt"
+                            style="font-size: 48px; margin-bottom: 20px; color: var(--accent);"></i>
+                        <h3 style="margin-bottom: 10px;">Our Headquarters</h3>
+                        <p>123 Shopping Street, New York, NY 10001</p>
+                    </div>
+                </div>
+                <div class="map-overlay">
+                    <h3>Visit Our Showroom</h3>
+                    <p><i class="fas fa-clock"></i> Mon-Fri: 9AM-8PM</p>
+                    <p><i class="fas fa-clock"></i> Sat-Sun: 10AM-6PM</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-envelope"></i> visit@passkart.com</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Response Time -->
+    <section class="response-time">
+        <div class="container">
+            <h2>We Respond Within 24 Hours</h2>
+            <p>Our support team is committed to getting back to you as quickly as possible. For urgent matters, please
+                call our support line.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>PassKart</h3>
+                    <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 20px;">
+                        Your ultimate shopping destination. Quality products, amazing deals, and exceptional service.
+                    </p>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="/index.html">Home</a></li>
+                        <li><a href="#">Shop</a></li>
+                        <li><a href="#">Deals</a></li>
+                        <li><a href="#">New Arrivals</a></li>
+                        <li><a href="/pages/about.html">About</a></li>
+                        <li><a href="/pages/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Customer Service</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Track Your Order</a></li>
+                        <li><a href="#">Returns & Refunds</a></li>
+                        <li><a href="#">Shipping Info</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Shopping Street</li>
+                        <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-envelope"></i> support@passkart.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 PassKart. All rights reserved. | Shop Smart, Live Better</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/scripts/index/header.js"></script>
+    <script src="/scripts/index/main.js"></script>
+    <script>
+        // Loading Animation
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loadingOverlay = document.getElementById('loading-overlay');
+                loadingOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 500);
+            }, 1000);
+        });
+
+        // FAQ Toggle
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentElement;
+                item.classList.toggle('active');
+
+                // Close other FAQ items
+                document.querySelectorAll('.faq-item').forEach(otherItem => {
+                    if (otherItem !== item && otherItem.classList.contains('active')) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        // Contact Form Submission
+        const contactForm = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+            // Simulate API call
+            setTimeout(() => {
+                // Show success message
+                alert('Thank you for your message! We will get back to you within 24 hours.');
+
+                // Reset form
+                contactForm.reset();
+
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+
+                // Show notification
+                const notification = document.createElement('div');
+                notification.className = 'notification success';
+                notification.innerHTML = `
+                    <i class="fas fa-check-circle"></i>
+                    <span>Message sent successfully! We'll get back to you soon.</span>
+                `;
+                document.body.appendChild(notification);
+
+                // Auto remove notification
+                setTimeout(() => {
+                    notification.style.animation = 'slideInRight 0.3s ease-out reverse';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }, 5000);
+            }, 1500);
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for scroll animations
+        document.querySelectorAll('.info-card, .faq-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+
+</html>
