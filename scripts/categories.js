@@ -4,7 +4,7 @@ class CategoriesManager {
         this.categories = []
         this.products = []
         this.activeCategory = "all"
-        this.apiBaseUrl = "https://dummyjson.com/products?limit=100"
+        this.apiBaseUrl = "https://dummyjson.com/products?limit=1000"
         this.searchQuery = ""
 
         this.init()
@@ -16,6 +16,7 @@ class CategoriesManager {
         if (window.cartManager) window.cartManager.updateCartBadge()
         if (window.wishlistManager) window.wishlistManager.updateWishlistBadge()
         this.setupRealTimeListeners()
+        if (window.authManager) window.authManager.updateUI()
     }
 
     setupRealTimeListeners() {
@@ -50,13 +51,7 @@ class CategoriesManager {
 
     bindEvents() {
         // Category tabs
-        const categoryTabs = document.querySelectorAll(".category-tab")
-        categoryTabs.forEach((tab) => {
-            tab.addEventListener("click", () => {
-                const category = tab.getAttribute("data-category")
-                this.setActiveCategory(category)
-            })
-        })
+        // Removed Category tabs event listeners as they were removed from HTML
 
         const searchBtn = document.getElementById("searchBtn")
         const searchInput = document.getElementById("searchInput")
@@ -218,8 +213,9 @@ class CategoriesManager {
                             <span>${category.rating.toFixed(1)}</span>
                         </div>
                     </div>
+                    <!-- Updated button icon and text for consistency -->
                     <button class="btn-view-category" onclick="categoriesManager.viewCategory('${category.name}')">
-                        <i class="fas fa-eye"></i> View Category
+                        <i class="fas fa-arrow-right"></i> Shop ${category.displayName}
                     </button>
                 </div>
             </div>

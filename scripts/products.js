@@ -6,7 +6,7 @@ class ProductManager {
         this.currentSort = "featured"
         this.totalProducts = 0
         this.isLoading = false
-        this.apiBaseUrl = "https://dummyjson.com/products?limit=100"
+        this.apiBaseUrl = "https://dummyjson.com/products?limit=1000"
         this.searchQuery = ""
 
         this.init()
@@ -88,14 +88,20 @@ class ProductManager {
         if (searchBtn && searchInput) {
             searchBtn.addEventListener("click", () => this.performSearch())
 
-            const debounceFn = window.utils && window.utils.debounce ? window.utils.debounce((fn) => fn, 500) : (fn) => fn
+            const debounce = (func, delay) => {
+                let timeout
+                return (...args) => {
+                    clearTimeout(timeout)
+                    timeout = setTimeout(() => func.apply(this, args), delay)
+                }
+            }
 
-            searchInput.addEventListener(
-                "input",
-                debounceFn(() => {
-                    this.performSearch()
-                }),
-            )
+            const handleSearch = debounce(() => {
+                this.performSearch()
+            }, 300)
+
+            searchInput.addEventListener("input", handleSearch)
+
             searchInput.addEventListener("keypress", (e) => {
                 if (e.key === "Enter") this.performSearch()
             })
@@ -135,7 +141,16 @@ class ProductManager {
                 priceINR: convertPrice(product.price || 0),
                 originalPriceINR: convertPrice(Math.round((product.price || 0) * 1.2 * 100) / 100),
                 image: product.thumbnail || (product.images && product.images[0]) || "/placeholder.svg",
-                category: product.category || "uncategorized",
+                category:
+                    product.category === "smartphones" || product.category === "laptops"
+                        ? "electronics"
+                        : product.category === "womens-jewellery"
+                            ? "jewelery"
+                            : product.category === "mens-shirts" || product.category === "mens-shoes"
+                                ? "men's clothing"
+                                : product.category === "womens-dresses" || product.category === "womens-shoes"
+                                    ? "women's clothing"
+                                    : product.category || "uncategorized",
                 rating: {
                     rate: product.rating || Math.random() * 2 + 3,
                     count: Math.floor(Math.random() * 1000) + 100,

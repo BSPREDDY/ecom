@@ -129,28 +129,11 @@ document.addEventListener("DOMContentLoaded", () => {
         })
     }
 
-    // View Sale button scroll to products (only on home page)
+    // View Sale button redirect to sale.html (only on home page)
     if (viewSaleBtn && (currentPage === "index.html" || currentPage === "")) {
         viewSaleBtn.addEventListener("click", (e) => {
             e.preventDefault()
-            document.getElementById("products").scrollIntoView({
-                behavior: "smooth",
-            })
-
-            // Update active nav
-            document.querySelectorAll(".nav-link, .mobile-nav-link").forEach((link) => {
-                link.classList.remove("active")
-                if (link.getAttribute("href") === "#products") {
-                    link.classList.add("active")
-                }
-            })
-
-            // Set sale filter if product manager exists
-            if (window.productManager) {
-                window.productManager.currentCategory = "all"
-                window.productManager.filterProducts()
-                window.productManager.renderProducts()
-            }
+            window.location.href = "sale.html"
         })
     }
 

@@ -62,27 +62,21 @@
                         </button>
                     </div>
 
-                    <!-- Wishlist Icon -->
-                    <div class="wishlist-container">
-                        <a href="wishlist.html" class="cart-icon" id="wishlistIcon" title="Wishlist">
-                            <i class="fas fa-heart"></i>
-                            <span class="cart-badge" id="wishlistBadge" style="display: none;">0</span>
-                        </a>
-                    </div>
-
-                    <!-- Cart Icon -->
-                    <div class="cart-container">
-                        <a href="cart.html" class="cart-icon" id="cartIcon" title="Shopping Cart">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span class="cart-badge" id="cartBadge">0</span>
-                        </a>
-                    </div>
-
                     <!-- User Account -->
-                    <div class="user-account">
-                        <a href="#" class="user-icon">
+                    <div class="user-account" id="userAccountDropdown">
+                        <a href="#" class="user-icon" id="userIconBtn">
                             <i class="fas fa-user"></i>
                         </a>
+                        <div class="user-dropdown" id="userDropdown" style="display: none;">
+                            <div id="userLoggedIn" style="display: none;">
+                                <div class="user-email" id="userEmail"></div>
+                                <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            </div>
+                            <div id="userLoggedOut">
+                                <a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a>
+                                <a href="signup.html"><i class="fas fa-user-plus"></i> Sign Up</a>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Hamburger Menu for Mobile -->
@@ -160,7 +154,7 @@
     </section>
 
     <!-- Sale Categories -->
-    <section class="sale-categories">
+    <section class="sale-categories" style="display: none;">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Shop by Sale Categories</h2>
@@ -174,7 +168,7 @@
     </section>
 
     <!-- Flash Sale Section -->
-    <section class="flash-sale">
+    <section class="flash-sale" id="flash-sale">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">⚡ FLASH SALE ⚡</h2>
@@ -255,91 +249,6 @@
         </div>
     </section>
 
-    <!-- Deal of the Day -->
-    <section class="deal-of-day">
-        <div class="container">
-            <div class="deal-content">
-                <div class="deal-image">
-                    <div class="deal-badge">DEAL OF THE DAY</div>
-                    <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80"
-                        alt="Deal of the Day" id="dealImage">
-                </div>
-                <div class="deal-info">
-                    <h2 id="dealTitle">Premium Smart Watch</h2>
-                    <p class="deal-description" id="dealDescription">
-                        Get our best-selling smartwatch with 60% off! Limited stock available.
-                        Features include heart rate monitoring, sleep tracking, and 7-day battery life.
-                    </p>
-
-                    <div class="deal-price">
-                        <div class="deal-current-price" id="dealCurrentPrice">$199.99</div>
-                        <div class="deal-original-price" id="dealOriginalPrice">$499.99</div>
-                    </div>
-
-                    <div class="deal-timer">
-                        <div class="flash-timer" id="dealTimer">
-                            <div class="flash-timer-item">
-                                <div class="flash-timer-value" id="dealHours">08</div>
-                                <div class="flash-timer-label">Hours</div>
-                            </div>
-                            <div class="flash-timer-item">
-                                <div class="flash-timer-value" id="dealMinutes">30</div>
-                                <div class="flash-timer-label">Minutes</div>
-                            </div>
-                            <div class="flash-timer-item">
-                                <div class="flash-timer-value" id="dealSeconds">15</div>
-                                <div class="flash-timer-label">Seconds</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Progress Bar -->
-                    <div class="sold-progress">
-                        <div class="progress-label">
-                            <span>Sold: <span id="dealSold">42</span> items</span>
-                            <span>Left: <span id="dealLeft">18</span> items</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="dealProgress" style="width: 70%"></div>
-                        </div>
-                    </div>
-
-                    <button class="btn btn-primary" id="buyDealBtn" style="padding: 15px 40px; font-size: 18px;">
-                        <i class="fas fa-bolt"></i> GRAB THIS DEAL NOW
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Sale Banner -->
-    <section class="sale-banner">
-        <div class="container">
-            <div class="sale-banner-content">
-                <h2>EXTRA 15% OFF</h2>
-                <p>Use code: <strong>MEGASALE15</strong> at checkout. Valid on all sale items. Limited time offer!</p>
-                <button class="btn" id="applyCouponBtn">
-                    <i class="fas fa-ticket-alt"></i> Copy Coupon Code
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Sale Products Section -->
-    <section class="sale-products-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">All Sale Products</h2>
-                <p class="section-subtitle">Browse through our complete sale collection</p>
-            </div>
-
-            <!-- Products Grid -->
-            <div class="products-grid" id="allSaleProductsGrid">
-                <!-- All sale products will be dynamically inserted -->
-            </div>
-        </div>
-    </section>
-
     <!-- Cart Sidebar -->
     <div class="cart-sidebar" id="cartSidebar">
         <div class="cart-header">
@@ -372,6 +281,7 @@
     <!-- JavaScript Files -->
     <script src="firebase-config.js"></script>
     <script src="scripts/utils.js"></script>
+    <script src="components/auth.js"></script> <!-- Added auth.js to handle user dropdown logic -->
     <script src="scripts/header-footer.js"></script>
     <script src="scripts/main.js"></script>
     <script src="scripts/sale.js"></script>

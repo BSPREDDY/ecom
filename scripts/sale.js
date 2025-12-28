@@ -8,7 +8,7 @@ class SaleManager {
         this.productsPerPage = 8
         this.totalSaleProducts = 0
         this.isLoading = false
-        this.apiBaseUrl = "https://fakestoreapi.com/products"
+        this.apiBaseUrl = "https://dummyjson.com/products?limit=1000"
         this.cart = JSON.parse(localStorage.getItem("cart")) || []
 
         // Sale end date (3 days from now)
@@ -19,20 +19,22 @@ class SaleManager {
         this.flashSaleEndDate = new Date()
         this.flashSaleEndDate.setHours(this.flashSaleEndDate.getHours() + 12)
 
-        // Deal of the day end date (8 hours from now)
-        this.dealEndDate = new Date()
-        this.dealEndDate.setHours(this.dealEndDate.getHours() + 8)
-
         this.init()
     }
 
     async init() {
         this.bindEvents()
         await this.loadSaleProducts()
-        this.updateCartBadge()
+
+        if (window.cartManager) {
+            window.cartManager.updateCartBadge()
+        } else {
+            this.updateCartBadge()
+        }
+
         this.updateSaleStats()
         this.startTimers()
-        this.loadSaleCategories()
+        // this.loadSaleCategories() // Removed
         this.setupDealOfTheDay()
     }
 
@@ -70,12 +72,6 @@ class SaleManager {
         const retryButton = document.getElementById("retryButton")
         if (retryButton) {
             retryButton.addEventListener("click", () => this.loadSaleProducts())
-        }
-
-        // Load more button
-        const loadMoreBtn = document.getElementById("loadMoreBtn")
-        if (loadMoreBtn) {
-            loadMoreBtn.addEventListener("click", () => this.loadMoreProducts())
         }
 
         // Cart functionality
@@ -155,7 +151,23 @@ class SaleManager {
                 throw new Error(`HTTP error! status: ${response.status}`)
             }
 
-            const products = await response.json()
+            const data = await response.json()
+            let products = []
+
+            if (Array.isArray(data)) {
+                // Direct array from fakestoreapi
+                products = data
+            } else if (data.products && Array.isArray(data.products)) {
+                // Object with products array from dummyjson
+                products = data.products
+            } else {
+                console.error("[v0] Unexpected API response format:", data)
+                throw new Error("Invalid products data format received from API")
+            }
+
+            if (products.length === 0) {
+                throw new Error("No products received from API")
+            }
 
             // Convert products to sale products with discounts
             this.saleProducts = products.map((product) => {
@@ -308,25 +320,19 @@ class SaleManager {
     }
 
     filterProducts() {
-        switch (this.currentFilter) {
-            case "50":
-                this.filteredProducts = this.saleProducts.filter((product) => product.discount >= 50)
-                break
-            case "30":
-                this.filteredProducts = this.saleProducts.filter((product) => product.discount >= 30 && product.discount < 50)
-                break
-            case "clearance":
-                this.filteredProducts = this.saleProducts.filter((product) => product.isClearance)
-                break
-            case "all":
-            default:
-                this.filteredProducts = [...this.saleProducts]
-                break
-        }
+        const discount = this.currentFilter
 
-        // Sort by discount (highest first)
-        this.filteredProducts.sort((a, b) => b.discount - a.discount)
-        this.currentPage = 1
+        if (discount === "all") {
+            this.filteredProducts = [...this.saleProducts]
+        } else if (discount === "clearance") {
+            this.filteredProducts = this.saleProducts.filter((product) => product.isClearance)
+        } else if (discount === "50") {
+            this.filteredProducts = this.saleProducts.filter((product) => product.discount >= 50)
+        } else if (discount === "30") {
+            this.filteredProducts = this.saleProducts.filter((product) => product.discount >= 30)
+        } else {
+            this.filteredProducts = [...this.saleProducts]
+        }
     }
 
     setActiveFilter(filter) {
@@ -352,158 +358,99 @@ class SaleManager {
     }
 
     renderSaleProducts() {
-        const productsToDisplay = this.getProductsToDisplay()
-        const saleProductsGrid = document.getElementById("saleProductsGrid")
-        const allSaleProductsGrid = document.getElementById("allSaleProductsGrid")
+        const grid = document.getElementById("saleProductsGrid")
+        if (!grid) return
 
-        if (!saleProductsGrid && !allSaleProductsGrid) return
+        const productsHTML = this.filteredProducts
+            .map((product) => {
+                const discountAmount = product.originalPriceINR - product.salePriceINR
+                const progressPercentage = Math.min((product.itemsSold / (product.itemsSold + product.itemsLeft)) * 100, 100)
 
-        const formatPrice =
-            window.utils && window.utils.formatINR ? window.utils.formatINR : (price) => `₹${price.toFixed(2)}`
-        const generateStars =
-            window.utils && window.utils.generateStarRating
-                ? window.utils.generateStarRating
-                : (rating) => {
-                    return `<i class="fas fa-star"></i>`.repeat(Math.floor(rating))
-                }
-
-        const productHTML = productsToDisplay
-            .map(
-                (product, index) => `
-            <div class="product-card sale-product-card" style="animation-delay: ${index * 0.1}s; cursor: pointer;" onclick="window.location.href='product.html?id=${product.id}'">
-                ${product.isFlashSale ? '<div class="category-badge" style="background: #ff4757;">⚡ FLASH SALE</div>' : ""}
-                <div class="product-image-container">
-                    <img src="${product.image}" alt="${product.title}" class="product-image" loading="lazy" 
-                         onerror="this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80'">
-                </div>
-                <div class="product-details">
-                    <div class="product-category">
-                        <i class="fas fa-tag"></i> ${product.category}
-                    </div>
-                    <h3 class="product-title">${product.title}</h3>
-                    <p class="product-description">${product.description.substring(0, 100)}...</p>
-                    
-                    <div class="sale-price">
-                        <span class="product-price">${formatPrice(product.salePriceINR)}</span>
-                        <span class="original-price">${formatPrice(product.originalPriceINR)}</span>
-                        <span class="discount-percent">-${product.discount}%</span>
-                    </div>
-                    
-                    <div class="product-rating">
-                        <span class="rating-stars">
-                            ${generateStars(product.rating.rate)}
-                        </span>
-                        <span class="rating-count">(${product.rating.count})</span>
-                    </div>
-                    
-                    ${product.itemsLeft < 20
-                        ? `
-                    <div class="sold-progress">
-                        <div class="progress-label">
-                            <span>Sold: ${product.itemsSold}</span>
-                            <span>Left: ${product.itemsLeft}</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${product.soldPercentage}%"></div>
-                        </div>
-                    </div>
-                    `
+                return `
+          <div class="product-card sale-product-card" data-product-id="${product.id}">
+            <div class="product-image-container" style="position: relative;">
+              ${product.thumbnail ? `<img src="${product.thumbnail}" alt="${product.title}" class="product-image">` : '<div class="placeholder-image">No Image</div>'}
+              ${product.discount >= 50 ? '<div class="hot-deal-badge"><i class="fas fa-fire"></i> HOT DEAL</div>' : ""}
+              ${product.isClearance
+                        ? '<div class="clearance-badge"><i class="fas fa-exclamation-circle"></i> CLEARANCE</div>'
                         : ""
                     }
-                    
-                    <div class="product-actions">
-                        <button class="btn-add-to-cart" onclick="event.stopPropagation(); saleManager.addToCart(${product.id})">
-                            <i class="fas fa-shopping-cart"></i> Add to Cart
-                        </button>
-                        <button class="btn-wishlist" onclick="event.stopPropagation(); saleManager.toggleWishlist(${product.id})">
-                            <i class="far fa-heart"></i>
-                        </button>
-                    </div>
-                </div>
+              <div class="discount-badge">${product.discount}% OFF</div>
             </div>
-        `,
-            )
+            <div class="product-info">
+              <div class="product-category">${product.category || "General"}</div>
+              <h3 class="product-title">${product.title}</h3>
+              <div class="product-rating">
+                ${'<i class="fas fa-star"></i>'.repeat(Math.floor(product.rating.rate))}
+                ${product.rating.rate % 1 >= 0.5 ? '<i class="fas fa-star-half-alt"></i>' : ""}
+                <span class="rating-count">(${product.rating.count})</span>
+              </div>
+
+              <div class="product-prices">
+                <div class="sale-price">₹${product.salePriceINR.toLocaleString("en-IN")}</div>
+                <div class="original-price">₹${product.originalPriceINR.toLocaleString("en-IN")}</div>
+              </div>
+
+              <div class="sale-progress">
+                <div class="progress-label">
+                  <span>Sold: ${product.itemsSold} / ${product.itemsSold + product.itemsLeft}</span>
+                  <span>Left: ${product.itemsLeft}</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${progressPercentage}%"></div>
+                </div>
+              </div>
+
+              <button class="btn-add-to-cart" data-product-id="${product.id}">
+                <i class="fas fa-shopping-cart"></i>
+                Add to Cart
+              </button>
+
+              <div class="product-actions-bottom">
+                <button class="btn-add-wishlist" data-product-id="${product.id}" title="Add to Wishlist">
+                  <i class="far fa-heart"></i> Add to Wishlist
+                </button>
+              </div>
+            </div>
+          </div>
+        `
+            })
             .join("")
 
-        if (saleProductsGrid) {
-            saleProductsGrid.innerHTML = productHTML
-        }
+        grid.innerHTML = productsHTML
 
-        if (allSaleProductsGrid) {
-            allSaleProductsGrid.innerHTML = productHTML
-        }
+        this.bindProductCardClicks()
+        this.bindWishlistButtons()
+        this.bindAddToCartButtons()
+    }
 
-        // Show/hide load more button
-        const hasMoreProducts = this.filteredProducts.length > productsToDisplay.length
-        const viewAllContainer = document.getElementById("viewAllContainer")
-        if (viewAllContainer) {
-            viewAllContainer.style.display = hasMoreProducts ? "block" : "none"
-        }
-
-        // Update load more button text
-        const remaining = this.filteredProducts.length - productsToDisplay.length
-        const loadMoreBtn = document.getElementById("loadMoreBtn")
-        if (loadMoreBtn) {
-            const btnText = loadMoreBtn.querySelector(".btn-text")
-            if (btnText) {
-                btnText.textContent = `Load More Sale Items (${remaining} remaining)`
-            }
-        }
+    bindAddToCartButtons() {
+        const addToCartButtons = document.querySelectorAll(".btn-add-to-cart")
+        addToCartButtons.forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation()
+                const productId = btn.getAttribute("data-product-id")
+                if (productId) {
+                    this.addToCart(productId)
+                }
+            })
+        })
     }
 
     loadMoreProducts() {
-        if (this.isLoading) return
-
-        this.currentPage++
-        const button = document.getElementById("loadMoreBtn")
-        const buttonText = button.querySelector(".btn-text")
-        const loadingDots = button.querySelector(".loading-dots")
-
-        // Show loading state
-        button.disabled = true
-        buttonText.style.display = "none"
-        loadingDots.style.display = "inline-flex"
-
-        // Simulate network delay
-        setTimeout(() => {
-            this.renderSaleProducts()
-            this.updateProductsCount()
-
-            // Hide loading state
-            button.disabled = false
-            buttonText.style.display = "inline"
-            loadingDots.style.display = "none"
-
-            // Scroll to newly loaded products
-            const newProducts = document.querySelector(".products-grid").lastElementChild
-            if (newProducts) {
-                newProducts.scrollIntoView({ behavior: "smooth", block: "nearest" })
-            }
-        }, 800)
+        return
     }
 
     updateFilterCounts() {
         const allCount = this.saleProducts.length
         const discount50Count = this.saleProducts.filter((p) => p.discount >= 50).length
-        const discount30Count = this.saleProducts.filter((p) => p.discount >= 30 && p.discount < 50).length
+        const discount30Count = this.saleProducts.filter((p) => p.discount >= 30).length
         const clearanceCount = this.saleProducts.filter((p) => p.isClearance).length
 
         document.getElementById("allCount").textContent = allCount
         document.getElementById("discount50Count").textContent = discount50Count
         document.getElementById("discount30Count").textContent = discount30Count
         document.getElementById("clearanceCount").textContent = clearanceCount
-    }
-
-    updateSaleStats() {
-        if (this.saleProducts.length === 0) return
-
-        const totalProducts = this.saleProducts.length
-        const avgDiscount = Math.round(this.saleProducts.reduce((sum, p) => sum + p.discount, 0) / totalProducts)
-        const itemsSold = this.saleProducts.reduce((sum, p) => sum + p.itemsSold, 0)
-
-        document.getElementById("totalProducts").textContent = totalProducts
-        document.getElementById("avgDiscount").textContent = `${avgDiscount}%`
-        document.getElementById("itemsSold").textContent = itemsSold.toLocaleString()
     }
 
     startTimers() {
@@ -515,9 +462,7 @@ class SaleManager {
         this.updateFlashSaleTimer()
         setInterval(() => this.updateFlashSaleTimer(), 1000)
 
-        // Deal of the day countdown
-        this.updateDealTimer()
-        setInterval(() => this.updateDealTimer(), 1000)
+        // Deal of the day countdown - REMOVED
     }
 
     updateCountdown() {
@@ -563,107 +508,34 @@ class SaleManager {
     }
 
     updateDealTimer() {
-        const now = new Date().getTime()
-        const distance = this.dealEndDate - now
-
-        if (distance < 0) {
-            // Reset deal for another 8 hours
-            this.dealEndDate = new Date()
-            this.dealEndDate.setHours(this.dealEndDate.getHours() + 8)
-            this.setupDealOfTheDay()
-            return
-        }
-
-        const hours = Math.floor(distance / (1000 * 60 * 60))
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000)
-
-        document.getElementById("dealHours").textContent = hours.toString().padStart(2, "0")
-        document.getElementById("dealMinutes").textContent = minutes.toString().padStart(2, "0")
-        document.getElementById("dealSeconds").textContent = seconds.toString().padStart(2, "0")
+        // This method is no longer called
+        return
     }
 
     loadSaleCategories() {
-        const categoriesGrid = document.getElementById("saleCategoriesGrid")
-        if (!categoriesGrid) return
-
-        const categories = [
-            {
-                name: "electronics",
-                title: "Electronics",
-                description: "Up to 70% off on smartphones, laptops, headphones, and gadgets.",
-                discount: "60% OFF",
-                count: this.saleProducts.filter((p) => p.category === "electronics").length,
-                image: "https://images.unsplash.com/photo-1498049794561-763728e1935b?w=600&h=400&fit=crop",
-            },
-            {
-                name: "men's clothing",
-                title: "Men's Fashion",
-                description: "Massive discounts on shirts, pants, shoes, and accessories.",
-                discount: "55% OFF",
-                count: this.saleProducts.filter((p) => p.category === "men's clothing").length,
-                image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=400&fit=crop",
-            },
-            {
-                name: "women's clothing",
-                title: "Women's Fashion",
-                description: "Beautiful dresses, handbags, and accessories at clearance prices.",
-                discount: "65% OFF",
-                count: this.saleProducts.filter((p) => p.category === "women's clothing").length,
-                image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&h=400&fit=crop",
-            },
-            {
-                name: "jewelery",
-                title: "Jewelry",
-                description: "Elegant jewelry pieces with special sale prices.",
-                discount: "50% OFF",
-                count: this.saleProducts.filter((p) => p.category === "jewelery").length,
-                image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&h=400&fit=crop",
-            },
-        ]
-
-        categoriesGrid.innerHTML = categories
-            .map(
-                (category) => `
-            <div class="sale-category-card">
-                <div class="category-badge">${category.discount}</div>
-                <div class="sale-category-image">
-                    <img src="${category.image}" alt="${category.title}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80'">
-                </div>
-                <div class="sale-category-content">
-                    <h3 class="sale-category-title">${category.title}</h3>
-                    <p class="sale-category-description">${category.description}</p>
-                    <div class="sale-category-stats">
-                        <span class="discount-badge-large">${category.discount}</span>
-                        <span class="products-count">${category.count} Items</span>
-                    </div>
-                    <button class="btn-view-sale" onclick="saleManager.filterByCategory('${category.name}')">
-                        <i class="fas fa-arrow-right"></i> Shop ${category.title}
-                    </button>
-                </div>
-            </div>
-        `,
-            )
-            .join("")
+        return
     }
 
     filterByCategory(category) {
-        // Filter products by category and show in sale section
-        this.filteredProducts = this.saleProducts.filter((product) => product.category === category)
-        this.currentFilter = "all"
-        this.currentPage = 1
+        // Normalize category for matching
+        const normalizedCategory = category.toLowerCase().trim()
 
-        // Update filter buttons
-        document.querySelectorAll(".sale-filter-btn").forEach((btn) => {
-            btn.classList.remove("active")
+        this.filteredProducts = this.saleProducts.filter((product) => {
+            const productCategory = (product.category || "").toLowerCase().trim()
+            return (
+                productCategory === normalizedCategory ||
+                productCategory.includes(normalizedCategory) ||
+                normalizedCategory.includes(productCategory)
+            )
         })
-        document.querySelector('.sale-filter-btn[data-discount="all"]').classList.add("active")
 
+        // Update active filter button
+        const filterButtons = document.querySelectorAll(".sale-filter-btn")
+        filterButtons.forEach((btn) => btn.classList.remove("active"))
+
+        // Render filtered products
         this.renderSaleProducts()
         this.updateProductsCount()
-
-        // Scroll to sale products section
-        document.getElementById("flash-sale").scrollIntoView({ behavior: "smooth" })
     }
 
     setupDealOfTheDay() {
@@ -767,23 +639,20 @@ class SaleManager {
 
         const quantity = fromQuickView ? Number.parseInt(document.getElementById("productQuantity")?.value || 1) : 1
 
-        const existingItem = this.cart.find((item) => item.id === productId)
-
-        if (existingItem) {
-            existingItem.quantity += quantity
+        if (window.cartManager) {
+            window.cartManager.addItem(product, quantity, {})
+            this.showCartFeedback(product.title, quantity)
         } else {
-            this.cart.push({
-                ...product,
-                quantity: quantity,
-            })
-        }
-
-        this.saveCart()
-        this.updateCartBadge()
-        this.showCartFeedback(product.title, quantity)
-
-        if (fromQuickView) {
-            // this.hideQuickView()
+            // Fallback to local cart logic
+            const existingItem = this.cart.find((item) => item.id === productId)
+            if (existingItem) {
+                existingItem.quantity += quantity
+            } else {
+                this.cart.push({ ...product, quantity })
+            }
+            this.saveCart()
+            this.updateCartBadge()
+            this.showCartFeedback(product.title, quantity)
         }
     }
 
@@ -791,7 +660,7 @@ class SaleManager {
         const product = this.saleProducts.find((p) => p.id === productId)
         if (!product) return
 
-        const wishlistButtons = document.querySelectorAll(`.btn-wishlist[onclick*="${productId}"]`)
+        const wishlistButtons = document.querySelectorAll(`.btn-add-wishlist[data-product-id="${productId}"]`)
 
         wishlistButtons.forEach((button) => {
             const icon = button.querySelector("i")
@@ -1052,6 +921,61 @@ class SaleManager {
         setTimeout(() => {
             if (notification.parentNode) notification.remove()
         }, 3000)
+    }
+
+    updateSaleStats() {
+        // Calculate total products
+        const totalProducts = this.saleProducts.length
+
+        // Calculate average discount
+        const totalDiscount = this.saleProducts.reduce((sum, product) => sum + product.discount, 0)
+        const avgDiscount = totalProducts > 0 ? Math.round(totalDiscount / totalProducts) : 0
+
+        // Calculate total items sold
+        const totalItemsSold = this.saleProducts.reduce((sum, product) => sum + product.itemsSold, 0)
+
+        // Update hero section stats
+        const totalProductsEl = document.getElementById("totalProducts")
+        const avgDiscountEl = document.getElementById("avgDiscount")
+        const itemsSoldEl = document.getElementById("itemsSold")
+
+        if (totalProductsEl) totalProductsEl.textContent = totalProducts
+        if (avgDiscountEl) avgDiscountEl.textContent = avgDiscount + "%"
+        if (itemsSoldEl) itemsSoldEl.textContent = totalItemsSold
+    }
+
+    bindProductCardClicks() {
+        const productCards = document.querySelectorAll(".sale-product-card")
+        productCards.forEach((card) => {
+            card.addEventListener("click", (e) => {
+                // Don't navigate if clicking action buttons
+                if (
+                    e.target.closest(".btn-add-to-cart") ||
+                    e.target.closest(".btn-quick-view") ||
+                    e.target.closest(".btn-add-wishlist") ||
+                    e.target.closest(".product-actions")
+                ) {
+                    return
+                }
+
+                // Get product ID from card and navigate to product detail page
+                const productId = card.getAttribute("data-product-id")
+                if (productId) {
+                    window.location.href = `product.html?id=${productId}`
+                }
+            })
+        })
+    }
+
+    bindWishlistButtons() {
+        const wishlistButtons = document.querySelectorAll(".btn-add-wishlist")
+        wishlistButtons.forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation()
+                const productId = btn.getAttribute("data-product-id")
+                this.toggleWishlist(productId)
+            })
+        })
     }
 }
 
