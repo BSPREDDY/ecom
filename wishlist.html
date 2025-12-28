@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist | StyleShop | Premium Fashion Store</title>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/products.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/wishlist.css">
+
+    <!-- External Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Firebase SDK - Updated to compat versions -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+</head>
+
+<body>
+    <!-- Header & Navigation -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html">
+                        <i class="fas fa-crown"></i>
+                        <span class="logo-text">Style<span class="logo-highlight">Shop</span></span>
+                    </a>
+                </div>
+
+                <nav class="desktop-nav">
+                    <ul class="nav-list">
+                        <li><a href="index.html" class="nav-link">Home</a></li>
+                        <li><a href="index.html#products" class="nav-link">Products</a></li>
+                        <li><a href="categories.html" class="nav-link">Categories</a></li>
+                        <li><a href="sale.html" class="nav-link">Sale</a></li>
+                        <li><a href="about.html" class="nav-link">About</a></li>
+                        <li><a href="contact.html" class="nav-link">Contact</a></li>
+                    </ul>
+                </nav>
+
+                <div class="header-right">
+                    <div class="search-container">
+                        <input type="text" class="search-input" placeholder="Search products..." id="searchInput">
+                        <button class="search-btn" id="searchBtn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+
+                    <!-- Fixed wishlist icon classes and structure -->
+                    <div class="wishlist-container">
+                        <a href="wishlist.html" class="wishlist-icon" id="wishlistIcon" title="Wishlist">
+                            <i class="fas fa-heart"></i>
+                            <span class="wishlist-badge" id="wishlistBadge" style="display: none;">0</span>
+                        </a>
+                    </div>
+
+                    <div class="cart-container">
+                        <a href="cart.html" class="cart-icon" id="cartIcon" title="Shopping Cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-badge" id="cartBadge">0</span>
+                        </a>
+                    </div>
+
+                    <div class="user-account">
+                        <a href="#" class="user-icon">
+                            <i class="fas fa-user"></i>
+                        </a>
+                    </div>
+
+                    <button class="hamburger-menu" id="hamburgerMenu">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+
+            <nav class="mobile-nav" id="mobileNav">
+                <ul class="mobile-nav-list">
+                    <li><a href="index.html" class="mobile-nav-link">Home</a></li>
+                    <li><a href="index.html#products" class="mobile-nav-link">Products</a></li>
+                    <li><a href="categories.html" class="mobile-nav-link">Categories</a></li>
+                    <li><a href="sale.html" class="mobile-nav-link">Sale</a></li>
+                    <li><a href="about.html" class="mobile-nav-link">About</a></li>
+                    <li><a href="contact.html" class="mobile-nav-link">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Wishlist Hero Section -->
+    <section class="wishlist-hero">
+        <div class="container">
+            <div class="wishlist-hero-content">
+                <h1><i class="fas fa-heart"></i> My Wishlist</h1>
+                <p>Your favorite products all in one place</p>
+                <div class="breadcrumb">
+                    <a href="index.html">Home</a>
+                    <span class="separator">/</span>
+                    <span>Wishlist</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Wishlist Content -->
+    <section class="wishlist-section">
+        <div class="container">
+            <div class="wishlist-header">
+                <h2><span id="wishlistCount">0 items</span> in your wishlist</h2>
+                <button class="btn btn-secondary" id="clearAllBtn">
+                    <i class="fas fa-trash"></i> Clear All
+                </button>
+            </div>
+
+            <!-- Empty Wishlist State -->
+            <div class="empty-wishlist" id="emptyWishlist">
+                <i class="fas fa-heart-broken"></i>
+                <h3>Your wishlist is empty</h3>
+                <p>Start adding products you love to your wishlist</p>
+                <a href="index.html#products" class="btn btn-primary">
+                    <i class="fas fa-shopping-bag"></i> Start Shopping
+                </a>
+            </div>
+
+            <!-- Wishlist Grid -->
+            <div class="products-grid" id="wishlistGrid">
+                <!-- Wishlist items will be dynamically inserted here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Placeholder -->
+    <div id="footerPlaceholder"></div>
+
+    <!-- JavaScript Files -->
+    <script src="firebase-config.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/header-footer.js"></script>
+    <script src="scripts/wishlist.js"></script>
+</body>
+
+</html>

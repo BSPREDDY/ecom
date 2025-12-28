@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | StyleShop</title>
+
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/checkout.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html">
+                        <i class="fas fa-crown"></i>
+                        <span class="logo-text">Style<span class="logo-highlight">Shop</span></span>
+                    </a>
+                </div>
+
+                <nav class="desktop-nav">
+                    <ul class="nav-list">
+                        <li><a href="index.html" class="nav-link">Home</a></li>
+                        <li><a href="index.html#products" class="nav-link">Products</a></li>
+                        <li><a href="categories.html" class="nav-link">Categories</a></li>
+                        <li><a href="sale.html" class="nav-link">Sale</a></li>
+                        <li><a href="about.html" class="nav-link">About</a></li>
+                        <li><a href="contact.html" class="nav-link">Contact</a></li>
+                    </ul>
+                </nav>
+
+                <div class="header-right">
+                    <div class="cart-container">
+                        <a href="cart.html" class="cart-icon" id="cartIcon">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-badge" id="cartBadge">0</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Checkout Page -->
+    <main class="checkout-page">
+        <div class="container">
+            <div class="breadcrumb-nav">
+                <div class="breadcrumb">
+                    <a href="index.html">Home</a>
+                    <span class="separator">/</span>
+                    <a href="cart.html">Cart</a>
+                    <span class="separator">/</span>
+                    <span class="current">Checkout</span>
+                </div>
+            </div>
+
+            <h1 class="page-title">Checkout</h1>
+
+            <div class="checkout-content">
+                <div class="checkout-form-section">
+                    <form id="checkoutForm">
+                        <!-- Contact Information -->
+                        <div class="checkout-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-user"></i> Contact Information
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="email">Email Address *</label>
+                                    <input type="email" id="email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">Phone Number *</label>
+                                    <input type="tel" id="phone" required placeholder="+91 XXXXX XXXXX">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Shipping Address -->
+                        <div class="checkout-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-shipping-fast"></i> Shipping Address
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group full-width">
+                                    <label for="fullName">Full Name *</label>
+                                    <input type="text" id="fullName" required>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label for="address">Street Address *</label>
+                                    <input type="text" id="address" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="city">City *</label>
+                                    <input type="text" id="city" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="state">State *</label>
+                                    <input type="text" id="state" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="pincode">PIN Code *</label>
+                                    <input type="text" id="pincode" required pattern="[0-9]{6}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="country">Country *</label>
+                                    <input type="text" id="country" value="India" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Method -->
+                        <div class="checkout-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-credit-card"></i> Payment Method
+                            </h3>
+                            <div class="payment-options">
+                                <label class="payment-option">
+                                    <input type="radio" name="payment" value="card" checked>
+                                    <div class="payment-content">
+                                        <i class="fas fa-credit-card"></i>
+                                        <span>Credit/Debit Card</span>
+                                    </div>
+                                </label>
+                                <label class="payment-option">
+                                    <input type="radio" name="payment" value="upi">
+                                    <div class="payment-content">
+                                        <i class="fas fa-mobile-alt"></i>
+                                        <span>UPI</span>
+                                    </div>
+                                </label>
+                                <label class="payment-option">
+                                    <input type="radio" name="payment" value="cod">
+                                    <div class="payment-content">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                        <span>Cash on Delivery</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="checkout-summary">
+                    <h3>Order Summary</h3>
+
+                    <div class="order-items" id="orderItems"></div>
+
+                    <div class="summary-divider"></div>
+
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span id="checkoutSubtotal">₹0.00</span>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span class="free-shipping">FREE</span>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Tax (18% GST)</span>
+                        <span id="checkoutTax">₹0.00</span>
+                    </div>
+
+                    <div class="summary-divider"></div>
+
+                    <div class="summary-row summary-total">
+                        <span>Total</span>
+                        <span id="checkoutTotal">₹0.00</span>
+                    </div>
+
+                    <button type="submit" form="checkoutForm" class="btn btn-primary btn-place-order">
+                        Place Order <i class="fas fa-check"></i>
+                    </button>
+
+                    <a href="cart.html" class="back-to-cart">
+                        <i class="fas fa-arrow-left"></i> Back to Cart
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Placeholder -->
+    <div id="footerPlaceholder"></div>
+
+    <!-- Correct script order with Firebase -->
+    <script src="firebase-config.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/header-footer.js"></script>
+    <script src="scripts/checkout.js"></script>
+</body>
+
+</html>

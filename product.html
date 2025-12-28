@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - StyleShop</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/products.css">
+    <!-- Moved inline styles to external CSS file -->
+    <link rel="stylesheet" href="styles/product-detail.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"></script>
+</head>
+
+<body>
+    <!-- Header & Navigation -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo -->
+                <div class="logo">
+                    <a href="index.html">
+                        <i class="fas fa-crown"></i>
+                        <span class="logo-text">Style<span class="logo-highlight">Shop</span></span>
+                    </a>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="desktop-nav">
+                    <ul class="nav-list">
+                        <li><a href="index.html" class="nav-link">Home</a></li>
+                        <li><a href="index.html#products" class="nav-link">Products</a></li>
+                        <li><a href="categories.html" class="nav-link">Categories</a></li>
+                        <li><a href="sale.html" class="nav-link">Sale</a></li>
+                        <li><a href="about.html" class="nav-link">About</a></li>
+                        <li><a href="contact.html" class="nav-link">Contact</a></li>
+                    </ul>
+                </nav>
+
+                <!-- Right Side Elements -->
+                <div class="header-right">
+                    <!-- Search Bar -->
+                    <div class="search-container">
+                        <input type="text" class="search-input" placeholder="Search products..." id="searchInput">
+                        <button class="search-btn" id="searchBtn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+
+                    <!-- Wishlist Icon -->
+                    <div class="wishlist-container">
+                        <a href="wishlist.html" class="cart-icon" id="wishlistIcon" title="Wishlist">
+                            <i class="fas fa-heart"></i>
+                            <span class="cart-badge" id="wishlistBadge" style="display: none;">0</span>
+                        </a>
+                    </div>
+
+                    <!-- Cart Icon -->
+                    <div class="cart-container">
+                        <a href="cart.html" class="cart-icon" id="cartIcon" title="Shopping Cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-badge" id="cartBadge">0</span>
+                        </a>
+                    </div>
+
+                    <!-- User Account -->
+                    <div class="user-account">
+                        <a href="#" class="user-icon">
+                            <i class="fas fa-user"></i>
+                        </a>
+                    </div>
+
+                    <!-- Hamburger Menu for Mobile -->
+                    <button class="hamburger-menu" id="hamburgerMenu">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <nav class="mobile-nav" id="mobileNav">
+                <ul class="mobile-nav-list">
+                    <li><a href="index.html" class="mobile-nav-link">Home</a></li>
+                    <li><a href="index.html#products" class="mobile-nav-link">Products</a></li>
+                    <li><a href="categories.html" class="mobile-nav-link">Categories</a></li>
+                    <li><a href="sale.html" class="mobile-nav-link">Sale</a></li>
+                    <li><a href="about.html" class="mobile-nav-link">About</a></li>
+                    <li><a href="contact.html" class="mobile-nav-link">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Product Detail Page -->
+    <main class="product-detail-page">
+        <div class="container">
+            <!-- Breadcrumb Navigation -->
+            <div class="breadcrumb-nav">
+                <div class="breadcrumb">
+                    <a href="index.html">Home</a>
+                    <span class="separator">/</span>
+                    <a href="index.html#products">Products</a>
+                    <span class="separator">/</span>
+                    <span class="current" id="breadcrumbProduct">Product Details</span>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div class="product-loading" id="productLoading">
+                <div class="loading-spinner"></div>
+                <p>Loading product details...</p>
+            </div>
+
+            <!-- Error State -->
+            <div class="product-error" id="productError" style="display: none;">
+                <i class="fas fa-exclamation-triangle"
+                    style="font-size: 60px; color: #ff4757; margin-bottom: 20px;"></i>
+                <h3>Product Not Found</h3>
+                <p>We couldn't find the product you're looking for.</p>
+                <a href="index.html#products" class="btn btn-primary" style="margin-top: 20px;">
+                    <i class="fas fa-arrow-left"></i> Back to Products
+                </a>
+            </div>
+
+            <!-- Product Detail Container -->
+            <div class="product-detail-container" id="productDetailContainer" style="display: none;">
+                <!-- Product Images Section -->
+                <div class="product-images-section">
+                    <div class="main-product-image" id="mainImageContainer">
+                        <img src="/placeholder.svg" alt="" id="mainProductImage">
+                        <div class="zoom-lens" id="zoomLens"></div>
+                        <div class="zoom-view" id="zoomView"></div>
+                    </div>
+
+                    <div class="image-thumbnails" id="imageThumbnails">
+                        <!-- Thumbnails will be dynamically inserted -->
+                    </div>
+
+                    <!-- Mobile Action Buttons -->
+                    <div class="product-actions-mobile" id="mobileActions">
+                        <button class="btn btn-primary btn-add-to-cart-large" id="mobileAddToCartBtn">
+                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                        </button>
+                        <button class="btn btn-secondary btn-buy-now-large" id="mobileBuyNowBtn">
+                            <i class="fas fa-bolt"></i> Buy Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product Info Section -->
+                <div class="product-info-section">
+                    <div class="product-category-badge" id="productCategory"></div>
+
+                    <h1 class="product-title" id="productTitle"></h1>
+
+                    <div class="product-rating-large">
+                        <div class="rating-stars-large" id="productRatingStars"></div>
+                        <span class="rating-count-large" id="productRatingCount"></span>
+                        <a href="#reviews" class="rating-link">Write a review</a>
+                    </div>
+
+                    <div class="product-price-section">
+                        <div class="current-price" id="currentPrice"></div>
+                        <div>
+                            <span class="original-price" id="originalPrice"></span>
+                            <span class="discount-percent-large" id="discountPercent" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <div class="product-description-full" id="productDescription"></div>
+
+                    <!-- Product Variations -->
+                    <div class="product-variations">
+                        <div class="color-variation" id="colorVariation" style="display: none;">
+                            <h3 class="variation-title">Color</h3>
+                            <div class="color-options" id="colorOptions">
+                                <!-- Color options will be dynamically inserted -->
+                            </div>
+                        </div>
+
+                        <div class="size-variation" id="sizeVariation" style="display: none;">
+                            <h3 class="variation-title">Size</h3>
+                            <div class="size-options" id="sizeOptions">
+                                <!-- Size options will be dynamically inserted -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quantity Selector -->
+                    <div class="quantity-section">
+                        <h3 class="variation-title">Quantity</h3>
+                        <div class="quantity-selector-large">
+                            <div class="quantity-controls">
+                                <button class="quantity-btn minus" id="quantityMinusBtn">-</button>
+                                <input type="number" class="quantity-input-large" value="1" min="1" max="10"
+                                    id="productQuantity">
+                                <button class="quantity-btn plus" id="quantityPlusBtn">+</button>
+                            </div>
+                            <div class="stock-status" id="stockStatus">In Stock</div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons" id="desktopActions">
+                        <button class="btn btn-primary btn-add-to-cart-large" id="addToCartBtn">
+                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                        </button>
+                        <button class="btn btn-secondary btn-buy-now-large" id="buyNowBtn">
+                            <i class="fas fa-bolt"></i> Buy Now
+                        </button>
+                        <button class="btn btn-wishlist-large" id="wishlistBtn">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+
+                    <!-- Product Meta -->
+                    <div class="product-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-truck"></i>
+                            <span>Free shipping on orders over $50</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>30-day return policy</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Secure payment</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-headset"></i>
+                            <span>24/7 customer support</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Tabs -->
+            <div class="product-tabs" id="productTabs" style="display: none;">
+                <div class="tabs-header">
+                    <button class="tab-btn active" data-tab="description">Description</button>
+                    <button class="tab-btn" data-tab="specifications">Specifications</button>
+                    <button class="tab-btn" data-tab="reviews">Reviews</button>
+                    <button class="tab-btn" data-tab="shipping">Shipping & Returns</button>
+                </div>
+
+                <div class="tab-content active" id="descriptionTab">
+                    <div class="product-description-full" id="fullDescription"></div>
+                </div>
+
+                <div class="tab-content" id="specificationsTab">
+                    <table class="specifications-table" id="specificationsTable">
+                        <!-- Specifications will be dynamically inserted -->
+                    </table>
+                </div>
+
+                <div class="tab-content" id="reviewsTab">
+                    <div class="reviews-container">
+                        <h3>Customer Reviews</h3>
+                        <div id="reviewsList">
+                            <!-- Reviews will be dynamically inserted -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="shippingTab">
+                    <div class="product-description-full">
+                        <h3>Shipping Information</h3>
+                        <p>We offer free standard shipping on all orders over $50. For orders under $50, a flat rate of
+                            $5.99 applies.</p>
+                        <ul style="margin: 20px 0; padding-left: 20px;">
+                            <li>Standard Shipping: 3-5 business days</li>
+                            <li>Express Shipping: 1-2 business days ($9.99)</li>
+                            <li>Overnight Shipping: Next business day ($19.99)</li>
+                        </ul>
+
+                        <h3>Return Policy</h3>
+                        <p>We offer a 30-day return policy for all items in original condition with tags attached.
+                            Return shipping is free for items that are defective or incorrect.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Products -->
+            <div class="related-products" id="relatedProducts" style="display: none;">
+                <div class="section-header">
+                    <h2 class="section-title">You May Also Like</h2>
+                    <p class="section-subtitle">Similar products you might be interested in</p>
+                </div>
+
+                <div class="related-products-grid" id="relatedProductsGrid">
+                    <!-- Related products will be dynamically inserted -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Your Shopping Cart</h3>
+            <button class="cart-close" id="cartClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="cart-body" id="cartBody">
+            <div class="empty-cart" id="emptyCart">
+                <i class="fas fa-shopping-cart"></i>
+                <p>Your cart is empty</p>
+                <button class="btn btn-primary" id="startShoppingBtn">Start Shopping</button>
+            </div>
+            <!-- Cart items will be dynamically inserted -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span class="total-amount" id="totalAmount">$0.00</span>
+            </div>
+            <button class="btn btn-checkout" id="checkoutBtn">Proceed to Checkout</button>
+        </div>
+    </div>
+    <div class="cart-overlay" id="cartOverlay"></div>
+
+    <!-- Footer Placeholder -->
+    <div id="footerPlaceholder"></div>
+
+    <!-- JavaScript Files -->
+    <script src="firebase-config.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/header-footer.js"></script>
+    <script src="scripts/main.js"></script>
+    <script src="scripts/product-detail.js"></script>
+</body>
+
+</html>
