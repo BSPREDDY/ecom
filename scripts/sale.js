@@ -401,14 +401,13 @@ class SaleManager {
                 </div>
               </div>
 
-              <button class="btn-add-to-cart" data-product-id="${product.id}">
-                <i class="fas fa-shopping-cart"></i>
-                Add to Cart
-              </button>
-
-              <div class="product-actions-bottom">
+              <div class="product-actions-wrapper">
+                <button class="btn-add-to-cart" data-product-id="${product.id}">
+                  <i class="fas fa-shopping-cart"></i>
+                  Add to Cart
+                </button>
                 <button class="btn-add-wishlist" data-product-id="${product.id}" title="Add to Wishlist">
-                  <i class="far fa-heart"></i> Add to Wishlist
+                  <i class="far fa-heart"></i>
                 </button>
               </div>
             </div>
