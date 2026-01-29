@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="description" content="Browse All Products - EshopHub E-commerce Platform">
+    <title>All Products - EshopHub</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/modern.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CORRECTED: Firebase SDK (Compat Version) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+        <div class="container-fluid px-3 px-md-4">
+            <a class="navbar-brand fw-bold fs-4" href="/">
+                <i class="bi bi-shop"></i> EshopHub
+            </a>
+
+            <!-- Search Bar -->
+            <div class="search-container d-none d-lg-flex flex-grow-1 mx-4">
+                <input type="text" class="form-control form-control-sm" id="searchInput"
+                    placeholder="Search products...">
+                <button class="btn btn-primary btn-sm" id="searchBtn">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="d-lg-none w-100 mt-3 mb-3">
+                    <input type="text" class="form-control form-control-sm mb-3" id="searchInputMobile"
+                        placeholder="Search products...">
+                </div>
+
+                <ul class="navbar-nav ms-auto gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-house"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/products.html">
+                            <i class="bi bi-bag"></i> Products
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button"
+                            data-bs-toggle="dropdown">
+                            <i class="bi bi-tag"></i> Categories
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" id="categoriesMenu">
+                            <li><a class="dropdown-item" href="/categories.html">All Categories</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/wishlist.html" id="wishlistLink">
+                            <i class="bi bi-heart"></i> Wishlist
+                            <span class="badge bg-danger" id="wishlistCount">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cart.html" id="cartLink">
+                            <i class="bi bi-cart"></i> Cart
+                            <span class="badge bg-warning text-dark" id="cartCount">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                            data-bs-toggle="dropdown">
+                            <i class="bi bi-person"></i> <span id="userName">Account</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li id="loginMenuItem"><a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                    data-bs-target="#loginModal"><i class="bi bi-box-arrow-in-right"></i> Login</a></li>
+                            <li id="registerMenuItem"><a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                    data-bs-target="#registerModal"><i class="bi bi-person-plus"></i> Register</a></li>
+                            <li id="profileMenuItem" style="display: none;"><a class="dropdown-item" href="#profile"><i
+                                        class="bi bi-person-circle"></i> Profile</a></li>
+                            <li id="ordersMenuItem" style="display: none;"><a class="dropdown-item" href="#orders"><i
+                                        class="bi bi-receipt"></i> My Orders</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li id="logoutMenuItem" style="display: none;"><a class="dropdown-item" href="#"
+                                    onclick="handleLogout()"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container-fluid py-5">
+        <div class="row g-4">
+            <!-- Sidebar Filters -->
+            <div class="col-lg-3">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">Filters</h5>
+
+                        <!-- Category Filter -->
+                        <div class="mb-4">
+                            <label class="form-label fw-600">Category</label>
+                            <select class="form-select" id="categoryFilter">
+                                <option value="">All Categories</option>
+                            </select>
+                        </div>
+
+                        <!-- Price Filter -->
+                        <div class="mb-4">
+                            <label class="form-label fw-600">Price Range</label>
+                            <input type="range" class="form-range" id="priceRange" min="0" max="1000" value="1000">
+                            <small class="text-muted">Up to $<span id="priceValue">1000</span></small>
+                        </div>
+
+                        <button class="btn btn-primary w-100" id="applyFilters">Apply Filters</button>
+                        <button class="btn btn-outline-secondary w-100 mt-2" id="resetFilters">Reset</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="col-lg-9">
+                <div class="row mb-4">
+                    <div class="col-12 d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0">All Products</h3>
+                        <select class="form-select w-auto" id="sortBy">
+                            <option value="">Sort By</option>
+                            <option value="popular">Most Popular</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="newest">Newest</option>
+                            <option value="rating">Top Rated</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Products Container -->
+                <div class="row g-3" id="productsContainer">
+                    <!-- Products will be loaded here -->
+                </div>
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation" class="mt-5">
+                    <ul class="pagination justify-content-center" id="pagination">
+                        <!-- Pagination will be rendered here -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMessage">Success</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Global Functions -->
+    <script>
+        // Global Toast Function
+        function showToast(message, type = 'success') {
+            const toastEl = document.getElementById('liveToast');
+            const toastMessage = document.getElementById('toastMessage');
+
+            if (toastEl && toastMessage) {
+                toastMessage.textContent = message;
+                toastEl.className = `toast align-items-center text-white bg-${type} border-0`;
+                try {
+                    const bsToast = new bootstrap.Toast(toastEl);
+                    bsToast.show();
+                } catch (e) {
+                    console.log(`[Toast] ${type}: ${message}`);
+                }
+            } else {
+                console.log(`[Toast] ${type}: ${message}`);
+            }
+        }
+        window.showToast = showToast;
+
+        // Global variables
+        window.cartItems = [];
+        window.wishlistItems = [];
+        window.allProducts = [];
+    </script>
+
+    <!-- App Scripts (Correct Order) -->
+    <!-- Firebase configuration (must be before auth) -->
+    <script src="/js/firebase-config.js"></script>
+    <!-- Authentication module -->
+    <script src="/js/auth.js"></script>
+    <!-- Load main app -->
+    <script src="/js/app.js"></script>
+    <!-- Then load supporting modules -->
+    <script src="/js/cart.js"></script>
+    <script src="/js/wishlist.js"></script>
+    <script src="/js/products.js"></script>
+
+    <script>
+        // Products page initialization
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('[v0] Products page loading');
+
+            loadCartFromStorage();
+            loadWishlistFromStorage();
+            updateCounters();
+            loadCategories();
+            setupFilters();
+
+            // Initialize products if function exists
+            if (typeof initializeProductsPage === 'function') {
+                initializeProductsPage();
+            }
+        });
+
+        function loadCartFromStorage() {
+            try {
+                window.cartItems = JSON.parse(localStorage.getItem('eshophub-cart')) || [];
+            } catch (e) {
+                window.cartItems = [];
+            }
+        }
+
+        function loadWishlistFromStorage() {
+            try {
+                window.wishlistItems = JSON.parse(localStorage.getItem('eshophub-wishlist')) || [];
+            } catch (e) {
+                window.wishlistItems = [];
+            }
+        }
+
+        function updateCounters() {
+            const cartCount = document.getElementById('cartCount');
+            const wishlistCount = document.getElementById('wishlistCount');
+
+            if (cartCount) {
+                cartCount.textContent = (window.cartItems || []).reduce((sum, item) => sum + (item.quantity || 1), 0);
+            }
+            if (wishlistCount) {
+                wishlistCount.textContent = (window.wishlistItems || []).length;
+            }
+        }
+
+        async function loadCategories() {
+            try {
+                const response = await fetch('https://dummyjson.com/products/categories');
+                const categories = await response.json();
+                const menu = document.getElementById('categoriesMenu');
+                const filter = document.getElementById('categoryFilter');
+
+                categories.slice(0, 10).forEach(cat => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<a class="dropdown-item" href="/products.html?category=${cat.slug}">${cat.name}</a>`;
+                    menu.appendChild(li);
+
+                    if (filter) {
+                        const option = document.createElement('option');
+                        option.value = cat.slug;
+                        option.textContent = cat.name;
+                        filter.appendChild(option);
+                    }
+                });
+
+                const params = new URLSearchParams(window.location.search);
+                const categoryParam = params.get('category');
+                if (categoryParam && filter) {
+                    filter.value = categoryParam;
+                    if (typeof applyFilters === 'function') {
+                        applyFilters();
+                    }
+                }
+            } catch (error) {
+                console.error('[v0] Error loading categories:', error);
+            }
+        }
+
+        function setupFilters() {
+            const categoryFilter = document.getElementById('categoryFilter');
+            const priceRange = document.getElementById('priceRange');
+            const priceValue = document.getElementById('priceValue');
+            const applyBtn = document.getElementById('applyFilters');
+            const resetBtn = document.getElementById('resetFilters');
+            const sortBy = document.getElementById('sortBy');
+
+            if (priceRange) {
+                priceRange.addEventListener('input', (e) => {
+                    priceValue.textContent = e.target.value;
+                });
+            }
+
+            if (applyBtn) {
+                applyBtn.addEventListener('click', () => {
+                    if (typeof applyFilters === 'function') {
+                        applyFilters();
+                    }
+                });
+            }
+
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                    if (categoryFilter) categoryFilter.value = '';
+                    if (priceRange) priceRange.value = 1000;
+                    if (priceValue) priceValue.textContent = '1000';
+                    if (typeof applyFilters === 'function') {
+                        applyFilters();
+                    }
+                });
+            }
+
+            if (sortBy) {
+                sortBy.addEventListener('change', () => {
+                    if (typeof applyFilters === 'function') {
+                        applyFilters();
+                    }
+                });
+            }
+        }
+    </script>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-box-arrow-in-right"></i> Login to Your Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="loginEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                        </div>
+                        <div id="loginError" class="alert alert-danger" style="display: none;"></div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <p class="w-100 text-center text-muted mb-0">
+                        Don't have an account?
+                        <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal"
+                            data-bs-target="#registerModal">Register here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-plus"></i> Create Your Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="registerName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="registerEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" id="registerPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="registerConfirmPassword" required>
+                        </div>
+                        <div id="registerError" class="alert alert-danger" style="display: none;"></div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-person-plus"></i> Create Account
+                        </button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <p class="w-100 text-center text-muted mb-0">
+                        Already have an account?
+                        <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#loginModal">Login
+                            here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

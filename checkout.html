@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="description" content="Checkout - EshopHub E-commerce Platform">
+    <title>Checkout - EshopHub</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/modern.css">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+        <div class="container-fluid px-3 px-md-4">
+            <a class="navbar-brand fw-bold fs-4" href="/">
+                <i class="bi bi-shop"></i> EshopHub
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-house"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#products">
+                            <i class="bi bi-bag"></i> Products
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button"
+                            data-bs-toggle="dropdown">
+                            <i class="bi bi-tag"></i> Categories
+                        </a>
+                        <ul class="dropdown-menu" id="categoriesMenu">
+                            <li><a class="dropdown-item" href="/">All Categories</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cart.html">
+                            <i class="bi bi-cart"></i> Cart
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container-fluid py-5">
+        <div class="row">
+            <div class="col-lg-8">
+                <h2 class="mb-4"><i class="bi bi-credit-card"></i> Checkout</h2>
+
+                <!-- Checkout Form -->
+                <form id="checkoutForm">
+                    <!-- Shipping Information -->
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="bi bi-geo-alt"></i> Shipping Address</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" class="form-control" id="firstName" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" id="lastName" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Street Address</label>
+                                <input type="text" class="form-control" id="street" required>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">City</label>
+                                    <input type="text" class="form-control" id="city" required>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">State</label>
+                                    <input type="text" class="form-control" id="state" required>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">ZIP Code</label>
+                                    <input type="text" class="form-control" id="zip" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-0">
+                                <label class="form-label">Country</label>
+                                <select class="form-select" id="country" required>
+                                    <option value="">Select Country</option>
+                                    <option value="US">United States</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="UK">United Kingdom</option>
+                                    <option value="AU">Australia</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Information -->
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="bi bi-credit-card"></i> Payment Method</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Card Holder Name</label>
+                                <input type="text" class="form-control" id="cardName" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Card Number</label>
+                                <input type="text" class="form-control" id="cardNumber"
+                                    placeholder="1234 5678 9012 3456" required>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Expiry Date</label>
+                                    <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY"
+                                        required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">CVV</label>
+                                    <input type="text" class="form-control" id="cvv" placeholder="123" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="checkoutError" class="alert alert-danger" style="display: none;"></div>
+                </form>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 sticky-top" style="top: 100px;">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="bi bi-receipt"></i> Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="orderItemsList">
+                            <!-- Cart items will be loaded here -->
+                        </div>
+
+                        <hr>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal</span>
+                                <span id="subtotal">$0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Shipping</span>
+                                <span id="shipping">$0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Tax</span>
+                                <span id="tax">$0.00</span>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between mb-4">
+                            <h6 class="mb-0">Total</h6>
+                            <h6 class="mb-0 text-primary" id="total">$0.00</h6>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 btn-lg" form="checkoutForm"
+                            onclick="submitOrder()">
+                            <i class="bi bi-credit-card"></i> Place Order
+                        </button>
+
+                        <a href="/" class="btn btn-outline-secondary w-100 mt-2">
+                            <i class="bi bi-arrow-left"></i> Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMessage">
+                    Success message here
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/firebase-init.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        let cartItems = [];
+
+        // Load cart and display order summary
+        function loadOrderSummary() {
+            const storedCart = localStorage.getItem('cart');
+            cartItems = storedCart ? JSON.parse(storedCart) : [];
+
+            if (cartItems.length === 0) {
+                window.location.href = '/';
+                return;
+            }
+
+            const itemsList = document.getElementById('orderItemsList');
+            const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = subtotal > 100 ? 0 : 10;
+            const tax = subtotal * 0.08;
+            const total = subtotal + shipping + tax;
+
+            itemsList.innerHTML = cartItems.map(item => `
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <small>${item.title}</small>
+                        <small>$${(item.price * item.quantity).toFixed(2)}</small>
+                    </div>
+                    <small class="text-muted">Qty: ${item.quantity}</small>
+                </div>
+            `).join('');
+
+            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('shipping').textContent = shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`;
+            document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
+            document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+
+            // Pre-fill email if logged in
+            if (window.firebase && window.firebase.auth.currentUser) {
+                document.getElementById('email').value = window.firebase.auth.currentUser.email;
+                document.getElementById('firstName').value = window.firebase.auth.currentUser.displayName || '';
+            }
+        }
+
+        // Submit order
+        async function submitOrder() {
+            event.preventDefault();
+
+            const form = document.getElementById('checkoutForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const errorDiv = document.getElementById('checkoutError');
+
+            try {
+                // Get user
+                const user = window.firebase?.auth.currentUser;
+                if (!user) {
+                    errorDiv.textContent = 'Please login to complete your order';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+
+                const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                const shipping = subtotal > 100 ? 0 : 10;
+                const tax = subtotal * 0.08;
+                const total = subtotal + shipping + tax;
+
+                // Create order in Firestore
+                const order = {
+                    userId: user.uid,
+                    items: cartItems,
+                    shippingAddress: {
+                        firstName: document.getElementById('firstName').value,
+                        lastName: document.getElementById('lastName').value,
+                        street: document.getElementById('street').value,
+                        city: document.getElementById('city').value,
+                        state: document.getElementById('state').value,
+                        zip: document.getElementById('zip').value,
+                        country: document.getElementById('country').value
+                    },
+                    contact: {
+                        email: document.getElementById('email').value
+                    },
+                    subtotal,
+                    shipping,
+                    tax,
+                    total,
+                    status: 'pending',
+                    createdAt: new Date().toISOString()
+                };
+
+                const docRef = await window.firebase.addDoc(
+                    window.firebase.collection(window.firebase.db, 'orders'),
+                    order
+                );
+
+                showToast('Order placed successfully!', 'success');
+                console.log('[v0] Order created with ID:', docRef.id);
+
+                // Clear cart
+                localStorage.removeItem('cart');
+
+                // Redirect to success page
+                setTimeout(() => {
+                    window.location.href = '/order-success.html?id=' + docRef.id;
+                }, 1500);
+
+            } catch (error) {
+                console.error('[v0] Order error:', error);
+                errorDiv.textContent = 'Error placing order: ' + error.message;
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        // Load categories for dropdown
+        async function loadCategories() {
+            try {
+                const response = await fetch('https://dummyjson.com/products/categories');
+                const categories = await response.json();
+                const menu = document.getElementById('categoriesMenu');
+
+                categories.slice(0, 10).forEach(cat => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<a class="dropdown-item" href="/?category=${cat.slug}">${cat.name}</a>`;
+                    menu.appendChild(li);
+                });
+            } catch (error) {
+                console.error('[v0] Error loading categories:', error);
+            }
+        }
+
+        // Initialize
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                loadOrderSummary();
+                loadCategories();
+            });
+        } else {
+            loadOrderSummary();
+            loadCategories();
+        }
+    </script>
+</body>
+
+</html>
