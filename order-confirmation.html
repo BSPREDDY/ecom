@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopEase - Order Confirmation</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .confirmation-icon {
+            font-size: 5rem;
+            color: #28a745;
+        }
+
+        .order-details-card {
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="index.html">
+                <i class="fas fa-shopping-bag me-2"></i>ShopEase
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="products.html">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="categories.html">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">Contact</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <a href="search.html" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-search"></i>
+                    </a>
+                    <a href="cart.html" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cart-count" class="badge bg-danger">0</span>
+                    </a>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="authDropdown"
+                            data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="auth.html">Login</a></li>
+                            <li><a class="dropdown-item" href="auth.html">Sign Up</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item logout-btn d-none" href="#">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Confirmation Section -->
+    <section class="confirmation-page py-5 mt-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="text-center mb-5">
+                        <div class="confirmation-icon mb-3">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h1 class="mb-3">Order Confirmed!</h1>
+                        <p class="lead text-muted">Thank you for your purchase. Your order has been successfully placed.
+                        </p>
+                    </div>
+
+                    <div id="confirmation-details">
+                        <!-- Order details will be loaded here -->
+                        <div class="text-center py-3">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <a href="products.html" class="btn btn-primary btn-lg">
+                            <i class="fas fa-shopping-bag me-2"></i>Continue Shopping
+                        </a>
+                        <a href="index.html" class="btn btn-outline-primary btn-lg ms-3">
+                            <i class="fas fa-home me-2"></i>Back to Home
+                        </a>
+                    </div>
+
+                    <div class="alert alert-info mt-5">
+                        <h5><i class="fas fa-info-circle me-2"></i>What's Next?</h5>
+                        <ul class="mb-0">
+                            <li>You will receive an order confirmation email shortly.</li>
+                            <li>We'll notify you when your order ships.</li>
+                            <li>Estimated delivery: 3-5 business days.</li>
+                            <li>Contact us at support@shopease.com for any questions.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-5 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h4>ShopEase</h4>
+                    <p>Your one-stop shop for everything</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white-50 text-decoration-none">Home</a></li>
+                        <li><a href="products.html" class="text-white-50 text-decoration-none">Products</a></li>
+                        <li><a href="categories.html" class="text-white-50 text-decoration-none">Categories</a></li>
+                        <li><a href="about.html" class="text-white-50 text-decoration-none">About</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact</h5>
+                    <p class="text-white-50">
+                        <i class="fas fa-map-marker-alt me-2"></i>123 Street, City
+                    </p>
+                    <p class="text-white-50">
+                        <i class="fas fa-phone me-2"></i>+1 234 567 890
+                    </p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Follow Us</h5>
+                    <div class="social-links">
+                        <a href="#" class="text-white-50 me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white-50 me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white-50 me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white-50"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-white">
+            <div class="text-center pt-3">
+                <p class="text-white-50">&copy; 2024 ShopEase. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Custom JS -->
+    <script src="js/main.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const order = JSON.parse(localStorage.getItem('currentOrder'));
+            const container = document.getElementById('confirmation-details');
+
+            if (!order) {
+                container.innerHTML = `
+                    <div class="alert alert-warning">
+                        <h4>No Order Found</h4>
+                        <p>It looks like you haven't placed an order yet.</p>
+                        <a href="products.html" class="btn btn-primary">Shop Now</a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0"><i class="fas fa-receipt me-2"></i>Order Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Order Number:</strong><br>${order.orderId}</p>
+                                <p><strong>Order Date:</strong><br>${new Date(order.date).toLocaleDateString()}</p>
+                                <p><strong>Status:</strong><br><span class="badge bg-success">Confirmed</span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Payment Method:</strong><br>
+                                    ${order.paymentMethod === 'credit-card' ? 'Credit Card' :
+                    order.paymentMethod === 'paypal' ? 'PayPal' :
+                        'Cash on Delivery'}
+                                </p>
+                                <p><strong>Estimated Delivery:</strong><br>${getDeliveryDate()}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mb-4 order-details-card">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0"><i class="fas fa-shipping-fast me-2"></i>Shipping Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>${order.shipping.firstName} ${order.shipping.lastName}</strong></p>
+                        <p>${order.shipping.address}<br>
+                           ${order.shipping.city}, ${order.shipping.state} ${order.shipping.zipCode}<br>
+                           ${order.shipping.country}</p>
+                        <p><i class="fas fa-phone me-2"></i>${order.shipping.phone}</p>
+                        <p><i class="fas fa-envelope me-2"></i>${order.shipping.email}</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Order Items</h5>
+                    </div>
+                    <div class="card-body">
+                        ${order.items.map(item => `
+                            <div class="row mb-3 align-items-center">
+                                <div class="col-md-2">
+                                    <img src="${item.image || 'https://via.placeholder.com/80'}" 
+                                         alt="${item.title}" 
+                                         class="img-fluid rounded">
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="mb-1">${item.title}</h6>
+                                    <p class="text-muted mb-0">Quantity: ${item.quantity}</p>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <h6 class="mb-0">${formatPrice(item.price * item.quantity)}</h6>
+                                </div>
+                            </div>
+                        `).join('')}
+                        
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6 offset-md-6">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Subtotal:</span>
+                                    <span>${formatPrice(order.subtotal)}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Shipping:</span>
+                                    <span>${order.shippingCost === 0 ? 'FREE' : formatPrice(order.shippingCost)}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span>Tax:</span>
+                                    <span>${formatPrice(order.tax)}</span>
+                                </div>
+                                <div class="d-flex justify-content-between border-top pt-2">
+                                    <h5>Total:</h5>
+                                    <h5>${formatPrice(order.total)}</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Clear current order after displaying
+            setTimeout(() => {
+                localStorage.removeItem('currentOrder');
+            }, 5000);
+        });
+
+        function getDeliveryDate() {
+            const today = new Date();
+            const deliveryDate = new Date(today);
+            deliveryDate.setDate(today.getDate() + 5); // 5 days from now
+            return deliveryDate.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+    </script>
+</body>
+
+</html>
