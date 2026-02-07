@@ -4,76 +4,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopEase - Product Details</title>
-    <!-- Bootstrap 5 -->
+    <title>ShopEasy - Product Details</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .thumbnail-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            cursor: pointer;
+            margin-right: 5px;
+            border: 2px solid transparent;
+            border-radius: 5px;
+        }
+
+        .thumbnail-img.active,
+        .thumbnail-img:hover {
+            border-color: var(--primary-color);
+        }
+
+        .carousel-item img {
+            height: 400px;
+            object-fit: contain;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Navbar (same as index.html) -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold text-primary" href="index.html">
-                <i class="fas fa-shopping-bag me-2"></i>ShopEase
-            </a>
+            <a class="navbar-brand" href="index.html">ShopEasy</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="products.html">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="categories.html">Categories</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="about.html">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="contact.html">Contact</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="products.html">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="categories.html">Categories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
                 </ul>
                 <div class="d-flex">
-                    <a href="search.html" class="btn btn-outline-primary me-2">
-                        <i class="fas fa-search"></i>
-                    </a>
-                    <a href="cart.html" class="btn btn-outline-primary me-2">
+                    <a href="search.html" class="btn btn-outline-light me-2"><i class="fas fa-search"></i></a>
+                    <a href="auth.html" class="btn btn-outline-light me-2" id="authBtn">Login</a>
+                    <a href="cart.html" class="btn btn-outline-light">
                         <i class="fas fa-shopping-cart"></i>
-                        <span id="cart-count" class="badge bg-danger">0</span>
+                        <span class="badge bg-danger" id="cartCount">0</span>
                     </a>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="authDropdown"
-                            data-bs-toggle="dropdown">
-                            <i class="fas fa-user"></i>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="auth.html">Login</a></li>
-                            <li><a class="dropdown-item" href="auth.html">Sign Up</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item logout-btn d-none" href="#">Logout</a></li>
-                        </ul>
-                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Product Details -->
+    <!-- Product Details Section -->
     <section class="product-details py-5 mt-5">
         <div class="container">
-            <div id="product-detail-container">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item"><a href="products.html">Products</a></li>
+                    <li class="breadcrumb-item active" id="productCategory">Product</li>
+                </ol>
+            </nav>
+
+            <div id="productDetails">
                 <!-- Product details will be loaded here -->
-                <div class="text-center py-5">
+                <div class="spinner-container">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
@@ -81,22 +84,44 @@
             </div>
 
             <!-- Related Products -->
-            <div class="related-products mt-5">
-                <h3 class="mb-4">Related Products</h3>
-                <div class="row" id="related-products">
-                    <!-- Related products will be loaded here -->
-                </div>
+            <div id="relatedProducts" class="mt-5">
+                <!-- Related products will be loaded here -->
             </div>
         </div>
     </section>
 
-    <!-- Footer (same as index.html) -->
-    <footer class="bg-dark text-white py-5">
-        <!-- ... same footer content ... -->
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>ShopEasy</h5>
+                    <p>Your one-stop shop for all your needs.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white">Home</a></li>
+                        <li><a href="products.html" class="text-white">Products</a></li>
+                        <li><a href="about.html" class="text-white">About Us</a></li>
+                        <li><a href="contact.html" class="text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact</h5>
+                    <p>Email: info@shopeasy.com</p>
+                    <p>Phone: +1 234 567 8900</p>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center">
+                <p>&copy; 2024 ShopEasy. All rights reserved.</p>
+            </div>
+        </div>
     </footer>
 
     <!-- Scroll to Top Button -->
-    <button id="scrollToTop" class="btn btn-primary rounded-circle">
+    <button id="scrollToTop" class="btn btn-primary">
         <i class="fas fa-arrow-up"></i>
     </button>
 
@@ -104,190 +129,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <!-- Custom JS -->
+    <script src="js/firebase-config.js"></script>
     <script src="js/main.js"></script>
     <script src="js/products.js"></script>
-    <script>
-        // Product details specific script
-        async function loadProductDetails() {
-            const params = new URLSearchParams(window.location.search);
-            const productId = params.get('id');
-
-            if (!productId) {
-                window.location.href = 'products.html';
-                return;
-            }
-
-            try {
-                // Load product details
-                const response = await fetch(`https://dummyjson.com/products/${productId}`);
-                const product = await response.json();
-
-                const container = document.getElementById('product-detail-container');
-                if (!container) return;
-
-                container.innerHTML = `
-                    <div class="row">
-                        <!-- Product Images -->
-                        <div class="col-lg-6">
-                            <div class="main-image mb-3">
-                                <img src="${product.thumbnail}" 
-                                     class="img-fluid rounded" 
-                                     alt="${product.title}"
-                                     id="main-product-image">
-                            </div>
-                            <div class="image-thumbnails d-flex">
-                                ${product.images.map((img, index) => `
-                                    <div class="thumbnail me-2 ${index === 0 ? 'active' : ''}" 
-                                         data-image="${img}"
-                                         style="width: 80px; height: 80px; cursor: pointer;">
-                                        <img src="${img}" 
-                                             class="img-fluid h-100 w-100 object-fit-cover rounded"
-                                             alt="Thumbnail ${index + 1}">
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                        
-                        <!-- Product Info -->
-                        <div class="col-lg-6">
-                            <h1 class="mb-3">${product.title}</h1>
-                            <div class="rating mb-3">
-                                ${generateStarRating(product.rating)}
-                                <span class="ms-2">${product.rating} (${product.reviews || 0} reviews)</span>
-                            </div>
-                            <h2 class="price mb-4">${formatPrice(product.price)}</h2>
-                            
-                            <div class="product-meta mb-4">
-                                <p><strong>Brand:</strong> ${product.brand || 'N/A'}</p>
-                                <p><strong>Category:</strong> ${product.category}</p>
-                                <p><strong>Availability:</strong> 
-                                    <span class="${product.stock > 0 ? 'text-success' : 'text-danger'}">
-                                        ${product.stock > 0 ? 'In Stock' : 'Out of Stock'}
-                                    </span>
-                                </p>
-                            </div>
-                            
-                            <div class="product-description mb-4">
-                                <h5>Description</h5>
-                                <p>${product.description}</p>
-                            </div>
-                            
-                            <div class="product-actions">
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <div class="input-group">
-                                            <button class="btn btn-outline-secondary" type="button" id="decrease-qty">
-                                                <i class="fas fa-minus"></i>
-                                            </button>
-                                            <input type="number" class="form-control text-center" 
-                                                   id="product-quantity" value="1" min="1" max="${product.stock}">
-                                            <button class="btn btn-outline-secondary" type="button" id="increase-qty">
-                                                <i class="fas fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="d-grid gap-2 d-md-flex">
-                                    <button class="btn btn-primary btn-lg add-to-cart-btn"
-                                            data-product-id="${product.id}"
-                                            data-product-title="${product.title}"
-                                            data-product-price="${product.price}"
-                                            data-product-image="${product.thumbnail}"
-                                            ${product.stock === 0 ? 'disabled' : ''}>
-                                        <i class="fas fa-cart-plus me-2"></i>
-                                        ${product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
-                                    </button>
-                                    <button class="btn btn-outline-primary btn-lg" id="buy-now">
-                                        <i class="fas fa-bolt me-2"></i>Buy Now
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                // Setup image thumbnail clicks
-                document.querySelectorAll('.thumbnail').forEach(thumb => {
-                    thumb.addEventListener('click', () => {
-                        document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
-                        thumb.classList.add('active');
-                        document.getElementById('main-product-image').src = thumb.dataset.image;
-                    });
-                });
-
-                // Setup quantity buttons
-                document.getElementById('decrease-qty')?.addEventListener('click', () => {
-                    const input = document.getElementById('product-quantity');
-                    if (input.value > 1) input.value = parseInt(input.value) - 1;
-                });
-
-                document.getElementById('increase-qty')?.addEventListener('click', () => {
-                    const input = document.getElementById('product-quantity');
-                    if (input.value < product.stock) input.value = parseInt(input.value) + 1;
-                });
-
-                // Load related products
-                loadRelatedProducts(product.category, product.id);
-
-            } catch (error) {
-                console.error('Error loading product details:', error);
-                document.getElementById('product-detail-container').innerHTML = `
-                    <div class="alert alert-danger">
-                        Product not found. <a href="products.html">Back to Products</a>
-                    </div>
-                `;
-            }
-        }
-
-        // Load related products
-        async function loadRelatedProducts(category, excludeId) {
-            try {
-                const response = await fetch(`https://dummyjson.com/products/category/${category}`);
-                const data = await response.json();
-
-                // Filter out current product and take first 4
-                const related = (Array.isArray(data) ? data : data.products || [])
-                    .filter(product => product.id !== excludeId)
-                    .slice(0, 4);
-
-                const container = document.getElementById('related-products');
-                if (!container) return;
-
-                if (related.length === 0) {
-                    container.innerHTML = '<p class="text-muted">No related products found.</p>';
-                    return;
-                }
-
-                container.innerHTML = related.map(product => `
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card product-card h-100">
-                            <img src="${product.thumbnail}" class="card-img-top product-img" alt="${product.title}">
-                            <div class="card-body">
-                                <h6 class="card-title">${product.title}</h6>
-                                <div class="rating mb-2">
-                                    ${generateStarRating(product.rating)}
-                                </div>
-                                <p class="price">${formatPrice(product.price)}</p>
-                            </div>
-                            <div class="card-footer bg-white border-top-0">
-                                <a href="product-details.html?id=${product.id}" class="btn btn-outline-primary w-100">
-                                    View Details
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-
-            } catch (error) {
-                console.error('Error loading related products:', error);
-            }
-        }
-
-        // Initialize product details page
-        document.addEventListener('DOMContentLoaded', loadProductDetails);
-    </script>
 </body>
 
 </html>

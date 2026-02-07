@@ -1,295 +1,362 @@
-// js/auth.js
-import { auth } from './firebase-config.js';
-import {
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+document.addEventListener('DOMContentLoaded', function () {
+    // Check if on auth page
+    if (!document.querySelector('.auth-container')) return;
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Form toggle
-    const loginToggle = document.getElementById('loginToggle');
-    const signupToggle = document.getElementById('signupToggle');
+    // Form elements
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
+    const formToggle = document.getElementById('formToggle');
+    const toggleText = document.getElementById('toggleText');
+    const toggleBtn = document.getElementById('toggleBtn');
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPassword = document.getElementById('loginPassword');
+    const signupName = document.getElementById('signupName');
+    const signupEmail = document.getElementById('signupEmail');
+    const signupPassword = document.getElementById('signupPassword');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const togglePasswordBtns = document.querySelectorAll('.toggle-password');
+    const passwordStrengthMeter = document.getElementById('passwordStrengthMeter');
+    const passwordRequirements = document.getElementById('passwordRequirements');
 
-    if (loginToggle && signupToggle) {
-        loginToggle.addEventListener('click', () => {
-            loginToggle.classList.add('active');
-            signupToggle.classList.remove('active');
-            loginForm.classList.remove('d-none');
-            signupForm.classList.add('d-none');
-        });
+    // Initialize with login form
+    showLoginForm();
 
-        signupToggle.addEventListener('click', () => {
-            signupToggle.classList.add('active');
-            loginToggle.classList.remove('active');
-            signupForm.classList.remove('d-none');
-            loginForm.classList.add('d-none');
-        });
-    }
-
-    // Password visibility toggle
-    document.getElementById('toggleLoginPassword')?.addEventListener('click', function () {
-        const passwordInput = document.getElementById('loginPassword');
-        const icon = this.querySelector('i');
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
+    // Form toggle
+    formToggle?.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (loginForm.classList.contains('form-hidden')) {
+            showLoginForm();
         } else {
-            passwordInput.type = 'password';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
+            showSignupForm();
         }
     });
 
-    document.getElementById('toggleSignupPassword')?.addEventListener('click', function () {
-        const passwordInput = document.getElementById('signupPassword');
-        const icon = this.querySelector('i');
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        } else {
-            passwordInput.type = 'password';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-        }
+    // Toggle password visibility
+    togglePasswordBtns.forEach(btn => {
+        btn.addEventListener('click', function () {
+            const input = this.previousElementSibling;
+            const type = input.type === 'password' ? 'text' : 'password';
+            input.type = type;
+            this.innerHTML = type === 'password' ?
+                '<i class="fas fa-eye"></i>' :
+                '<i class="fas fa-eye-slash"></i>';
+        });
     });
 
-    // Password strength indicator
-    document.getElementById('signupPassword')?.addEventListener('input', function () {
+    // Password strength checker
+    signupPassword?.addEventListener('input', function () {
         checkPasswordStrength(this.value);
     });
 
-    // Login form submission
-    document.getElementById('loginFormElement')?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        await handleLogin();
+    // Password confirmation check
+    confirmPassword?.addEventListener('input', function () {
+        checkPasswordConfirmation();
     });
 
-    // Signup form submission
-    document.getElementById('signupFormElement')?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        await handleSignup();
-    });
+    // Form validation
+    loginForm?.addEventListener('submit', handleLogin);
+    signupForm?.addEventListener('submit', handleSignup);
 
-    // Check authentication state
-    checkAuthState();
+    // Forgot password
+    const forgotPassword = document.getElementById('forgotPassword');
+    forgotPassword?.addEventListener('click', function (e) {
+        e.preventDefault();
+        const email = prompt('Please enter your email address:');
+        if (email) {
+            resetPassword(email);
+        }
+    });
 });
 
-// Password strength checker
+function showLoginForm() {
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const toggleText = document.getElementById('toggleText');
+    const toggleBtn = document.getElementById('toggleBtn');
+
+    loginForm.classList.remove('form-hidden');
+    signupForm.classList.add('form-hidden');
+    toggleText.textContent = "Don't have an account?";
+    toggleBtn.textContent = "Sign Up";
+    document.title = "ShopEasy - Login";
+}
+
+function showSignupForm() {
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const toggleText = document.getElementById('toggleText');
+    const toggleBtn = document.getElementById('toggleBtn');
+
+    signupForm.classList.remove('form-hidden');
+    loginForm.classList.add('form-hidden');
+    toggleText.textContent = "Already have an account?";
+    toggleBtn.textContent = "Login";
+    document.title = "ShopEasy - Sign Up";
+}
+
 function checkPasswordStrength(password) {
-    const strengthBar = document.getElementById('passwordStrengthBar');
-    const strengthText = document.getElementById('passwordStrengthText');
-
-    if (!strengthBar || !strengthText) return;
-
     let strength = 0;
-    let text = '';
-    let color = '';
+    const requirements = [];
 
-    // Check password length
-    if (password.length >= 8) strength += 25;
+    // Check length
+    if (password.length >= 8) {
+        strength += 25;
+        requirements.push('✓ At least 8 characters');
+    } else {
+        requirements.push('✗ At least 8 characters');
+    }
 
-    // Check for uppercase letters
-    if (/[A-Z]/.test(password)) strength += 25;
+    // Check for uppercase
+    if (/[A-Z]/.test(password)) {
+        strength += 25;
+        requirements.push('✓ Uppercase letter');
+    } else {
+        requirements.push('✗ Uppercase letter');
+    }
 
-    // Check for lowercase letters
-    if (/[a-z]/.test(password)) strength += 25;
+    // Check for lowercase
+    if (/[a-z]/.test(password)) {
+        strength += 25;
+        requirements.push('✓ Lowercase letter');
+    } else {
+        requirements.push('✗ Lowercase letter');
+    }
 
     // Check for numbers
-    if (/[0-9]/.test(password)) strength += 25;
-
-    // Determine strength level
-    if (strength === 0) {
-        text = '';
-        color = '';
-    } else if (strength <= 25) {
-        text = 'Weak';
-        color = '#dc3545';
-    } else if (strength <= 50) {
-        text = 'Fair';
-        color = '#ffc107';
-    } else if (strength <= 75) {
-        text = 'Good';
-        color = '#17a2b8';
+    if (/[0-9]/.test(password)) {
+        strength += 25;
+        requirements.push('✓ Number');
     } else {
-        text = 'Strong';
-        color = '#28a745';
+        requirements.push('✗ Number');
     }
 
-    strengthBar.style.width = `${strength}%`;
-    strengthBar.style.backgroundColor = color;
-    strengthText.textContent = text;
-    strengthText.style.color = color;
+    // Update meter
+    const meter = document.getElementById('passwordStrengthMeter');
+    meter.className = 'password-strength-meter';
+
+    if (strength >= 100) {
+        meter.classList.add('strong');
+    } else if (strength >= 50) {
+        meter.classList.add('medium');
+    } else if (strength > 0) {
+        meter.classList.add('weak');
+    }
+
+    // Update requirements list
+    const requirementsList = document.getElementById('passwordRequirements');
+    requirementsList.innerHTML = requirements.map(req =>
+        `<span class="d-block">${req}</span>`
+    ).join('');
 }
 
-// Handle Login
-async function handleLogin() {
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    const errorDiv = document.getElementById('loginError');
-
-    // Basic validation
-    if (!email || !password) {
-        showError(errorDiv, 'Please fill in all fields');
-        return;
-    }
-
-    try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-
-        // Store user info in localStorage
-        localStorage.setItem('user', JSON.stringify({
-            uid: user.uid,
-            email: user.email
-        }));
-
-        // Redirect to home page
-        window.location.href = 'index.html';
-    } catch (error) {
-        let errorMessage = 'Login failed. Please try again.';
-
-        switch (error.code) {
-            case 'auth/invalid-email':
-                errorMessage = 'Invalid email address.';
-                break;
-            case 'auth/user-not-found':
-                errorMessage = 'No account found with this email.';
-                break;
-            case 'auth/wrong-password':
-                errorMessage = 'Incorrect password.';
-                break;
-            case 'auth/too-many-requests':
-                errorMessage = 'Too many attempts. Please try again later.';
-                break;
-        }
-
-        showError(errorDiv, errorMessage);
-    }
-}
-
-// Handle Signup
-async function handleSignup() {
-    const name = document.getElementById('signupName').value;
-    const email = document.getElementById('signupEmail').value;
+function checkPasswordConfirmation() {
     const password = document.getElementById('signupPassword').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-    const errorDiv = document.getElementById('signupError');
-    const successDiv = document.getElementById('signupSuccess');
+    const confirm = document.getElementById('confirmPassword').value;
+    const error = document.getElementById('confirmPasswordError');
 
-    // Validation
-    if (!name || !email || !password || !confirmPassword) {
-        showError(errorDiv, 'Please fill in all fields');
-        return;
-    }
-
-    if (password !== confirmPassword) {
-        showError(errorDiv, 'Passwords do not match');
-        return;
-    }
-
-    if (password.length < 8) {
-        showError(errorDiv, 'Password must be at least 8 characters long');
-        return;
-    }
-
-    if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
-        showError(errorDiv, 'Password must contain uppercase, lowercase, and numbers');
-        return;
-    }
-
-    try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-
-        // Store additional user info
-        localStorage.setItem('user', JSON.stringify({
-            uid: user.uid,
-            email: user.email,
-            name: name
-        }));
-
-        // Show success message
-        errorDiv.classList.add('d-none');
-        successDiv.classList.remove('d-none');
-
-        // Switch to login form after 2 seconds
-        setTimeout(() => {
-            document.getElementById('loginToggle').click();
-            successDiv.classList.add('d-none');
-        }, 2000);
-
-    } catch (error) {
-        let errorMessage = 'Signup failed. Please try again.';
-
-        switch (error.code) {
-            case 'auth/email-already-in-use':
-                errorMessage = 'Email already in use.';
-                break;
-            case 'auth/invalid-email':
-                errorMessage = 'Invalid email address.';
-                break;
-            case 'auth/weak-password':
-                errorMessage = 'Password is too weak.';
-                break;
-        }
-
-        showError(errorDiv, errorMessage);
+    if (confirm && password !== confirm) {
+        error.textContent = 'Passwords do not match';
+        error.style.display = 'block';
+        return false;
+    } else {
+        error.style.display = 'none';
+        return true;
     }
 }
 
-// Show error message
-function showError(element, message) {
-    if (!element) return;
-
+function showMessage(elementId, message, type) {
+    const element = document.getElementById(elementId);
     element.textContent = message;
-    element.classList.remove('d-none');
+    element.className = `message ${type}`;
+    element.style.display = 'block';
 
-    // Hide error after 5 seconds
     setTimeout(() => {
-        element.classList.add('d-none');
+        element.style.display = 'none';
     }, 5000);
 }
 
-// Check authentication state
-function checkAuthState() {
-    onAuthStateChanged(auth, (user) => {
-        const authDropdown = document.getElementById('authDropdown');
-        const logoutBtn = document.querySelector('.logout-btn');
+async function handleLogin(e) {
+    e.preventDefault();
 
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const messageElement = document.getElementById('loginMessage');
+
+    // Basic validation
+    if (!email || !password) {
+        showMessage('loginMessage', 'Please fill in all fields', 'error');
+        return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showMessage('loginMessage', 'Please enter a valid email address', 'error');
+        return;
+    }
+
+    try {
+        // Show loading state
+        const submitBtn = document.querySelector('#loginForm button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+        submitBtn.disabled = true;
+
+        // Firebase login
+        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        // Store user info
+        localStorage.setItem('user', JSON.stringify({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName
+        }));
+
+        showMessage('loginMessage', 'Login successful! Redirecting...', 'success');
+
+        // Redirect after delay
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 2000);
+
+    } catch (error) {
+        let errorMessage = 'Login failed. ';
+
+        switch (error.code) {
+            case 'auth/user-not-found':
+                errorMessage += 'No user found with this email.';
+                break;
+            case 'auth/wrong-password':
+                errorMessage += 'Incorrect password.';
+                break;
+            case 'auth/invalid-email':
+                errorMessage += 'Invalid email address.';
+                break;
+            case 'auth/user-disabled':
+                errorMessage += 'This account has been disabled.';
+                break;
+            default:
+                errorMessage += error.message;
+        }
+
+        showMessage('loginMessage', errorMessage, 'error');
+
+        // Reset button
+        const submitBtn = document.querySelector('#loginForm button[type="submit"]');
+        submitBtn.innerHTML = originalText || 'Login';
+        submitBtn.disabled = false;
+    }
+}
+
+async function handleSignup(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('signupName').value;
+    const email = document.getElementById('signupEmail').value;
+    const password = document.getElementById('signupPassword').value;
+    const confirm = document.getElementById('confirmPassword').value;
+
+    // Validation
+    if (!name || !email || !password || !confirm) {
+        showMessage('signupMessage', 'Please fill in all fields', 'error');
+        return;
+    }
+
+    if (password !== confirm) {
+        showMessage('signupMessage', 'Passwords do not match', 'error');
+        return;
+    }
+
+    // Password strength check
+    if (password.length < 8 || !/[A-Z]/.test(password) ||
+        !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
+        showMessage('signupMessage', 'Password does not meet requirements', 'error');
+        return;
+    }
+
+    try {
+        // Show loading state
+        const submitBtn = document.querySelector('#signupForm button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+        submitBtn.disabled = true;
+
+        // Firebase signup
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        // Update profile
+        await user.updateProfile({
+            displayName: name
+        });
+
+        // Store user info
+        localStorage.setItem('user', JSON.stringify({
+            uid: user.uid,
+            email: user.email,
+            displayName: name
+        }));
+
+        showMessage('signupMessage', 'Account created successfully! Redirecting...', 'success');
+
+        // Redirect after delay
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 2000);
+
+    } catch (error) {
+        let errorMessage = 'Signup failed. ';
+
+        switch (error.code) {
+            case 'auth/email-already-in-use':
+                errorMessage += 'Email already in use.';
+                break;
+            case 'auth/invalid-email':
+                errorMessage += 'Invalid email address.';
+                break;
+            case 'auth/operation-not-allowed':
+                errorMessage += 'Operation not allowed.';
+                break;
+            case 'auth/weak-password':
+                errorMessage += 'Password is too weak.';
+                break;
+            default:
+                errorMessage += error.message;
+        }
+
+        showMessage('signupMessage', errorMessage, 'error');
+
+        // Reset button
+        const submitBtn = document.querySelector('#signupForm button[type="submit"]');
+        submitBtn.innerHTML = originalText || 'Sign Up';
+        submitBtn.disabled = false;
+    }
+}
+
+async function resetPassword(email) {
+    try {
+        await firebase.auth().sendPasswordResetEmail(email);
+        alert('Password reset email sent! Please check your inbox.');
+    } catch (error) {
+        alert('Error sending reset email: ' + error.message);
+    }
+}
+
+// Check if user is logged in on page load
+window.addEventListener('load', function () {
+    firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
             // User is signed in
-            if (authDropdown) {
-                authDropdown.innerHTML = `
-                    <i class="fas fa-user me-2"></i>${user.email}
-                `;
-            }
-            if (logoutBtn) {
-                logoutBtn.classList.remove('d-none');
-                logoutBtn.addEventListener('click', handleLogout);
-            }
+            localStorage.setItem('user', JSON.stringify({
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName
+            }));
         } else {
             // User is signed out
             localStorage.removeItem('user');
-            if (logoutBtn) {
-                logoutBtn.classList.add('d-none');
-            }
         }
+        updateAuthButton();
     });
-}
-
-// Handle Logout
-async function handleLogout() {
-    try {
-        await signOut(auth);
-        localStorage.removeItem('user');
-        window.location.href = 'index.html';
-    } catch (error) {
-        console.error('Logout error:', error);
-    }
-}
+});

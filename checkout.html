@@ -4,167 +4,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopEase - Checkout</title>
-    <!-- Bootstrap 5 -->
+    <title>ShopEasy - Checkout</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        .checkout-step {
-            border-bottom: 3px solid #dee2e6;
-            padding-bottom: 10px;
-            margin-bottom: 30px;
-        }
-
-        .checkout-step.active {
-            border-color: #007bff;
-            color: #007bff;
-        }
-
-        .checkout-step.completed {
-            border-color: #28a745;
-            color: #28a745;
-        }
-    </style>
 </head>
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold text-primary" href="index.html">
-                <i class="fas fa-shopping-bag me-2"></i>ShopEase
-            </a>
+            <a class="navbar-brand" href="index.html">ShopEasy</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="products.html">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="categories.html">Categories</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="about.html">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="contact.html">Contact</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="products.html">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="categories.html">Categories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
                 </ul>
                 <div class="d-flex">
-                    <a href="search.html" class="btn btn-outline-primary me-2">
-                        <i class="fas fa-search"></i>
-                    </a>
-                    <a href="cart.html" class="btn btn-outline-primary me-2">
+                    <a href="search.html" class="btn btn-outline-light me-2"><i class="fas fa-search"></i></a>
+                    <a href="auth.html" class="btn btn-outline-light me-2" id="authBtn">Login</a>
+                    <a href="cart.html" class="btn btn-outline-light">
                         <i class="fas fa-shopping-cart"></i>
-                        <span id="cart-count" class="badge bg-danger">0</span>
+                        <span class="badge bg-danger" id="cartCount">0</span>
                     </a>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="authDropdown"
-                            data-bs-toggle="dropdown">
-                            <i class="fas fa-user"></i>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="auth.html">Login</a></li>
-                            <li><a class="dropdown-item" href="auth.html">Sign Up</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item logout-btn d-none" href="#">Logout</a></li>
-                        </ul>
-                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Checkout Section -->
-    <section class="checkout-page py-5 mt-5">
+    <section class="checkout py-5 mt-5">
         <div class="container">
-            <!-- Checkout Steps -->
-            <div class="row mb-5">
-                <div class="col-12">
-                    <div class="d-flex justify-content-between checkout-steps">
-                        <div class="text-center checkout-step active" style="width: 33.33%">
-                            <div class="step-number">1</div>
-                            <div class="step-title">Shipping</div>
-                        </div>
-                        <div class="text-center checkout-step" style="width: 33.33%">
-                            <div class="step-number">2</div>
-                            <div class="step-title">Payment</div>
-                        </div>
-                        <div class="text-center checkout-step" style="width: 33.33%">
-                            <div class="step-number">3</div>
-                            <div class="step-title">Confirmation</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <h1 class="mb-4">Checkout</h1>
 
             <div class="row">
-                <!-- Shipping Form -->
-                <div class="col-lg-8 mb-4">
-                    <div id="checkout-step-1">
-                        <h3 class="mb-4">Shipping Information</h3>
-                        <form id="shipping-form">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="firstName" class="form-label">First Name *</label>
-                                    <input type="text" class="form-control" id="firstName" required>
-                                    <div class="invalid-feedback">Please enter your first name.</div>
+                <!-- Shipping Information Form -->
+                <div class="col-lg-8">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Shipping Information</h5>
+                            <form id="checkoutForm">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="firstName" class="form-label">First Name *</label>
+                                        <input type="text" class="form-control" id="firstName" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="lastName" class="form-label">Last Name *</label>
+                                        <input type="text" class="form-control" id="lastName" required>
+                                    </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="lastName" class="form-label">Last Name *</label>
-                                    <input type="text" class="form-control" id="lastName" required>
-                                    <div class="invalid-feedback">Please enter your last name.</div>
+
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email Address *</label>
+                                    <input type="email" class="form-control" id="email" required>
                                 </div>
-                            </div>
 
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email Address *</label>
-                                <input type="email" class="form-control" id="email" required>
-                                <div class="invalid-feedback">Please enter a valid email address.</div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="phone" class="form-label">Phone Number *</label>
-                                <input type="tel" class="form-control" id="phone" required>
-                                <div class="invalid-feedback">Please enter your phone number.</div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="address" class="form-label">Address *</label>
-                                <input type="text" class="form-control" id="address" required>
-                                <div class="invalid-feedback">Please enter your address.</div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="city" class="form-label">City *</label>
-                                    <input type="text" class="form-control" id="city" required>
-                                    <div class="invalid-feedback">Please enter your city.</div>
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Phone Number *</label>
+                                    <input type="tel" class="form-control" id="phone" required>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="state" class="form-label">State *</label>
-                                    <input type="text" class="form-control" id="state" required>
-                                    <div class="invalid-feedback">Please enter your state.</div>
-                                </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="zipCode" class="form-label">ZIP Code *</label>
-                                    <input type="text" class="form-control" id="zipCode" required>
-                                    <div class="invalid-feedback">Please enter your ZIP code.</div>
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">Street Address *</label>
+                                    <input type="text" class="form-control" id="address" required>
                                 </div>
-                                <div class="col-md-6 mb-3">
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="city" class="form-label">City *</label>
+                                        <input type="text" class="form-control" id="city" required>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="state" class="form-label">State *</label>
+                                        <input type="text" class="form-control" id="state" required>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="zip" class="form-label">ZIP Code *</label>
+                                        <input type="text" class="form-control" id="zip" required>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
                                     <label for="country" class="form-label">Country *</label>
                                     <select class="form-select" id="country" required>
                                         <option value="">Select Country</option>
@@ -173,147 +103,101 @@
                                         <option value="UK">United Kingdom</option>
                                         <option value="AU">Australia</option>
                                     </select>
-                                    <div class="invalid-feedback">Please select your country.</div>
                                 </div>
-                            </div>
 
-                            <div class="form-check mb-4">
-                                <input class="form-check-input" type="checkbox" id="saveAddress">
-                                <label class="form-check-label" for="saveAddress">
-                                    Save this address for future orders
-                                </label>
-                            </div>
+                                <hr class="my-4">
 
-                            <div class="d-flex justify-content-between">
-                                <a href="cart.html" class="btn btn-outline-secondary">
-                                    <i class="fas fa-arrow-left me-2"></i>Back to Cart
-                                </a>
-                                <button type="button" class="btn btn-primary" id="continue-to-payment">
-                                    Continue to Payment
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Payment Form (Hidden Initially) -->
-                    <div id="checkout-step-2" class="d-none">
-                        <h3 class="mb-4">Payment Information</h3>
-                        <form id="payment-form">
-                            <div class="mb-3">
-                                <label class="form-label">Payment Method *</label>
+                                <h6 class="mb-3">Shipping Method</h6>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard"
-                                        value="credit-card" checked>
-                                    <label class="form-check-label" for="creditCard">
-                                        <i class="fab fa-cc-visa me-2"></i>Credit Card
+                                    <input class="form-check-input" type="radio" name="shippingMethod"
+                                        id="standardShipping" value="standard" checked>
+                                    <label class="form-check-label" for="standardShipping">
+                                        Standard Shipping (5-7 business days) - Free
                                     </label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="paymentMethod" id="paypal"
-                                        value="paypal">
-                                    <label class="form-check-label" for="paypal">
-                                        <i class="fab fa-paypal me-2"></i>PayPal
+                                    <input class="form-check-input" type="radio" name="shippingMethod"
+                                        id="expressShipping" value="express">
+                                    <label class="form-check-label" for="expressShipping">
+                                        Express Shipping (2-3 business days) - $9.99
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="paymentMethod" id="cod"
-                                        value="cod">
-                                    <label class="form-check-label" for="cod">
-                                        <i class="fas fa-money-bill-wave me-2"></i>Cash on Delivery
+                                    <input class="form-check-input" type="radio" name="shippingMethod"
+                                        id="overnightShipping" value="overnight">
+                                    <label class="form-check-label" for="overnightShipping">
+                                        Overnight Shipping (1 business day) - $19.99
                                     </label>
                                 </div>
-                            </div>
 
-                            <!-- Credit Card Details -->
-                            <div id="credit-card-details">
-                                <div class="mb-3">
-                                    <label for="cardNumber" class="form-label">Card Number *</label>
-                                    <input type="text" class="form-control" id="cardNumber"
-                                        placeholder="1234 5678 9012 3456">
-                                    <div class="invalid-feedback">Please enter a valid card number.</div>
+                                <hr class="my-4">
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="saveAddress">
+                                    <label class="form-check-label" for="saveAddress">
+                                        Save this address for future use
+                                    </label>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="cardExpiry" class="form-label">Expiry Date *</label>
-                                        <input type="text" class="form-control" id="cardExpiry" placeholder="MM/YY">
-                                        <div class="invalid-feedback">Please enter expiry date.</div>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="cardCVC" class="form-label">CVC *</label>
-                                        <input type="text" class="form-control" id="cardCVC" placeholder="123">
-                                        <div class="invalid-feedback">Please enter CVC.</div>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="cardName" class="form-label">Name on Card *</label>
-                                    <input type="text" class="form-control" id="cardName">
-                                    <div class="invalid-feedback">Please enter name on card.</div>
-                                </div>
-                            </div>
-
-                            <div class="form-check mb-4">
-                                <input class="form-check-input" type="checkbox" id="saveCard">
-                                <label class="form-check-label" for="saveCard">
-                                    Save card for future purchases
-                                </label>
-                            </div>
-
-                            <div class="d-flex justify-content-between">
-                                <button type="button" class="btn btn-outline-secondary" id="back-to-shipping">
-                                    <i class="fas fa-arrow-left me-2"></i>Back to Shipping
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-lock me-2"></i>Complete Order
                                 </button>
-                                <button type="submit" class="btn btn-success" id="place-order">
-                                    <i class="fas fa-check me-2"></i>Place Order
-                                </button>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Order Summary -->
                 <div class="col-lg-4">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0">Order Summary</h5>
-                        </div>
+                    <div class="card mb-4">
                         <div class="card-body">
-                            <div id="order-summary-items">
-                                <!-- Order items will be loaded here -->
-                            </div>
-
-                            <div class="mt-3 pt-3 border-top">
+                            <h5 class="card-title mb-4">Order Summary</h5>
+                            <div class="mb-3">
                                 <div class="d-flex justify-content-between mb-2">
-                                    <span>Subtotal:</span>
-                                    <span id="order-subtotal">$0.00</span>
+                                    <span>Items (<span id="orderItems">0</span>)</span>
+                                    <span id="orderSubtotal">$0.00</span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-2">
-                                    <span>Shipping:</span>
-                                    <span id="order-shipping">$0.00</span>
+                                    <span>Shipping</span>
+                                    <span id="orderShipping">$0.00</span>
                                 </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Tax</span>
+                                    <span id="orderTax">$0.00</span>
+                                </div>
+                                <hr>
                                 <div class="d-flex justify-content-between mb-3">
-                                    <span>Tax:</span>
-                                    <span id="order-tax">$0.00</span>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <h5>Total:</h5>
-                                    <h5 id="order-total">$0.00</h5>
+                                    <strong>Total</strong>
+                                    <strong id="orderTotal">$0.00</strong>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card mt-3">
+                    <!-- Payment Info -->
+                    <div class="card">
                         <div class="card-body">
-                            <h6>Need Help?</h6>
-                            <p class="small text-muted">
-                                <i class="fas fa-phone me-2"></i>Call us: 1-800-SHOP-EASE
-                            </p>
-                            <p class="small text-muted">
-                                <i class="fas fa-envelope me-2"></i>Email: support@shopease.com
-                            </p>
+                            <h6 class="card-title">Payment Information</h6>
+                            <div class="alert alert-info">
+                                <small>
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    This is a demo checkout. No actual payment will be processed.
+                                </small>
+                            </div>
+                            <div class="text-center mt-3">
+                                <i class="fab fa-cc-visa fa-2x text-primary mx-2"></i>
+                                <i class="fab fa-cc-mastercard fa-2x text-primary mx-2"></i>
+                                <i class="fab fa-cc-amex fa-2x text-primary mx-2"></i>
+                                <i class="fab fa-cc-paypal fa-2x text-primary mx-2"></i>
+                            </div>
                         </div>
+                    </div>
+
+                    <!-- Return to Cart -->
+                    <div class="mt-4">
+                        <a href="cart.html" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-arrow-left me-2"></i>Return to Cart
+                        </a>
                     </div>
                 </div>
             </div>
@@ -321,190 +205,51 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-dark text-white py-4 mt-5">
-        <div class="container text-center">
-            <p>&copy; 2024 ShopEase. All rights reserved.</p>
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>ShopEasy</h5>
+                    <p>Your one-stop shop for all your needs.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white">Home</a></li>
+                        <li><a href="products.html" class="text-white">Products</a></li>
+                        <li><a href="about.html" class="text-white">About Us</a></li>
+                        <li><a href="contact.html" class="text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact</h5>
+                    <p>Email: info@shopeasy.com</p>
+                    <p>Phone: +1 234 567 8900</p>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center">
+                <p>&copy; 2024 ShopEasy. All rights reserved.</p>
+            </div>
         </div>
     </footer>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTop" class="btn btn-primary">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Firebase SDK -->
-    <script type="module" src="js/firebase-config.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <!-- Custom JS -->
+    <script src="js/firebase-config.js"></script>
     <script src="js/main.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Check if cart is empty
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            if (cart.length === 0) {
-                window.location.href = 'cart.html';
-                return;
-            }
-
-            // Load order summary
-            loadOrderSummary();
-
-            // Setup checkout steps
-            setupCheckoutSteps();
-        });
-
-        function loadOrderSummary() {
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            const container = document.getElementById('order-summary-items');
-            const subtotal = calculateCartTotal();
-            const shipping = subtotal > 50 ? 0 : 10;
-            const tax = subtotal * 0.1;
-            const total = subtotal + shipping + tax;
-
-            if (container) {
-                container.innerHTML = cart.map(item => `
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <div>
-                            <h6 class="mb-0">${item.title}</h6>
-                            <small class="text-muted">Qty: ${item.quantity}</small>
-                        </div>
-                        <span>${formatPrice(item.price * item.quantity)}</span>
-                    </div>
-                `).join('');
-            }
-
-            document.getElementById('order-subtotal').textContent = formatPrice(subtotal);
-            document.getElementById('order-shipping').textContent = shipping === 0 ? 'FREE' : formatPrice(shipping);
-            document.getElementById('order-tax').textContent = formatPrice(tax);
-            document.getElementById('order-total').textContent = formatPrice(total);
-        }
-
-        function setupCheckoutSteps() {
-            const shippingStep = document.getElementById('checkout-step-1');
-            const paymentStep = document.getElementById('checkout-step-2');
-            const steps = document.querySelectorAll('.checkout-step');
-
-            // Continue to payment button
-            document.getElementById('continue-to-payment')?.addEventListener('click', function () {
-                const shippingForm = document.getElementById('shipping-form');
-
-                if (!shippingForm.checkValidity()) {
-                    shippingForm.classList.add('was-validated');
-                    return;
-                }
-
-                // Save shipping info
-                const shippingInfo = {
-                    firstName: document.getElementById('firstName').value,
-                    lastName: document.getElementById('lastName').value,
-                    email: document.getElementById('email').value,
-                    phone: document.getElementById('phone').value,
-                    address: document.getElementById('address').value,
-                    city: document.getElementById('city').value,
-                    state: document.getElementById('state').value,
-                    zipCode: document.getElementById('zipCode').value,
-                    country: document.getElementById('country').value
-                };
-
-                localStorage.setItem('shippingInfo', JSON.stringify(shippingInfo));
-
-                // Show payment step
-                shippingStep.classList.add('d-none');
-                paymentStep.classList.remove('d-none');
-
-                // Update steps
-                steps[0].classList.remove('active');
-                steps[0].classList.add('completed');
-                steps[1].classList.add('active');
-
-                // Toggle credit card details
-                togglePaymentMethod();
-            });
-
-            // Back to shipping button
-            document.getElementById('back-to-shipping')?.addEventListener('click', function () {
-                paymentStep.classList.add('d-none');
-                shippingStep.classList.remove('d-none');
-
-                steps[1].classList.remove('active');
-                steps[0].classList.add('active');
-            });
-
-            // Payment method change
-            document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
-                radio.addEventListener('change', togglePaymentMethod);
-            });
-
-            // Place order button
-            document.getElementById('place-order')?.addEventListener('click', function (e) {
-                e.preventDefault();
-                const paymentForm = document.getElementById('payment-form');
-
-                if (!paymentForm.checkValidity()) {
-                    paymentForm.classList.add('was-validated');
-                    return;
-                }
-
-                // Get payment method
-                const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-
-                if (paymentMethod === 'credit-card') {
-                    // Validate credit card
-                    const cardNumber = document.getElementById('cardNumber').value;
-                    const cardExpiry = document.getElementById('cardExpiry').value;
-                    const cardCVC = document.getElementById('cardCVC').value;
-                    const cardName = document.getElementById('cardName').value;
-
-                    if (!cardNumber || !cardExpiry || !cardCVC || !cardName) {
-                        alert('Please fill in all credit card details');
-                        return;
-                    }
-                }
-
-                // Create order
-                const order = {
-                    orderId: 'ORD-' + Date.now(),
-                    date: new Date().toISOString(),
-                    items: JSON.parse(localStorage.getItem('cart')) || [],
-                    shipping: JSON.parse(localStorage.getItem('shippingInfo')) || {},
-                    paymentMethod: paymentMethod,
-                    subtotal: calculateCartTotal(),
-                    shippingCost: calculateCartTotal() > 50 ? 0 : 10,
-                    tax: calculateCartTotal() * 0.1,
-                    total: calculateCartTotal() + (calculateCartTotal() > 50 ? 0 : 10) + (calculateCartTotal() * 0.1)
-                };
-
-                // Save order
-                localStorage.setItem('currentOrder', JSON.stringify(order));
-
-                // Clear cart
-                localStorage.removeItem('cart');
-                updateCartCount();
-
-                // Redirect to confirmation
-                window.location.href = 'order-confirmation.html';
-            });
-        }
-
-        function togglePaymentMethod() {
-            const creditCardDetails = document.getElementById('credit-card-details');
-            const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-
-            if (selectedMethod === 'credit-card') {
-                creditCardDetails.classList.remove('d-none');
-                // Make credit card fields required
-                document.getElementById('cardNumber').required = true;
-                document.getElementById('cardExpiry').required = true;
-                document.getElementById('cardCVC').required = true;
-                document.getElementById('cardName').required = true;
-            } else {
-                creditCardDetails.classList.add('d-none');
-                // Remove required from credit card fields
-                document.getElementById('cardNumber').required = false;
-                document.getElementById('cardExpiry').required = false;
-                document.getElementById('cardCVC').required = false;
-                document.getElementById('cardName').required = false;
-            }
-        }
-    </script>
+    <script src="js/cart.js"></script>
 </body>
 
 </html>

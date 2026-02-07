@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopEase - Categories</title>
-    <!-- Bootstrap 5 -->
+    <title>ShopEasy - Categories</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,120 +15,83 @@
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold text-primary" href="index.html">
-                <i class="fas fa-shopping-bag me-2"></i>ShopEase
-            </a>
+            <a class="navbar-brand" href="index.html">ShopEasy</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="products.html">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="categories.html">Categories</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="about.html">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="contact.html">Contact</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="products.html">Products</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="categories.html">Categories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
                 </ul>
                 <div class="d-flex">
-                    <a href="search.html" class="btn btn-outline-primary me-2">
-                        <i class="fas fa-search"></i>
-                    </a>
-                    <a href="cart.html" class="btn btn-outline-primary me-2">
+                    <a href="search.html" class="btn btn-outline-light me-2"><i class="fas fa-search"></i></a>
+                    <a href="auth.html" class="btn btn-outline-light me-2" id="authBtn">Login</a>
+                    <a href="cart.html" class="btn btn-outline-light">
                         <i class="fas fa-shopping-cart"></i>
-                        <span id="cart-count" class="badge bg-danger">0</span>
+                        <span class="badge bg-danger" id="cartCount">0</span>
                     </a>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="authDropdown"
-                            data-bs-toggle="dropdown">
-                            <i class="fas fa-user"></i>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="auth.html">Login</a></li>
-                            <li><a class="dropdown-item" href="auth.html">Sign Up</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item logout-btn d-none" href="#">Logout</a></li>
-                        </ul>
-                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Categories Section -->
-    <section class="categories-page py-5 mt-5">
+    <section class="categories py-5 mt-5">
         <div class="container">
-            <h1 class="text-center mb-5">Browse Categories</h1>
+            <h1 class="text-center mb-5" id="categoryTitle">Shop by Category</h1>
 
-            <div class="row" id="categories-list">
-                <!-- Categories will be loaded here -->
-                <div class="text-center py-5">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
+            <!-- All Categories -->
+            <div id="categoryProducts">
+                <div class="row" id="categoryList">
+                    <!-- Categories grid will be loaded here -->
                 </div>
+            </div>
+
+            <!-- Category Specific Products -->
+            <div id="categorySpecificProducts" style="display: none;">
+                <!-- Products for specific category will be loaded here -->
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-dark text-white py-5">
+    <footer class="bg-dark text-white py-4">
         <div class="container">
             <div class="row">
-                <div class="col-md-4 mb-4">
-                    <h4>ShopEase</h4>
-                    <p>Your one-stop shop for everything</p>
+                <div class="col-md-4">
+                    <h5>ShopEasy</h5>
+                    <p>Your one-stop shop for all your needs.</p>
                 </div>
-                <div class="col-md-2 mb-4">
+                <div class="col-md-4">
                     <h5>Quick Links</h5>
                     <ul class="list-unstyled">
-                        <li><a href="index.html" class="text-white-50 text-decoration-none">Home</a></li>
-                        <li><a href="products.html" class="text-white-50 text-decoration-none">Products</a></li>
-                        <li><a href="categories.html" class="text-white-50 text-decoration-none">Categories</a></li>
-                        <li><a href="about.html" class="text-white-50 text-decoration-none">About</a></li>
+                        <li><a href="index.html" class="text-white">Home</a></li>
+                        <li><a href="products.html" class="text-white">Products</a></li>
+                        <li><a href="about.html" class="text-white">About Us</a></li>
+                        <li><a href="contact.html" class="text-white">Contact</a></li>
                     </ul>
                 </div>
-                <div class="col-md-3 mb-4">
+                <div class="col-md-4">
                     <h5>Contact</h5>
-                    <p class="text-white-50">
-                        <i class="fas fa-map-marker-alt me-2"></i>123 Street, City
-                    </p>
-                    <p class="text-white-50">
-                        <i class="fas fa-phone me-2"></i>+1 234 567 890
-                    </p>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <h5>Follow Us</h5>
-                    <div class="social-links">
-                        <a href="#" class="text-white-50 me-3"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-white-50 me-3"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-white-50 me-3"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-white-50"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
+                    <p>Email: info@shopeasy.com</p>
+                    <p>Phone: +1 234 567 8900</p>
                 </div>
             </div>
-            <hr class="bg-white">
-            <div class="text-center pt-3">
-                <p class="text-white-50">&copy; 2024 ShopEase. All rights reserved.</p>
+            <hr class="bg-light">
+            <div class="text-center">
+                <p>&copy; 2024 ShopEasy. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
     <!-- Scroll to Top Button -->
-    <button id="scrollToTop" class="btn btn-primary rounded-circle">
+    <button id="scrollToTop" class="btn btn-primary">
         <i class="fas fa-arrow-up"></i>
     </button>
 
@@ -137,53 +100,12 @@
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Firebase SDK -->
-    <script type="module" src="js/firebase-config.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <!-- Custom JS -->
+    <script src="js/firebase-config.js"></script>
     <script src="js/main.js"></script>
-
-    <script>
-        // Load all categories
-        async function loadAllCategories() {
-            try {
-                const response = await fetch('https://dummyjson.com/products/categories');
-                const categories = await response.json();
-
-                const container = document.getElementById('categories-list');
-                if (!container) return;
-
-                container.innerHTML = categories.map(category => `
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="card category-card h-100">
-                            <img src="https://via.placeholder.com/400x300/e9ecef/495057?text=${encodeURIComponent(category.replace('-', ' ').toUpperCase())}" 
-                                 class="card-img-top category-img" 
-                                 alt="${category}">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">${category.replace(/-/g, ' ').toUpperCase()}</h5>
-                                <p class="card-text text-muted small">
-                                    Explore our ${category.replace(/-/g, ' ')} collection
-                                </p>
-                                <a href="products.html?category=${category}" class="btn btn-primary">
-                                    <i class="fas fa-arrow-right me-2"></i>Shop Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-
-            } catch (error) {
-                console.error('Error loading categories:', error);
-                document.getElementById('categories-list').innerHTML = `
-                    <div class="col-12 text-center">
-                        <div class="alert alert-danger">
-                            Failed to load categories. Please try again later.
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', loadAllCategories);
-    </script>
+    <script src="js/products.js"></script>
 </body>
 
 </html>

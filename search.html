@@ -4,233 +4,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopEase - Search</title>
-    <!-- Bootstrap 5 -->
+    <title>ShopEasy - Search Results</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        .search-hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 80px 0;
-            color: white;
-        }
-
-        .search-box {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .search-results-count {
-            color: #6c757d;
-        }
-    </style>
 </head>
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold text-primary" href="index.html">
-                <i class="fas fa-shopping-bag me-2"></i>ShopEase
-            </a>
+            <a class="navbar-brand" href="index.html">ShopEasy</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="products.html">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="categories.html">Categories</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="about.html">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="contact.html">Contact</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="products.html">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="categories.html">Categories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
                 </ul>
                 <div class="d-flex">
-                    <a href="search.html" class="btn btn-outline-primary me-2">
-                        <i class="fas fa-search"></i>
-                    </a>
-                    <a href="cart.html" class="btn btn-outline-primary me-2">
+                    <a href="search.html" class="btn btn-outline-light me-2"><i class="fas fa-search"></i></a>
+                    <a href="auth.html" class="btn btn-outline-light me-2" id="authBtn">Login</a>
+                    <a href="cart.html" class="btn btn-outline-light">
                         <i class="fas fa-shopping-cart"></i>
-                        <span id="cart-count" class="badge bg-danger">0</span>
+                        <span class="badge bg-danger" id="cartCount">0</span>
                     </a>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="authDropdown"
-                            data-bs-toggle="dropdown">
-                            <i class="fas fa-user"></i>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="auth.html">Login</a></li>
-                            <li><a class="dropdown-item" href="auth.html">Sign Up</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item logout-btn d-none" href="#">Logout</a></li>
-                        </ul>
-                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Search Hero -->
-    <section class="search-hero mt-5">
+    <!-- Search Section -->
+    <section class="search py-5 mt-5">
         <div class="container">
-            <div class="text-center mb-5">
-                <h1 class="display-4 fw-bold mb-4">Search Products</h1>
-                <p class="lead mb-4">Find exactly what you're looking for</p>
-            </div>
-
-            <div class="search-box">
-                <div class="input-group input-group-lg">
-                    <input type="text" class="form-control" id="searchInput"
-                        placeholder="Search for products, brands, categories..." aria-label="Search">
-                    <button class="btn btn-light" type="button" id="searchButton">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-
-                <div class="search-filters mt-3">
-                    <div class="row g-2">
-                        <div class="col-md-4">
-                            <select class="form-select" id="searchCategory">
-                                <option value="">All Categories</option>
-                                <!-- Categories will be loaded here -->
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <select class="form-select" id="searchSort">
-                                <option value="relevance">Sort by Relevance</option>
-                                <option value="price-low">Price: Low to High</option>
-                                <option value="price-high">Price: High to Low</option>
-                                <option value="rating">Highest Rated</option>
-                                <option value="newest">Newest First</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <select class="form-select" id="searchPrice">
-                                <option value="">All Prices</option>
-                                <option value="0-50">Under $50</option>
-                                <option value="50-100">$50 - $100</option>
-                                <option value="100-200">$100 - $200</option>
-                                <option value="200-500">$200 - $500</option>
-                                <option value="500+">Over $500</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Search Results -->
-    <section class="search-results py-5">
-        <div class="container">
+            <!-- Search Bar -->
             <div class="row mb-4">
-                <div class="col-md-6">
-                    <h3 id="results-title">Search Results</h3>
-                    <p class="search-results-count" id="results-count">Enter a search term to begin</p>
-                </div>
-                <div class="col-md-6 text-end">
-                    <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-outline-secondary active" id="viewGrid">
-                            <i class="fas fa-th-large"></i>
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary" id="viewList">
-                            <i class="fas fa-list"></i>
-                        </button>
+                <div class="col-md-8 mx-auto">
+                    <div class="card">
+                        <div class="card-body">
+                            <form id="searchForm" class="d-flex">
+                                <div class="input-group">
+                                    <input type="text" class="form-control form-control-lg" id="searchInput"
+                                        placeholder="What are you looking for?" value="">
+                                    <button class="btn btn-primary btn-lg" type="submit">
+                                        <i class="fas fa-search"></i> Search
+                                    </button>
+                                </div>
+                            </form>
+                            <div class="mt-3">
+                                <small class="text-muted">Try searching for: "laptop", "phone", "shoes", "books"</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="row" id="search-results-container">
-                <!-- Search results will be displayed here -->
-                <div class="col-12 text-center py-5">
-                    <div class="py-5">
+            <!-- Search Results -->
+            <div id="searchResultsContainer">
+                <h2 id="searchTitle" class="mb-4">Search Results</h2>
+                <p id="searchQuery" class="text-muted mb-4"></p>
+
+                <div id="searchResults">
+                    <!-- Search results will be loaded here -->
+                    <div class="text-center py-5">
                         <i class="fas fa-search fa-3x text-muted mb-3"></i>
-                        <h4 class="text-muted">Start your search</h4>
-                        <p class="text-muted">Enter keywords in the search box above to find products</p>
+                        <h4>Search for products</h4>
+                        <p class="text-muted">Enter a search term above to find products</p>
                     </div>
                 </div>
             </div>
 
-            <div class="row mt-4 d-none" id="pagination-container">
-                <div class="col-12">
-                    <nav aria-label="Search results pagination">
-                        <ul class="pagination justify-content-center" id="search-pagination">
-                            <!-- Pagination will be generated here -->
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-
-            <!-- No Results Message -->
-            <div class="row d-none" id="no-results">
-                <div class="col-12 text-center py-5">
-                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
-                    <h4>No results found</h4>
-                    <p class="text-muted">Try different keywords or remove filters</p>
+            <!-- Search Tips -->
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Search Tips</h5>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h6><i class="fas fa-lightbulb text-warning me-2"></i>Be Specific</h6>
+                                    <p class="text-muted small">Use specific keywords like "wireless headphones" instead
+                                        of just "headphones".</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6><i class="fas fa-filter text-warning me-2"></i>Use Filters</h6>
+                                    <p class="text-muted small">Browse categories to find specific types of products.
+                                    </p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6><i class="fas fa-tags text-warning me-2"></i>Check Categories</h6>
+                                    <p class="text-muted small">Browse categories if you're not sure what you're looking
+                                        for.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-dark text-white py-5">
+    <footer class="bg-dark text-white py-4">
         <div class="container">
             <div class="row">
-                <div class="col-md-4 mb-4">
-                    <h4>ShopEase</h4>
-                    <p>Your one-stop shop for everything</p>
+                <div class="col-md-4">
+                    <h5>ShopEasy</h5>
+                    <p>Your one-stop shop for all your needs.</p>
                 </div>
-                <div class="col-md-2 mb-4">
+                <div class="col-md-4">
                     <h5>Quick Links</h5>
                     <ul class="list-unstyled">
-                        <li><a href="index.html" class="text-white-50 text-decoration-none">Home</a></li>
-                        <li><a href="products.html" class="text-white-50 text-decoration-none">Products</a></li>
-                        <li><a href="categories.html" class="text-white-50 text-decoration-none">Categories</a></li>
-                        <li><a href="about.html" class="text-white-50 text-decoration-none">About</a></li>
+                        <li><a href="index.html" class="text-white">Home</a></li>
+                        <li><a href="products.html" class="text-white">Products</a></li>
+                        <li><a href="about.html" class="text-white">About Us</a></li>
+                        <li><a href="contact.html" class="text-white">Contact</a></li>
                     </ul>
                 </div>
-                <div class="col-md-3 mb-4">
+                <div class="col-md-4">
                     <h5>Contact</h5>
-                    <p class="text-white-50">
-                        <i class="fas fa-map-marker-alt me-2"></i>123 Street, City
-                    </p>
-                    <p class="text-white-50">
-                        <i class="fas fa-phone me-2"></i>+1 234 567 890
-                    </p>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <h5>Follow Us</h5>
-                    <div class="social-links">
-                        <a href="#" class="text-white-50 me-3"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-white-50 me-3"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-white-50 me-3"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-white-50"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
+                    <p>Email: info@shopeasy.com</p>
+                    <p>Phone: +1 234 567 8900</p>
                 </div>
             </div>
-            <hr class="bg-white">
-            <div class="text-center pt-3">
-                <p class="text-white-50">&copy; 2024 ShopEase. All rights reserved.</p>
+            <hr class="bg-light">
+            <div class="text-center">
+                <p>&copy; 2024 ShopEasy. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
     <!-- Scroll to Top Button -->
-    <button id="scrollToTop" class="btn btn-primary rounded-circle">
+    <button id="scrollToTop" class="btn btn-primary">
         <i class="fas fa-arrow-up"></i>
     </button>
 
@@ -239,339 +151,32 @@
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Firebase SDK -->
-    <script type="module" src="js/firebase-config.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <!-- Custom JS -->
+    <script src="js/firebase-config.js"></script>
     <script src="js/main.js"></script>
     <script src="js/products.js"></script>
     <script>
-        // Search functionality
-        let allSearchProducts = [];
-        let searchResults = [];
-        let searchCurrentPage = 1;
-        const searchPerPage = 12;
-        let isGridView = true;
-
-        document.addEventListener('DOMContentLoaded', async function () {
-            // Load all products for search
-            await loadAllProductsForSearch();
-
-            // Setup search functionality
-            setupSearch();
-
-            // Load categories for search filter
-            loadCategoriesForSearch();
-
-            // Check for URL search parameter
-            const urlParams = new URLSearchParams(window.location.search);
-            const searchQuery = urlParams.get('q');
-            if (searchQuery) {
-                document.getElementById('searchInput').value = searchQuery;
-                performSearch(searchQuery);
+        // Handle search form submission
+        document.getElementById('searchForm')?.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            if (searchTerm) {
+                window.location.href = `search.html?q=${encodeURIComponent(searchTerm)}`;
             }
         });
 
-        async function loadAllProductsForSearch() {
-            try {
-                const response = await fetch('https://dummyjson.com/products?limit=100');
-                const data = await response.json();
-                allSearchProducts = Array.isArray(data) ? data : data.products;
-            } catch (error) {
-                console.error('Error loading products for search:', error);
+        // Load search term from URL
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchTerm = urlParams.get('q');
+            if (searchTerm) {
+                document.getElementById('searchInput').value = searchTerm;
+                document.getElementById('searchQuery').textContent = `Showing results for: "${searchTerm}"`;
+                document.getElementById('searchTitle').textContent = `Search Results for "${searchTerm}"`;
             }
-        }
-
-        function loadCategoriesForSearch() {
-            fetch('https://dummyjson.com/products/categories')
-                .then(response => response.json())
-                .then(categories => {
-                    const select = document.getElementById('searchCategory');
-                    categories.forEach(category => {
-                        const option = document.createElement('option');
-                        option.value = category;
-                        option.textContent = category.replace(/-/g, ' ');
-                        select.appendChild(option);
-                    });
-                });
-        }
-
-        function setupSearch() {
-            const searchInput = document.getElementById('searchInput');
-            const searchButton = document.getElementById('searchButton');
-            const searchCategory = document.getElementById('searchCategory');
-            const searchSort = document.getElementById('searchSort');
-            const searchPrice = document.getElementById('searchPrice');
-            const viewGridBtn = document.getElementById('viewGrid');
-            const viewListBtn = document.getElementById('viewList');
-
-            // Search button click
-            searchButton.addEventListener('click', () => {
-                performSearch(searchInput.value);
-            });
-
-            // Enter key in search input
-            searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    performSearch(searchInput.value);
-                }
-            });
-
-            // Filter changes
-            [searchCategory, searchSort, searchPrice].forEach(filter => {
-                filter.addEventListener('change', () => {
-                    if (searchResults.length > 0) {
-                        filterAndDisplayResults();
-                    }
-                });
-            });
-
-            // View toggle
-            viewGridBtn.addEventListener('click', () => {
-                viewGridBtn.classList.add('active');
-                viewListBtn.classList.remove('active');
-                isGridView = true;
-                displaySearchResults();
-            });
-
-            viewListBtn.addEventListener('click', () => {
-                viewListBtn.classList.add('active');
-                viewGridBtn.classList.remove('active');
-                isGridView = false;
-                displaySearchResults();
-            });
-        }
-
-        function performSearch(query) {
-            if (!query.trim()) {
-                searchResults = [];
-                displaySearchResults();
-                return;
-            }
-
-            // Search in products
-            const searchTerm = query.toLowerCase();
-            searchResults = allSearchProducts.filter(product =>
-                product.title.toLowerCase().includes(searchTerm) ||
-                product.description.toLowerCase().includes(searchTerm) ||
-                product.category.toLowerCase().includes(searchTerm) ||
-                product.brand?.toLowerCase().includes(searchTerm)
-            );
-
-            // Update URL
-            const url = new URL(window.location);
-            url.searchParams.set('q', query);
-            window.history.pushState({}, '', url);
-
-            // Display results
-            filterAndDisplayResults();
-        }
-
-        function filterAndDisplayResults() {
-            let filtered = [...searchResults];
-            const category = document.getElementById('searchCategory').value;
-            const priceRange = document.getElementById('searchPrice').value;
-            const sortBy = document.getElementById('searchSort').value;
-
-            // Apply category filter
-            if (category) {
-                filtered = filtered.filter(product => product.category === category);
-            }
-
-            // Apply price filter
-            if (priceRange) {
-                const [min, max] = priceRange.split('-').map(val =>
-                    val === '+' ? Infinity : parseInt(val)
-                );
-                filtered = filtered.filter(product => {
-                    if (priceRange === '500+') {
-                        return product.price >= 500;
-                    }
-                    return product.price >= min && product.price <= max;
-                });
-            }
-
-            // Apply sorting
-            switch (sortBy) {
-                case 'price-low':
-                    filtered.sort((a, b) => a.price - b.price);
-                    break;
-                case 'price-high':
-                    filtered.sort((a, b) => b.price - a.price);
-                    break;
-                case 'rating':
-                    filtered.sort((a, b) => b.rating - a.rating);
-                    break;
-                case 'newest':
-                    // Assuming newer products have higher IDs
-                    filtered.sort((a, b) => b.id - a.id);
-                    break;
-            }
-
-            searchResults = filtered;
-            searchCurrentPage = 1;
-            displaySearchResults();
-        }
-
-        function displaySearchResults() {
-            const container = document.getElementById('search-results-container');
-            const noResultsDiv = document.getElementById('no-results');
-            const resultsTitle = document.getElementById('results-title');
-            const resultsCount = document.getElementById('results-count');
-            const paginationContainer = document.getElementById('pagination-container');
-
-            if (searchResults.length === 0) {
-                container.innerHTML = '';
-                noResultsDiv.classList.remove('d-none');
-                resultsTitle.textContent = 'Search Results';
-                resultsCount.textContent = '0 results found';
-                paginationContainer.classList.add('d-none');
-                return;
-            }
-
-            noResultsDiv.classList.add('d-none');
-
-            // Update results info
-            const searchQuery = document.getElementById('searchInput').value;
-            resultsTitle.textContent = `Search Results for "${searchQuery}"`;
-            resultsCount.textContent = `${searchResults.length} results found`;
-
-            // Paginate
-            const totalPages = Math.ceil(searchResults.length / searchPerPage);
-            const startIndex = (searchCurrentPage - 1) * searchPerPage;
-            const endIndex = startIndex + searchPerPage;
-            const paginatedResults = searchResults.slice(startIndex, endIndex);
-
-            // Display products
-            if (isGridView) {
-                container.innerHTML = paginatedResults.map(product => `
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="card product-card h-100">
-                            <img src="${product.thumbnail}" class="card-img-top product-img" alt="${product.title}">
-                            <div class="card-body">
-                                <h6 class="card-title">${product.title}</h6>
-                                <div class="rating mb-2">
-                                    ${generateStarRating(product.rating)}
-                                </div>
-                                <p class="price">${formatPrice(product.price)}</p>
-                                <p class="card-text small text-muted">${product.description.substring(0, 60)}...</p>
-                            </div>
-                            <div class="card-footer bg-white border-top-0">
-                                <button class="btn btn-primary w-100 add-to-cart" data-product='${JSON.stringify(product)}'>
-                                    <i class="fas fa-cart-plus me-2"></i>Add to Cart
-                                </button>
-                                <a href="product-details.html?id=${product.id}" class="btn btn-outline-secondary w-100 mt-2">
-                                    View Details
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            } else {
-                container.innerHTML = paginatedResults.map(product => `
-                    <div class="col-12 mb-4">
-                        <div class="card product-card h-100">
-                            <div class="row g-0">
-                                <div class="col-md-3">
-                                    <img src="${product.thumbnail}" class="img-fluid rounded-start h-100 w-100 object-fit-cover" alt="${product.title}">
-                                </div>
-                                <div class="col-md-9">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-md-8">
-                                                <h5 class="card-title">${product.title}</h5>
-                                                <div class="rating mb-2">
-                                                    ${generateStarRating(product.rating)}
-                                                    <small class="text-muted">(${product.rating})</small>
-                                                </div>
-                                                <p class="card-text">${product.description}</p>
-                                                <p class="text-muted">
-                                                    <strong>Category:</strong> ${product.category} | 
-                                                    <strong>Brand:</strong> ${product.brand || 'N/A'} | 
-                                                    <strong>Stock:</strong> ${product.stock}
-                                                </p>
-                                            </div>
-                                            <div class="col-md-4 text-end">
-                                                <h4 class="price mb-3">${formatPrice(product.price)}</h4>
-                                                <div class="d-grid gap-2">
-                                                    <button class="btn btn-primary add-to-cart" data-product='${JSON.stringify(product)}'>
-                                                        <i class="fas fa-cart-plus me-2"></i>Add to Cart
-                                                    </button>
-                                                    <a href="product-details.html?id=${product.id}" class="btn btn-outline-primary">
-                                                        View Details
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            // Setup pagination
-            if (totalPages > 1) {
-                setupSearchPagination(totalPages);
-                paginationContainer.classList.remove('d-none');
-            } else {
-                paginationContainer.classList.add('d-none');
-            }
-
-            // Add event listeners to add-to-cart buttons
-            container.querySelectorAll('.add-to-cart').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const product = JSON.parse(e.target.closest('.add-to-cart').dataset.product);
-                    addToCart(product);
-                });
-            });
-        }
-
-        function setupSearchPagination(totalPages) {
-            const pagination = document.getElementById('search-pagination');
-            let paginationHTML = '';
-
-            // Previous button
-            paginationHTML += `
-                <li class="page-item ${searchCurrentPage === 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="#" data-page="${searchCurrentPage - 1}">Previous</a>
-                </li>
-            `;
-
-            // Page numbers
-            for (let i = 1; i <= totalPages; i++) {
-                if (i === 1 || i === totalPages || (i >= searchCurrentPage - 1 && i <= searchCurrentPage + 1)) {
-                    paginationHTML += `
-                        <li class="page-item ${i === searchCurrentPage ? 'active' : ''}">
-                            <a class="page-link" href="#" data-page="${i}">${i}</a>
-                        </li>
-                    `;
-                } else if (i === searchCurrentPage - 2 || i === searchCurrentPage + 2) {
-                    paginationHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-                }
-            }
-
-            // Next button
-            paginationHTML += `
-                <li class="page-item ${searchCurrentPage === totalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="#" data-page="${searchCurrentPage + 1}">Next</a>
-                </li>
-            `;
-
-            pagination.innerHTML = paginationHTML;
-
-            // Add event listeners
-            pagination.querySelectorAll('.page-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const page = parseInt(link.dataset.page);
-                    if (page && page !== searchCurrentPage) {
-                        searchCurrentPage = page;
-                        displaySearchResults();
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-                });
-            });
-        }
+        });
     </script>
 </body>
 
