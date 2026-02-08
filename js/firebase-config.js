@@ -1,4 +1,3 @@
-// js/firebase-config.js
 // Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBymNxicwA7ALiiNKJVyTZlBQTI1nuZa6o",
@@ -11,17 +10,19 @@ const firebaseConfig = {
 
 // Initialize Firebase
 try {
-    firebase.initializeApp(firebaseConfig);
-    console.log('Firebase initialized successfully');
+    if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+        console.log('Firebase initialized successfully');
 
-    // Set persistence
-    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-        .then(() => {
-            console.log('Auth persistence set to LOCAL');
-        })
-        .catch((error) => {
-            console.error('Error setting auth persistence:', error);
-        });
+        // Set persistence
+        firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+            .then(() => {
+                console.log('Auth persistence set to LOCAL');
+            })
+            .catch((error) => {
+                console.error('Error setting auth persistence:', error);
+            });
+    }
 } catch (error) {
     console.error('Firebase initialization error:', error);
 }

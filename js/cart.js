@@ -22,23 +22,41 @@ function initializeCart() {
 // ===============================
 function loadCart() {
     initializeCart();
+    console.log('[v0] Loading cart. Items in cart:', cart.length);
 
     const container = document.getElementById('cartItems');
     const emptyCart = document.getElementById('emptyCart');
     const cartContent = document.getElementById('cartContent');
 
     if (cart.length === 0) {
-        if (emptyCart) emptyCart.classList.remove('d-none');
-        if (cartContent) cartContent.classList.add('d-none');
+        console.log('[v0] Cart is empty, showing empty message');
+        if (emptyCart) {
+            emptyCart.classList.remove('d-none');
+            console.log('[v0] Showed empty cart message');
+        }
+        if (cartContent) {
+            cartContent.classList.add('d-none');
+            console.log('[v0] Hid cart content');
+        }
         updateCartSummary();
         updateCartCount();
         return;
     }
 
-    if (emptyCart) emptyCart.classList.add('d-none');
-    if (cartContent) cartContent.classList.remove('d-none');
+    console.log('[v0] Cart has items, showing cart content');
+    if (emptyCart) {
+        emptyCart.classList.add('d-none');
+        console.log('[v0] Hid empty cart message');
+    }
+    if (cartContent) {
+        cartContent.classList.remove('d-none');
+        console.log('[v0] Showed cart content');
+    }
 
-    if (!container) return;
+    if (!container) {
+        console.error('[v0] cartItems container not found!');
+        return;
+    }
 
     container.innerHTML = '';
 
@@ -52,7 +70,8 @@ function loadCart() {
                 <div class="d-flex align-items-center">
                     <img src="${item.image || 'https://via.placeholder.com/80'}"
                          class="img-thumbnail me-3"
-                         style="width:80px;height:80px;object-fit:contain;">
+                         style="width:80px;height:80px;object-fit:contain;"
+                         onerror="this.src='https://via.placeholder.com/80'">
                     <div>
                         <h6 class="mb-1">${item.title}</h6>
                         <small class="text-muted">Product ID: ${item.id}</small>
@@ -61,22 +80,25 @@ function loadCart() {
             </td>
 
             <td>
-                <button onclick="updateQuantity(${index},-1)">-</button>
-                ${item.quantity}
-                <button onclick="updateQuantity(${index},1)">+</button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity(${index},-1)">-</button>
+                <span class="mx-2">${item.quantity}</span>
+                <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity(${index},1)">+</button>
             </td>
 
             <td>${formatPrice(item.price)}</td>
             <td>${formatPrice(item.price * item.quantity)}</td>
 
             <td>
-                <button onclick="removeFromCart(${index})">🗑</button>
+                <button class="btn btn-sm btn-danger" onclick="removeFromCart(${index})" title="Remove from cart">
+                    <i class="fas fa-trash"></i>
+                </button>
             </td>
         `;
 
         container.appendChild(row);
     });
 
+    console.log('[v0] Rendered', cart.length, 'items in cart');
     updateCartSummary();
     updateCartCount();
 }
@@ -221,12 +243,32 @@ function showNotification(message, type) {
 // ===============================
 document.addEventListener('DOMContentLoaded', () => {
     const path = window.location.pathname;
+    console.log('[v0] Current path:', path);
 
     if (path.includes('cart.html')) {
+        console.log('[v0] Loading cart page');
         loadCart();
     }
 
     if (path.includes('order-confirmation.html')) {
+        console.log('[v0] Loading order confirmation');
         loadOrderConfirmation();
     }
 });
+
+// Also try loading immediately in case DOM is already ready
+if (document.readyState === 'loading') {
+    // DOM is still loading
+    document.addEventListener('DOMContentLoaded', () => {
+        const path = window.location.pathname;
+        if (path.includes('cart.html')) {
+            setTimeout(() => loadCart(), 100);
+        }
+    });
+} else {
+    // DOM is already ready
+    const path = window.location.pathname;
+    if (path.includes('cart.html')) {
+        setTimeout(() => loadCart(), 100);
+    }
+}

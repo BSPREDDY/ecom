@@ -23,8 +23,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Update authentication button
-    updateAuthButton();
+    // Update authentication button - only if not on auth page
+    if (!document.querySelector('.auth-container')) {
+        updateAuthButton();
+    }
 
     // Lazy load images
     if ('IntersectionObserver' in window) {
@@ -127,32 +129,35 @@ function showError(element, message) {
 // Update authentication button based on login status
 function updateAuthButton() {
     const authBtn = document.getElementById('authBtn');
-    if (authBtn) {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (user) {
-            authBtn.innerHTML = '<i class="fas fa-user me-2"></i>Profile';
-            authBtn.href = '#';
-            authBtn.onclick = function (e) {
-                e.preventDefault();
-                if (confirm('Are you sure you want to logout?')) {
-                    const firebase = window.firebase; // Assuming firebase is globally available
-                    if (firebase && firebase.auth) {
-                        firebase.auth().signOut().then(() => {
-                            console.log('User signed out');
-                        }).catch((error) => {
-                            console.error('Sign out error:', error);
-                        });
-                    }
-                    localStorage.removeItem('user');
-                    updateAuthButton();
-                    window.location.href = 'index.html';
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    // Check if we're on a page with auth button
+    if (!authBtn) return;
+
+    if (user) {
+        // User is logged in
+        authBtn.innerHTML = '<i class="fas fa-user me-2"></i>' + (user.displayName || 'Profile');
+        authBtn.href = '#';
+        authBtn.onclick = function (e) {
+            e.preventDefault();
+            if (confirm('Are you sure you want to logout?')) {
+                if (window.firebase && window.firebase.auth) {
+                    window.firebase.auth().signOut().then(() => {
+                        console.log('User signed out');
+                    }).catch((error) => {
+                        console.error('Sign out error:', error);
+                    });
                 }
-            };
-        } else {
-            authBtn.innerHTML = 'Login';
-            authBtn.href = 'auth.html';
-            authBtn.onclick = null;
-        }
+                localStorage.removeItem('user');
+                updateAuthButton();
+                window.location.href = 'index.html';
+            }
+        };
+    } else {
+        // User is not logged in
+        authBtn.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Login';
+        authBtn.href = 'auth.html';
+        authBtn.onclick = null;
     }
 }
 
@@ -189,9 +194,12 @@ function addToCart(product) {
 
 // Show notification
 function showNotification(message, type = 'success') {
+    // Remove existing notifications
+    document.querySelectorAll('.alert-notification').forEach(el => el.remove());
+
     // Create notification element
     const notification = document.createElement('div');
-    notification.className = `alert alert-${type} position-fixed`;
+    notification.className = `alert alert-${type} alert-notification`;
     notification.style.cssText = `
         position: fixed;
         top: 80px;
@@ -243,24 +251,6 @@ if (!document.querySelector('#notification-animations')) {
     `;
     document.head.appendChild(style);
 }
-
-// Add event listener for thumbnail images in product details
-document.addEventListener('click', function (e) {
-    if (e.target.classList.contains('thumbnail-img')) {
-        e.target.classList.add('active');
-        Array.from(e.target.parentNode.children).forEach(img => {
-            if (img !== e.target) {
-                img.classList.remove('active');
-            }
-        });
-    }
-});
-
-// Optimize memory by removing event listeners when no longer needed
-window.addEventListener('beforeunload', function () {
-    // Clean up event listeners if needed
-    document.removeEventListener('click', null);
-});
 
 // Preload API responses
 const apiCache = new Map();

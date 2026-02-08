@@ -5,9 +5,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Form elements
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
-    const formToggle = document.getElementById('formToggle');
-    const toggleText = document.getElementById('toggleText');
-    const toggleBtn = document.getElementById('toggleBtn');
+    const loginToggleBtn = document.getElementById('loginToggleBtn');
+    const signupToggleBtn = document.getElementById('signupToggleBtn');
+    const loginToggleText = document.getElementById('loginToggleText');
+    const signupToggleText = document.getElementById('signupToggleText');
     const loginEmail = document.getElementById('loginEmail');
     const loginPassword = document.getElementById('loginPassword');
     const signupName = document.getElementById('signupName');
@@ -17,84 +18,117 @@ document.addEventListener('DOMContentLoaded', function () {
     const togglePasswordBtns = document.querySelectorAll('.toggle-password');
     const passwordStrengthMeter = document.getElementById('passwordStrengthMeter');
     const passwordRequirements = document.getElementById('passwordRequirements');
+    const forgotPassword = document.getElementById('forgotPassword');
+
+    // Firebase initialization check
+    if (typeof firebase === 'undefined') {
+        console.error('Firebase is not loaded');
+        showMessage('loginMessage', 'Authentication service not available. Please refresh the page.', 'error');
+        return;
+    }
 
     // Initialize with login form
     showLoginForm();
 
-    // Form toggle
-    formToggle?.addEventListener('click', function (e) {
-        e.preventDefault();
-        if (loginForm.classList.contains('form-hidden')) {
-            showLoginForm();
-        } else {
+    // Form toggle - Login form
+    if (loginToggleBtn) {
+        loginToggleBtn.addEventListener('click', function (e) {
+            e.preventDefault();
             showSignupForm();
-        }
-    });
+        });
+    }
+
+    // Form toggle - Signup form
+    if (signupToggleBtn) {
+        signupToggleBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            showLoginForm();
+        });
+    }
 
     // Toggle password visibility
-    togglePasswordBtns.forEach(btn => {
-        btn.addEventListener('click', function () {
-            const input = this.previousElementSibling;
-            const type = input.type === 'password' ? 'text' : 'password';
-            input.type = type;
-            this.innerHTML = type === 'password' ?
-                '<i class="fas fa-eye"></i>' :
-                '<i class="fas fa-eye-slash"></i>';
+    if (togglePasswordBtns) {
+        togglePasswordBtns.forEach(btn => {
+            btn.addEventListener('click', function () {
+                const input = this.previousElementSibling;
+                if (!input) return;
+
+                const type = input.type === 'password' ? 'text' : 'password';
+                input.type = type;
+                this.innerHTML = type === 'password' ?
+                    '<i class="fas fa-eye"></i>' :
+                    '<i class="fas fa-eye-slash"></i>';
+            });
         });
-    });
+    }
 
     // Password strength checker
-    signupPassword?.addEventListener('input', function () {
-        checkPasswordStrength(this.value);
-    });
+    if (signupPassword) {
+        signupPassword.addEventListener('input', function () {
+            checkPasswordStrength(this.value);
+        });
+    }
 
     // Password confirmation check
-    confirmPassword?.addEventListener('input', function () {
-        checkPasswordConfirmation();
-    });
+    if (confirmPassword) {
+        confirmPassword.addEventListener('input', function () {
+            checkPasswordConfirmation();
+        });
+    }
 
-    // Form validation
-    loginForm?.addEventListener('submit', handleLogin);
-    signupForm?.addEventListener('submit', handleSignup);
+    // Form submission
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+    }
+
+    if (signupForm) {
+        signupForm.addEventListener('submit', handleSignup);
+    }
 
     // Forgot password
-    const forgotPassword = document.getElementById('forgotPassword');
-    forgotPassword?.addEventListener('click', function (e) {
-        e.preventDefault();
-        const email = prompt('Please enter your email address:');
-        if (email) {
-            resetPassword(email);
-        }
-    });
+    if (forgotPassword) {
+        forgotPassword.addEventListener('click', function (e) {
+            e.preventDefault();
+            const email = prompt('Please enter your email address:');
+            if (email) {
+                resetPassword(email);
+            }
+        });
+    }
+
+    // Check if user is already logged in
+    checkAuthState();
 });
 
 function showLoginForm() {
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
-    const toggleText = document.getElementById('toggleText');
-    const toggleBtn = document.getElementById('toggleBtn');
+    const authTitle = document.getElementById('authTitle');
+    const authSubtitle = document.getElementById('authSubtitle');
 
-    loginForm.classList.remove('form-hidden');
-    signupForm.classList.add('form-hidden');
-    toggleText.textContent = "Don't have an account?";
-    toggleBtn.textContent = "Sign Up";
+    if (loginForm) loginForm.classList.remove('form-hidden');
+    if (signupForm) signupForm.classList.add('form-hidden');
+    if (authTitle) authTitle.textContent = "Welcome Back";
+    if (authSubtitle) authSubtitle.textContent = "Please login to your account";
     document.title = "ShopEasy - Login";
 }
 
 function showSignupForm() {
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
-    const toggleText = document.getElementById('toggleText');
-    const toggleBtn = document.getElementById('toggleBtn');
+    const authTitle = document.getElementById('authTitle');
+    const authSubtitle = document.getElementById('authSubtitle');
 
-    signupForm.classList.remove('form-hidden');
-    loginForm.classList.add('form-hidden');
-    toggleText.textContent = "Already have an account?";
-    toggleBtn.textContent = "Login";
+    if (signupForm) signupForm.classList.remove('form-hidden');
+    if (loginForm) loginForm.classList.add('form-hidden');
+    if (authTitle) authTitle.textContent = "Create Account";
+    if (authSubtitle) authSubtitle.textContent = "Sign up to get started";
     document.title = "ShopEasy - Sign Up";
 }
 
 function checkPasswordStrength(password) {
+    if (!password) return;
+
     let strength = 0;
     const requirements = [];
 
@@ -132,29 +166,36 @@ function checkPasswordStrength(password) {
 
     // Update meter
     const meter = document.getElementById('passwordStrengthMeter');
-    meter.className = 'password-strength-meter';
+    if (meter) {
+        meter.className = 'password-strength-meter';
+        meter.style.width = `${strength}%`;
 
-    if (strength >= 100) {
-        meter.classList.add('strong');
-    } else if (strength >= 50) {
-        meter.classList.add('medium');
-    } else if (strength > 0) {
-        meter.classList.add('weak');
+        if (strength >= 100) {
+            meter.classList.add('strong');
+        } else if (strength >= 50) {
+            meter.classList.add('medium');
+        } else if (strength > 0) {
+            meter.classList.add('weak');
+        }
     }
 
     // Update requirements list
     const requirementsList = document.getElementById('passwordRequirements');
-    requirementsList.innerHTML = requirements.map(req =>
-        `<span class="d-block">${req}</span>`
-    ).join('');
+    if (requirementsList) {
+        requirementsList.innerHTML = requirements.map(req =>
+            `<span class="d-block">${req}</span>`
+        ).join('');
+    }
 }
 
 function checkPasswordConfirmation() {
-    const password = document.getElementById('signupPassword').value;
-    const confirm = document.getElementById('confirmPassword').value;
+    const password = document.getElementById('signupPassword')?.value;
+    const confirm = document.getElementById('confirmPassword')?.value;
     const error = document.getElementById('confirmPasswordError');
 
-    if (confirm && password !== confirm) {
+    if (!password || !confirm || !error) return false;
+
+    if (password !== confirm) {
         error.textContent = 'Passwords do not match';
         error.style.display = 'block';
         return false;
@@ -166,6 +207,11 @@ function checkPasswordConfirmation() {
 
 function showMessage(elementId, message, type) {
     const element = document.getElementById(elementId);
+    if (!element) {
+        console.error(`Element with id "${elementId}" not found`);
+        return;
+    }
+
     element.textContent = message;
     element.className = `message ${type}`;
     element.style.display = 'block';
@@ -178,8 +224,8 @@ function showMessage(elementId, message, type) {
 async function handleLogin(e) {
     e.preventDefault();
 
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
+    const email = document.getElementById('loginEmail')?.value;
+    const password = document.getElementById('loginPassword')?.value;
     const messageElement = document.getElementById('loginMessage');
 
     // Basic validation
@@ -195,13 +241,15 @@ async function handleLogin(e) {
         return;
     }
 
-    try {
-        // Show loading state
-        const submitBtn = document.querySelector('#loginForm button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
-        submitBtn.disabled = true;
+    // Show loading state
+    const submitBtn = document.querySelector('#loginForm button[type="submit"]');
+    if (!submitBtn) return;
 
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+    submitBtn.disabled = true;
+
+    try {
         // Firebase login
         const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
         const user = userCredential.user;
@@ -243,8 +291,7 @@ async function handleLogin(e) {
         showMessage('loginMessage', errorMessage, 'error');
 
         // Reset button
-        const submitBtn = document.querySelector('#loginForm button[type="submit"]');
-        submitBtn.innerHTML = originalText || 'Login';
+        submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
     }
 }
@@ -252,10 +299,10 @@ async function handleLogin(e) {
 async function handleSignup(e) {
     e.preventDefault();
 
-    const name = document.getElementById('signupName').value;
-    const email = document.getElementById('signupEmail').value;
-    const password = document.getElementById('signupPassword').value;
-    const confirm = document.getElementById('confirmPassword').value;
+    const name = document.getElementById('signupName')?.value;
+    const email = document.getElementById('signupEmail')?.value;
+    const password = document.getElementById('signupPassword')?.value;
+    const confirm = document.getElementById('confirmPassword')?.value;
 
     // Validation
     if (!name || !email || !password || !confirm) {
@@ -275,13 +322,15 @@ async function handleSignup(e) {
         return;
     }
 
-    try {
-        // Show loading state
-        const submitBtn = document.querySelector('#signupForm button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
-        submitBtn.disabled = true;
+    // Show loading state
+    const submitBtn = document.querySelector('#signupForm button[type="submit"]');
+    if (!submitBtn) return;
 
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+    submitBtn.disabled = true;
+
+    try {
         // Firebase signup
         const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
@@ -328,8 +377,7 @@ async function handleSignup(e) {
         showMessage('signupMessage', errorMessage, 'error');
 
         // Reset button
-        const submitBtn = document.querySelector('#signupForm button[type="submit"]');
-        submitBtn.innerHTML = originalText || 'Sign Up';
+        submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
     }
 }
@@ -343,20 +391,19 @@ async function resetPassword(email) {
     }
 }
 
-// Check if user is logged in on page load
-window.addEventListener('load', function () {
+// Check authentication state
+function checkAuthState() {
+    if (typeof firebase === 'undefined' || !firebase.auth) {
+        console.warn('Firebase auth not available');
+        return;
+    }
+
     firebase.auth().onAuthStateChanged(function (user) {
-        if (user) {
-            // User is signed in
-            localStorage.setItem('user', JSON.stringify({
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName
-            }));
-        } else {
-            // User is signed out
-            localStorage.removeItem('user');
+        if (user && window.location.pathname.includes('auth.html')) {
+            // User is already logged in, redirect to home
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
         }
-        updateAuthButton();
     });
-});
+}
