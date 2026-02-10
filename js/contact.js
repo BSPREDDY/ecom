@@ -1,162 +1,123 @@
-// Contact form validation
-document.addEventListener('DOMContentLoaded', function () {
-    const contactForm = document.getElementById('contactForm');
-    if (!contactForm) return;
+// Contact form validation using JavaScript + jQuery
+$(document).ready(function () {
+    const $form = $('#contactForm');
+    if (!$form.length) return;
 
-    // Form elements
-    const nameInput = document.getElementById('name');
-    const emailInput = document.getElementById('email');
-    const subjectInput = document.getElementById('subject');
-    const messageInput = document.getElementById('message');
-    const submitBtn = contactForm.querySelector('button[type="submit"]');
+    const $name = $('#name');
+    const $email = $('#email');
+    const $subject = $('#subject');
+    const $message = $('#message');
+    const $submitBtn = $form.find('button[type="submit"]');
 
-    // Error elements
-    const nameError = document.getElementById('nameError');
-    const emailError = document.getElementById('emailError');
-    const subjectError = document.getElementById('subjectError');
-    const messageError = document.getElementById('messageError');
-    const formMessage = document.getElementById('formMessage');
+    const $nameError = $('#nameError');
+    const $emailError = $('#emailError');
+    const $subjectError = $('#subjectError');
+    const $messageError = $('#messageError');
+    const $formMessage = $('#formMessage');
 
     // Real-time validation
-    nameInput?.addEventListener('input', validateName);
-    emailInput?.addEventListener('input', validateEmail);
-    subjectInput?.addEventListener('input', validateSubject);
-    messageInput?.addEventListener('input', validateMessage);
+    $name.on('input', validateName);
+    $email.on('input', validateEmail);
+    $subject.on('input', validateSubject);
+    $message.on('input', validateMessage);
 
-    // Form submission
-    contactForm.addEventListener('submit', handleSubmit);
+    // Submit handler
+    $form.on('submit', handleSubmit);
 
-    // Validation functions
     function validateName() {
-        const name = nameInput.value.trim();
-        if (!name) {
-            showError(nameError, 'Name is required');
-            return false;
-        }
-        if (name.length < 2) {
-            showError(nameError, 'Name must be at least 2 characters');
-            return false;
-        }
-        hideError(nameError);
+        const value = $name.val().trim();
+        if (!value) return showError($name, $nameError, 'Name is required');
+        if (value.length < 2) return showError($name, $nameError, 'Name must be at least 2 characters');
+        hideError($name, $nameError);
         return true;
     }
 
     function validateEmail() {
-        const email = emailInput.value.trim();
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (!email) {
-            showError(emailError, 'Email is required');
-            return false;
-        }
-        if (!emailRegex.test(email)) {
-            showError(emailError, 'Please enter a valid email address');
-            return false;
-        }
-        hideError(emailError);
+        const value = $email.val().trim();
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!value) return showError($email, $emailError, 'Email is required');
+        if (!regex.test(value)) return showError($email, $emailError, 'Enter a valid email');
+        hideError($email, $emailError);
         return true;
     }
 
     function validateSubject() {
-        const subject = subjectInput.value.trim();
-        if (!subject) {
-            showError(subjectError, 'Subject is required');
-            return false;
-        }
-        if (subject.length < 3) {
-            showError(subjectError, 'Subject must be at least 3 characters');
-            return false;
-        }
-        hideError(subjectError);
+        const value = $subject.val().trim();
+        if (!value) return showError($subject, $subjectError, 'Subject is required');
+        if (value.length < 3) return showError($subject, $subjectError, 'Subject must be at least 3 characters');
+        hideError($subject, $subjectError);
         return true;
     }
 
     function validateMessage() {
-        const message = messageInput.value.trim();
-        if (!message) {
-            showError(messageError, 'Message is required');
-            return false;
-        }
-        if (message.length < 10) {
-            showError(messageError, 'Message must be at least 10 characters');
-            return false;
-        }
-        hideError(messageError);
+        const value = $message.val().trim();
+        if (!value) return showError($message, $messageError, 'Message is required');
+        if (value.length < 10) return showError($message, $messageError, 'Message must be at least 10 characters');
+        hideError($message, $messageError);
         return true;
     }
 
-    function showError(element, message) {
-        element.textContent = message;
-        element.style.display = 'block';
-        element.previousElementSibling.classList.add('is-invalid');
+    function showError($input, $error, msg) {
+        $error.text(msg).fadeIn();
+        $input.addClass('is-invalid');
+        return false;
     }
 
-    function hideError(element) {
-        element.style.display = 'none';
-        element.previousElementSibling.classList.remove('is-invalid');
+    function hideError($input, $error) {
+        $error.fadeOut();
+        $input.removeClass('is-invalid');
     }
 
     async function handleSubmit(e) {
         e.preventDefault();
 
-        // Validate all fields
-        const isNameValid = validateName();
-        const isEmailValid = validateEmail();
-        const isSubjectValid = validateSubject();
-        const isMessageValid = validateMessage();
+        const valid =
+            validateName() &
+            validateEmail() &
+            validateSubject() &
+            validateMessage();
 
-        if (!isNameValid || !isEmailValid || !isSubjectValid || !isMessageValid) {
-            showFormMessage('Please fix the errors above', 'error');
+        if (!valid) {
+            showFormMessage('Please fix the errors above', 'danger');
             return;
         }
 
-        // Disable submit button
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        $submitBtn.prop('disabled', true).html(
+            '<i class="fas fa-spinner fa-spin"></i> Sending...'
+        );
 
         try {
-            // In a real application, you would send this data to a server
-            // For demo purposes, we'll simulate an API call
-
-            const formData = {
-                name: nameInput.value.trim(),
-                email: emailInput.value.trim(),
-                subject: subjectInput.value.trim(),
-                message: messageInput.value.trim(),
-                timestamp: new Date().toISOString()
-            };
-
-            // Simulate API call delay
             await new Promise(resolve => setTimeout(resolve, 1500));
 
-            // Save to localStorage (in a real app, send to server)
+            const data = {
+                name: $name.val(),
+                email: $email.val(),
+                subject: $subject.val(),
+                message: $message.val(),
+                time: new Date().toISOString()
+            };
+
             const messages = JSON.parse(localStorage.getItem('contactMessages')) || [];
-            messages.push(formData);
+            messages.push(data);
             localStorage.setItem('contactMessages', JSON.stringify(messages));
 
-            // Show success message
-            showFormMessage('Message sent successfully! We\'ll get back to you soon.', 'success');
+            showFormMessage('Message sent successfully!', 'success');
+            $form.trigger('reset');
 
-            // Reset form
-            contactForm.reset();
-
-        } catch (error) {
-            showFormMessage('Failed to send message. Please try again.', 'error');
+        } catch {
+            showFormMessage('Something went wrong. Try again.', 'danger');
         } finally {
-            // Re-enable submit button
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = 'Send Message';
+            $submitBtn.prop('disabled', false).text('Send Message');
         }
     }
 
-    function showFormMessage(message, type) {
-        formMessage.textContent = message;
-        formMessage.className = `alert alert-${type}`;
-        formMessage.style.display = 'block';
+    function showFormMessage(msg, type) {
+        $formMessage
+            .removeClass()
+            .addClass(`alert alert-${type}`)
+            .text(msg)
+            .fadeIn();
 
-        // Auto-hide after 5 seconds
-        setTimeout(() => {
-            formMessage.style.display = 'none';
-        }, 5000);
+        setTimeout(() => $formMessage.fadeOut(), 5000);
     }
 });

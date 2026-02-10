@@ -213,13 +213,181 @@ function loadOrderConfirmation() {
     const container = document.getElementById('orderConfirmation');
     if (!container) return;
 
+    const user = JSON.parse(localStorage.getItem('user')) || {};
+    const orderDate = new Date(order.date);
+    const estimatedDelivery = new Date(orderDate.getTime() + (5 * 24 * 60 * 60 * 1000));
+
+    let itemsHtml = '';
+    if (order.items && order.items.length > 0) {
+        itemsHtml = order.items.map((item, index) => `
+            <tr style="animation: fadeIn 0.5s ease-out ${index * 0.1}s both;">
+                <td>
+                    <img src="${item.image || 'https://via.placeholder.com/80'}" 
+                         style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;"
+                         onerror="this.src='https://via.placeholder.com/80'">
+                </td>
+                <td><strong>${item.title}</strong></td>
+                <td>${item.quantity}</td>
+                <td>${formatPrice(item.price)}</td>
+                <td>${formatPrice(item.price * item.quantity)}</td>
+            </tr>
+        `).join('');
+    }
+
     container.innerHTML = `
-        <h2>Order Confirmed 🎉</h2>
-        <p>Order #: ${order.orderNumber}</p>
-        <p>Total: ${formatPrice(order.total)}</p>
+        <div style="animation: fadeIn 0.5s ease-out;">
+            <!-- Success Message -->
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-left: 5px solid #28a745;">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong>Order Confirmed!</strong> Your order has been successfully placed.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Order Details -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Order Details</h5>
+                            <div class="mb-3">
+                                <small class="text-muted">Order Number</small>
+                                <h6 class="mb-0" style="color: #007bff; font-weight: 700;">${order.orderNumber}</h6>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted">Order Date</small>
+                                <h6 class="mb-0">${orderDate.toLocaleDateString()} ${orderDate.toLocaleTimeString()}</h6>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted">Status</small>
+                                <span class="badge bg-primary ms-2">${order.status || 'Processing'}</span>
+                            </div>
+                            <div>
+                                <small class="text-muted">Estimated Delivery</small>
+                                <h6 class="mb-0">${estimatedDelivery.toLocaleDateString()}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Customer Information</h5>
+                            <div class="mb-3">
+                                <small class="text-muted">Name</small>
+                                <h6 class="mb-0">${user.displayName || user.email || 'Guest'}</h6>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted">Email</small>
+                                <h6 class="mb-0">${user.email || 'Not provided'}</h6>
+                            </div>
+                            <div>
+                                <small class="text-muted">Total Items</small>
+                                <h6 class="mb-0">${order.items ? order.items.length : 0} item(s)</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0">Order Items</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${itemsHtml}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="row text-right">
+                        <div class="col-md-8 text-end">
+                            <strong>Subtotal:</strong>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <strong>${formatPrice(order.subtotal || 0)}</strong>
+                        </div>
+                    </div>
+                    <div class="row text-right mt-2">
+                        <div class="col-md-8 text-end">
+                            <strong>Shipping:</strong>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <strong class="text-success">${order.shipping === 0 ? 'FREE' : formatPrice(order.shipping || 0)}</strong>
+                        </div>
+                    </div>
+                    <div class="row text-right mt-2">
+                        <div class="col-md-8 text-end">
+                            <strong>Tax (10%):</strong>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <strong>${formatPrice(order.tax || 0)}</strong>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row text-right">
+                        <div class="col-md-8 text-end">
+                            <h5>Total:</h5>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <h5 class="text-primary" style="font-weight: 700;">${formatPrice(order.total || 0)}</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex gap-3 mb-4">
+                <a href="index.html" class="btn btn-primary flex-fill">
+                    <i class="fas fa-home me-2"></i>Back to Home
+                </a>
+                <a href="products.html" class="btn btn-outline-primary flex-fill">
+                    <i class="fas fa-shopping-bag me-2"></i>Continue Shopping
+                </a>
+            </div>
+
+            <!-- Order Tracking Section -->
+            <div class="alert alert-info" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>What's Next?</strong> You will receive an email confirmation shortly with tracking information. You can track your order progress below.
+            </div>
+        </div>
     `;
 
+    // Show order tracking section
+    const trackingElement = document.getElementById('orderTracking');
+    if (trackingElement) {
+        trackingElement.style.display = 'block';
+        // Activate first step
+        trackingElement.querySelector('.timeline-step')?.classList.add('active');
+    }
+
+    // Mark second step as active after 2 seconds
+    setTimeout(() => {
+        const steps = document.querySelectorAll('.timeline-step');
+        if (steps[1]) steps[1].classList.add('active');
+    }, 2000);
+
     localStorage.removeItem('currentOrder');
+    localStorage.removeItem('cart');
 }
 
 // ===============================

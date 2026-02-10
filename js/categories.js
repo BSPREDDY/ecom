@@ -1,22 +1,25 @@
-// categories.js - UPDATED IMAGE URLS
+// categories.js - Category Management Module
 // ===============================
 // Category Management Module
 // ===============================
 
-// Use API_BASE_URL from products.js (already declared globally)
+// Ensure API_BASE_URL is declared globally (from products.js)
+if (typeof window.API_BASE_URL === 'undefined') {
+    window.API_BASE_URL = 'https://dummyjson.com';
+}
+// Removed unused CART_BASE_URL variable
+
 const CATEGORY_API = `${API_BASE_URL}/products/categories`;
 const CATEGORY_PRODUCT_API = (category) => `${API_BASE_URL}/products/category/${encodeURIComponent(category)}`;
 
 // CATEGORY IMAGES - Map each category to a relevant image (FIXED URLs)
+// Consolidated duplicate entries
 const CATEGORY_IMAGES = {
     electronics: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
     jewelery: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    jewelry: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
     "men's clothing": 'https://images.unsplash.com/photo-1521572163474-68674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    "mens clothing": 'https://images.unsplash.com/photo-1521572163474-68674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
     "women's clothing": 'https://images.unsplash.com/photo-1491553895917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    "womens clothing": 'https://images.unsplash.com/photo-1491553895917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    beauty: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+    beauty: 'https://images.unsplash.com/photo-1558618666917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
     fragrances: 'https://images.unsplash.com/photo-1587318014919-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
     furniture: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
     groceries: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
@@ -36,8 +39,18 @@ function getCategoryImage(category) {
         categoryName = category;
     }
 
+    // Handle common variations
     const key = categoryName.toLowerCase().trim();
-    return CATEGORY_IMAGES[key] || CATEGORY_IMAGES.default;
+
+    // Map variations to standardized keys
+    const categoryMap = {
+        'jewelry': 'jewelery',
+        'mens clothing': "men's clothing",
+        'womens clothing': "women's clothing"
+    };
+
+    const normalizedKey = categoryMap[key] || key;
+    return CATEGORY_IMAGES[normalizedKey] || CATEGORY_IMAGES.default;
 }
 
 // Format category name properly
@@ -60,6 +73,40 @@ function formatCategoryName(category) {
         .join(' ');
 }
 
+// Generate star rating HTML
+function generateStarRating(rating) {
+    if (typeof rating !== 'number' || rating < 0) rating = 0;
+    if (rating > 5) rating = 5;
+
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    let stars = '';
+
+    for (let i = 0; i < fullStars; i++) {
+        stars += '<i class="fas fa-star text-warning"></i>';
+    }
+
+    if (hasHalfStar) {
+        stars += '<i class="fas fa-star-half-alt text-warning"></i>';
+    }
+
+    for (let i = 0; i < emptyStars; i++) {
+        stars += '<i class="far fa-star text-muted"></i>';
+    }
+
+    return stars;
+}
+
+// Format price with dollar sign
+function formatPrice(price) {
+    if (typeof price !== 'number') {
+        price = parseFloat(price) || 0;
+    }
+    return `$${price.toFixed(2)}`;
+}
+
 // Create category card with proper image handling
 function createCategoryCard(category) {
     const categoryName = formatCategoryName(category);
@@ -67,7 +114,7 @@ function createCategoryCard(category) {
     const categorySlug = typeof category === 'object' ? (category.slug || category.name) : category;
 
     // Use a simple placeholder if main image fails
-    const placeholderUrl = `https://via.placeholder.com/300x200/6c757d/ffffff?text=${categoryName.substring(0, 15)}`;
+    const placeholderUrl = `https://via.placeholder.com/300x200/6c757d/ffffff?text=${encodeURIComponent(categoryName.substring(0, 15))}`;
 
     return `
         <div class="card category-card h-100 shadow-sm border-0 hover-effect">
@@ -76,7 +123,7 @@ function createCategoryCard(category) {
                      class="card-img-top w-100 h-100" 
                      style="object-fit: cover; transition: transform 0.3s ease;"
                      alt="${categoryName}"
-                     onerror="this.onerror=null; this.src='${placeholderUrl}';">
+                     onerror="this.onerror=null; this.src='${placeholderUrl}'; this.style.objectFit='contain'; this.style.padding='20px';">
             </div>
             <div class="card-body d-flex flex-column text-center p-3">
                 <h5 class="card-title mb-3 fw-bold">${categoryName}</h5>
@@ -91,24 +138,47 @@ function createCategoryCard(category) {
 
 // Create product card for categories page
 function createProductCardForCategory(product) {
-    const description = product.description ? product.description.substring(0, 60) + '...' : 'No description';
-    const placeholderUrl = `https://via.placeholder.com/300x200/6c757d/ffffff?text=Product+${product.id}`;
+    const description = product.description ?
+        product.description.substring(0, 60) + (product.description.length > 60 ? '...' : '') :
+        'No description available';
+
+    // Use product thumbnail or category image, with proper fallback
+    let imageUrl = product.thumbnail || product.image;
+    if (!imageUrl || imageUrl === 'undefined') {
+        // Use category-specific image
+        imageUrl = getCategoryImage(product.category) || 'https://via.placeholder.com/300x200/6c757d/ffffff?text=Product';
+    }
+
+    const placeholderUrl = `https://via.placeholder.com/300x200/e9ecef/666666?text=${encodeURIComponent(product.title.substring(0, 20))}`;
+    const rating = typeof product.rating === 'number' ? product.rating : 0;
+    const stars = generateStarRating(rating);
+    const stock = product.stock || product.quantity || 5;
 
     return `
         <div class="card product-card h-100 shadow-sm border-0 hover-effect">
-            <div style="height: 200px; overflow: hidden; background-color: #f8f9fa;">
-                <img src="${product.thumbnail || placeholderUrl}" 
+            <div class="position-relative" style="height: 200px; overflow: hidden; background-color: #f8f9fa;">
+                <img src="${imageUrl}" 
                      class="card-img-top w-100 h-100" 
                      alt="${product.title}"
                      style="object-fit: cover; transition: transform 0.3s ease;"
-                     onerror="this.onerror=null; this.src='${placeholderUrl}';">
+                     loading="lazy"
+                     onerror="this.src='${placeholderUrl}'; this.style.objectFit='contain'; this.style.padding='10px';">
+                <div class="position-absolute top-0 end-0 p-2">
+                    <span class="badge ${stock > 0 ? 'bg-success' : 'bg-danger'} rounded-pill">
+                        ${stock > 0 ? 'In Stock' : 'Out of Stock'}
+                    </span>
+                </div>
             </div>
             <div class="card-body d-flex flex-column p-3">
-                <h6 class="card-title fw-bold mb-2">${product.title}</h6>
+                <h6 class="card-title fw-bold mb-2" title="${product.title}">${product.title}</h6>
                 <p class="card-text text-muted small flex-grow-1 mb-2">${description}</p>
+                <div class="mb-2">
+                    <small class="text-warning">${stars}</small>
+                    <small class="text-muted ms-1">(${rating.toFixed(1)})</small>
+                </div>
                 <div class="d-flex justify-content-between align-items-center mt-auto">
                     <span class="text-primary fw-bold fs-5">${formatPrice(product.price)}</span>
-                    <button class="btn btn-sm btn-primary add-to-cart" data-id="${product.id}">
+                    <button class="btn btn-sm btn-primary add-to-cart" data-id="${product.id}" data-title="${product.title}" title="Add to cart">
                         <i class="fas fa-cart-plus"></i> Add
                     </button>
                 </div>
@@ -140,6 +210,10 @@ function addCategoryStyles() {
                 display: flex;
                 align-items: center;
                 justify-content: center;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
             }
         `;
         document.head.appendChild(style);
@@ -367,13 +441,62 @@ function displayCategoryProductsGrid(products) {
     `;
     container.insertBefore(resultsCount, row);
 
-    // Attach event listeners to add-to-cart buttons
+    // Attach event listeners to add-to-cart buttons with proper product reference
     row.querySelectorAll('.add-to-cart').forEach(button => {
-        button.addEventListener('click', function () {
+        button.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
             const productId = parseInt(this.dataset.id);
             const product = products.find(p => p.id === productId);
+
             if (product) {
-                addToCart(product);
+                console.log('[v0] Adding product from category:', product);
+
+                // Add to cart - assuming this function exists globally
+                if (typeof window.addToCart === 'function') {
+                    window.addToCart(product);
+                } else {
+                    console.warn('addToCart function not found. Using fallback.');
+                    // Fallback: store in localStorage
+                    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                    const existingItem = cart.find(item => item.id === product.id);
+
+                    if (existingItem) {
+                        existingItem.quantity = (existingItem.quantity || 1) + 1;
+                    } else {
+                        cart.push({
+                            ...product,
+                            quantity: 1
+                        });
+                    }
+
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                }
+
+                // Wait a brief moment for addToCart to save, then update cart count
+                setTimeout(() => {
+                    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                    const cartCountElement = document.getElementById('cartCount');
+                    if (cartCountElement) {
+                        const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+                        cartCountElement.textContent = totalItems;
+                        console.log('[v0] Cart count updated to:', totalItems);
+                    }
+                }, 50);
+
+                // Add visual feedback
+                const originalHtml = this.innerHTML;
+                const originalClass = this.className;
+                this.innerHTML = '<i class="fas fa-check me-1"></i>Added!';
+                this.className = 'btn btn-sm btn-success add-to-cart';
+                this.disabled = true;
+
+                setTimeout(() => {
+                    this.innerHTML = originalHtml;
+                    this.className = originalClass;
+                    this.disabled = false;
+                }, 2000);
             }
         });
     });
@@ -415,6 +538,12 @@ function initializeCategories() {
     }
 }
 
+// Helper function to get URL query parameters
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function () {
     console.log('DOM loaded - initializing categories module');
@@ -450,3 +579,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }, 100);
 });
+
+// Export functions for use in other modules (if using modules)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        loadFeaturedCategories,
+        loadAllCategoryCards,
+        loadCategoryProducts,
+        getCategoryImage,
+        formatCategoryName,
+        generateStarRating,
+        formatPrice
+    };
+}

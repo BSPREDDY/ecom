@@ -55,6 +55,21 @@
             <div id="categoryProducts">
                 <!-- Products for specific category will be loaded here -->
             </div>
+
+            <!-- Toast Notification for Cart Updates -->
+            <div id="cartToast" class="position-fixed bottom-0 end-0 p-3" style="z-index: 11; display: none;">
+                <div class="toast show" role="alert">
+                    <div class="toast-header bg-success text-white">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong class="me-auto">Added to Cart</strong>
+                        <button type="button" class="btn-close btn-close-white"
+                            onclick="document.getElementById('cartToast').style.display='none'"></button>
+                    </div>
+                    <div class="toast-body" id="cartToastMessage">
+                        Product added successfully!
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -103,9 +118,9 @@
     <!-- Custom JS -->
     <script src="js/firebase-config.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/cart.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/products.js"></script>
-    <script src="js/cart.js"></script>
     <script src="js/categories.js"></script>
 
 </body>
