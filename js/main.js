@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Update auth button
-    if (!document.querySelector('.auth-container')) {
+    if (!document.querySelector('.auth-container') && typeof updateAuthButton === 'function') {
         updateAuthButton();
     }
 

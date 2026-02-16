@@ -3,7 +3,9 @@
 // Progressive Web App with proper caching strategy
 // ===============================
 
-const APP_VERSION = 'v1.0.2';
+// IMPORTANT: Increment this version number whenever you update CSS, JS, or images
+// This forces browsers to clear old cache and download new files
+const APP_VERSION = 'v1.0.3';
 const CACHE_NAME = `shopeasy-cache-${APP_VERSION}`;
 
 // URLs to cache (app shell)

@@ -531,7 +531,7 @@ body {
 .product-card img,
 .category-card img {
     width: 100%;
-    height: 120px;
+    height: 220px;
     object-fit: cover;
     transition: transform 0.4s ease;
     background: var(--light);
@@ -1178,7 +1178,6 @@ button:focus {
     color: white;
     padding: 100px 0;
     text-align: center;
-    margin-top: 80px;
 }
 
 .timeline {
@@ -1238,7 +1237,7 @@ button:focus {
     color: white;
     padding: 80px 0;
     text-align: center;
-    margin-top: 80px;
+    /* margin-top: 80px; */
 }
 
 .contact-info-card {
@@ -1358,7 +1357,6 @@ button:focus {
 .product-details-section {
     background: var(--light);
     min-height: 100vh;
-    margin-top: 80px;
 }
 
 .breadcrumb-custom {

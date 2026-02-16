@@ -1,17 +1,7 @@
-// Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyBymNxicwA7ALiiNKJVyTZlBQTI1nuZa6o",
-    authDomain: "authentication-1f69e.firebaseapp.com",
-    projectId: "authentication-1f69e",
-    storageBucket: "authentication-1f69e.firebasestorage.app",
-    messagingSenderId: "719879359858",
-    appId: "1:719879359858:web:8eb24d174d30245c45e1eb"
-};
-
 // Initialize Firebase
 try {
     if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
+        firebase.initializeApp(CONFIG.FIREBASE);
         console.log('Firebase initialized successfully');
 
         // Set persistence
