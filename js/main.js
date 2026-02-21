@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeNavbar();
 
     updateCartCount();
-    
+
     // Initialize wishlist count
     if (typeof updateWishlistCount === 'function') {
         updateWishlistCount();

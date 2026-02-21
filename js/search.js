@@ -14,14 +14,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
     searchPageInitialized = true;
-    
+
     console.log('[v0] Search page initialized');
 
     // Update cart count on page load
     if (typeof window.updateCartCount === 'function') {
         window.updateCartCount();
     }
-    
+
     // Update wishlist count on page load
     if (typeof window.updateWishlistCount === 'function') {
         window.updateWishlistCount();
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.updateCartCount();
         }
     });
-    
+
     // Listen for wishlist updates
     window.addEventListener('wishlistUpdated', () => {
         if (typeof window.updateWishlistCount === 'function') {
@@ -93,9 +93,6 @@ async function loadAllProducts() {
         console.log(`[v0] Loaded ${allProducts.length} products`);
     } catch (error) {
         console.error('[v0] Error loading products:', error);
-        if (typeof window.showNotification === 'function') {
-            window.showNotification('Error loading products. Please try again.', 'danger');
-        }
     }
 }
 
@@ -225,7 +222,7 @@ function displaySearchResults(results) {
 
     // Attach event listeners to add to cart buttons
     attachSearchCartEventListeners();
-    
+
     // Attach wishlist event listeners
     attachSearchWishlistEventListeners();
 }
@@ -294,7 +291,7 @@ function attachSearchWishlistEventListeners() {
         button.removeEventListener('click', handleSearchAddToWishlist);
         button.addEventListener('click', handleSearchAddToWishlist);
     });
-    
+
     // Update wishlist button states
     if (typeof updateWishlistButtons === 'function') {
         updateWishlistButtons();

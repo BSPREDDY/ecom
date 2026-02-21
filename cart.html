@@ -195,6 +195,22 @@
     <script src="js/wishlist.js"></script>
     <script src="js/products.js"></script>
     <script src="js/main.js"></script>
+
+    <!-- Checkout Function -->
+    <script>
+        function checkout() {
+            console.log('[v0] Checkout button clicked');
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+            if (cart.length === 0) {
+                alert('Your cart is empty. Please add items before checking out.');
+                return;
+            }
+
+            console.log('[v0] Proceeding to checkout with', cart.length, 'items');
+            window.location.href = 'checkout.html';
+        }
+    </script>
 </body>
 
 </html>

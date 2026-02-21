@@ -289,9 +289,7 @@ function removeItem(productId) {
     if (item && confirm(`Remove ${item.title} from cart?`)) {
         cartRemoveFromCart(productId);
         renderCart();
-        if (typeof window.showNotification === 'function') {
-            window.showNotification(`${item.title} removed from cart`, 'info');
-        }
+        console.log('[CART] Item removed from cart:', item.title);
     }
 }
 
@@ -313,9 +311,7 @@ function attachEventListeners() {
             if (confirm('Are you sure you want to clear your entire cart?')) {
                 cartClearCart();
                 renderCart();
-                if (typeof window.showNotification === 'function') {
-                    window.showNotification('Cart cleared', 'info');
-                }
+                console.log('[CART] Cart cleared by user');
             }
         });
     }

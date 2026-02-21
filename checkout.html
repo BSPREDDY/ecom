@@ -332,44 +332,73 @@
 
         // Complete order and redirect to confirmation
         function completeOrder() {
+            console.log('[v0] Starting order completion...');
+
             // Validate form
             const form = document.getElementById('checkoutForm');
             if (!form.checkValidity()) {
+                console.log('[v0] Form validation failed');
                 alert('Please fill in all required fields');
                 return;
             }
 
-            // Get form data
-            const formData = new FormData(form);
+            // Get cart from localStorage
+            const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+            if (cartItems.length === 0) {
+                console.log('[v0] Cart is empty');
+                alert('Your cart is empty. Please add items before checking out.');
+                return;
+            }
+
+            // Collect form data
             const orderData = {
-                firstName: document.getElementById('firstName').value,
-                lastName: document.getElementById('lastName').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                address: document.getElementById('address').value,
-                city: document.getElementById('city').value,
-                state: document.getElementById('state').value,
-                zip: document.getElementById('zip').value,
-                country: document.getElementById('country').value,
+                firstName: document.getElementById('firstName').value.trim(),
+                lastName: document.getElementById('lastName').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                address: document.getElementById('address').value.trim(),
+                city: document.getElementById('city').value.trim(),
+                state: document.getElementById('state').value.trim(),
+                zip: document.getElementById('zip').value.trim(),
+                country: document.getElementById('country').value.trim(),
                 shippingMethod: document.querySelector('input[name="shippingMethod"]:checked')?.value || 'standard',
-                cart: JSON.parse(localStorage.getItem('cart') || '[]'),
+                cart: cartItems,
                 orderDate: new Date().toISOString(),
-                orderTotal: document.getElementById('orderTotal').textContent
+                orderTotal: document.getElementById('orderTotal').textContent,
+                orderNumber: 'ORD-' + Math.random().toString(36).substr(2, 9).toUpperCase(),
+                status: 'confirmed'
             };
+
+            console.log('[v0] Order data:', orderData);
 
             // Save order to localStorage
             try {
                 localStorage.setItem('lastOrder', JSON.stringify(orderData));
+                console.log('[v0] Order saved to localStorage');
+
                 // Clear cart after successful order
                 localStorage.removeItem('cart');
                 window.dispatchEvent(new CustomEvent('cartUpdated'));
+                console.log('[v0] Cart cleared');
+
+                // Show success message
+                const successMsg = document.createElement('div');
+                successMsg.className = 'alert alert-success position-fixed';
+                successMsg.style.cssText = 'top: 80px; right: 20px; z-index: 9999; min-width: 300px;';
+                successMsg.innerHTML = `
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Order Placed Successfully!</strong><br>
+                    Redirecting to confirmation...
+                `;
+                document.body.appendChild(successMsg);
 
                 // Redirect to order confirmation page
                 setTimeout(() => {
+                    console.log('[v0] Redirecting to order-confirmation.html');
                     window.location.href = 'order-confirmation.html';
-                }, 500);
+                }, 1500);
             } catch (error) {
-                console.error('Error completing order:', error);
+                console.error('[v0] Error completing order:', error);
                 alert('An error occurred while processing your order. Please try again.');
             }
         }

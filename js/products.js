@@ -39,29 +39,8 @@ function showError(container, message) {
 }
 
 function showNotification(message, type = 'success') {
-    // Use main.js notification if available
-    if (typeof window.showNotification === 'function') {
-        window.showNotification(message, type);
-        return;
-    }
-
-    // Fallback notification
-    const notification = document.createElement('div');
-    notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
-    notification.style.cssText = 'top: 80px; right: 20px; z-index: 1050; min-width: 300px;';
-    notification.innerHTML = `
-        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-
-    document.body.appendChild(notification);
-
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.parentNode.removeChild(notification);
-        }
-    }, 3000);
+    // Notifications disabled for optimization
+    console.log(`[${type.toUpperCase()}] ${message}`);
 }
 
 function addToCart(product, quantity = 1) {
@@ -262,13 +241,12 @@ function createProductCard(product, isRelated = false) {
 
     // For regular products grid
     return `
-        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-6 mb-4">
             <div class="card product-card h-100 border-0 shadow-sm">
-                <div class="position-relative product-image-container" style="overflow: hidden; background: #f8f9fa;">
+                <div class="position-relative product-image-container">
                     <img src="${image}" 
                          class="card-img-top product-img" 
                          alt="${product.title}"
-                         style="height: 250px; object-fit: cover; width: 100%;"
                          onerror="this.src='https://via.placeholder.com/300'">
                     ${stock <= 10 && stock > 0 ?
             `<span class="badge bg-warning position-absolute top-0 end-0 m-2">Low Stock</span>` :
@@ -283,23 +261,23 @@ function createProductCard(product, isRelated = false) {
                     ` : ''}
                 </div>
                 <div class="card-body d-flex flex-column">
-                    <h6 class="card-title fw-bold mb-2" title="${product.title}">${product.title}</h6>
-                    <p class="card-text text-muted small mb-2 flex-grow-1">${description}</p>
+                    <h6 class="card-title fw-bold" title="${product.title}">${product.title}</h6>
+                    <p class="card-text text-muted small flex-grow-1">${description}</p>
                     <div class="d-flex align-items-center mb-2">
                         <div class="text-warning small">
                             ${generateStarRating(rating)}
                         </div>
                         <small class="text-muted ms-1">(${rating.toFixed(1)})</small>
                     </div>
-                    <div class="d-flex align-items-center gap-2 mt-auto mb-2 flex-wrap">
+                    <div class="d-flex align-items-center gap-2 mt-auto mb-3 flex-wrap">
                         ${product.discountPercentage ? `
-                            <span class="text-muted" style="text-decoration: line-through; font-size: 0.9rem;">
+                            <span class="text-muted product-old-price">
                                 ${formatPrice(product.price / (1 - product.discountPercentage / 100))}
                             </span>
-                            <span class="text-primary fw-bold fs-5">${formatPrice(product.price)}</span>
+                            <span class="text-primary fw-bold">${formatPrice(product.price)}</span>
                             <span class="badge bg-danger">-${Math.round(product.discountPercentage)}%</span>
                         ` : `
-                            <span class="text-primary fw-bold fs-5">${formatPrice(product.price)}</span>
+                            <span class="text-primary fw-bold">${formatPrice(product.price)}</span>
                         `}
                     </div>
                     <div class="d-flex gap-2 mt-2">
@@ -309,7 +287,7 @@ function createProductCard(product, isRelated = false) {
                                 data-price="${product.price}"
                                 data-image="${image}"
                                 ${stock === 0 ? 'disabled' : ''}>
-                            <i class="fas fa-shopping-cart me-1"></i> Cart
+                            <i class="fas fa-shopping-cart me-1"></i><span class="d-none d-sm-inline">Cart</span>
                         </button>
                         <button class="btn btn-sm btn-outline-danger add-to-wishlist-btn flex-grow-1" 
                                 data-id="${product.id}"
@@ -317,14 +295,14 @@ function createProductCard(product, isRelated = false) {
                                 data-price="${product.price}"
                                 data-image="${image}"
                                 title="Add to wishlist">
-                            <i class="far fa-heart"></i> Wishlist
+                            <i class="far fa-heart"></i><span class="d-none d-sm-inline"> Wish</span>
                         </button>
                     </div>
                 </div>
                 <div class="card-footer bg-transparent border-top-0">
                     <a href="product-details.html?id=${product.id}" 
                        class="btn btn-outline-primary btn-sm w-100">
-                        <i class="fas fa-eye me-1"></i> View Details
+                        <i class="fas fa-eye me-1"></i><span class="d-none d-sm-inline">View</span>
                     </a>
                 </div>
             </div>
@@ -335,6 +313,9 @@ function createProductCard(product, isRelated = false) {
 // ===============================
 // RENDER PRODUCTS (CENTRAL FUNCTION)
 // ===============================
+let renderTimeout = null;
+let currentRenderBatch = 0;
+
 function renderProducts(products) {
     const container = document.getElementById('productsContainer');
     if (!container) {
@@ -342,7 +323,14 @@ function renderProducts(products) {
         return;
     }
 
+    // Cancel any pending renders to prevent duplicates
+    if (renderTimeout) {
+        clearTimeout(renderTimeout);
+        cancelAnimationFrame(renderTimeout);
+    }
+
     container.innerHTML = '';
+    currentRenderBatch = 0;
 
     if (!products || products.length === 0) {
         container.innerHTML = `
@@ -361,35 +349,18 @@ function renderProducts(products) {
         resultsCount.textContent = `Showing ${products.length} of ${allProducts.length} products`;
     }
 
-    // Render products in batches for better performance
-    const batchSize = 12;
-    const batches = Math.ceil(products.length / batchSize);
+    // Render all products at once to prevent multiple renders
+    let html = '';
+    products.forEach(product => {
+        html += createProductCard(product);
+    });
 
-    let currentBatch = 0;
+    container.innerHTML = html;
 
-    function renderBatch() {
-        const start = currentBatch * batchSize;
-        const end = Math.min(start + batchSize, products.length);
-        const batch = products.slice(start, end);
+    // Attach event listeners for all products
+    attachCartEventListeners(products);
 
-        let html = '';
-        batch.forEach(product => {
-            html += createProductCard(product);
-        });
-
-        container.innerHTML += html;
-
-        // Attach event listeners for this batch
-        attachCartEventListeners(batch);
-
-        currentBatch++;
-        if (currentBatch < batches) {
-            // Render next batch on next animation frame
-            requestAnimationFrame(renderBatch);
-        }
-    }
-
-    renderBatch();
+    console.log('[v0] Rendered', products.length, 'products');
 }
 
 // ===============================
@@ -465,6 +436,8 @@ function handleAddToWishlist(e) {
     const button = e.currentTarget;
     const productId = parseInt(button.dataset.id);
 
+    console.log('[v0] Wishlist button clicked for product:', productId);
+
     // Try to find product in allProducts
     let product = allProducts.find(p => p.id === productId);
 
@@ -479,29 +452,40 @@ function handleAddToWishlist(e) {
         };
     }
 
-    if (!product) {
+    if (!product || !product.id) {
         console.error('Product not found:', productId);
+        showNotification('Product not found', 'danger');
         return;
     }
 
+    console.log('[v0] Product found:', product.title);
+
     // Check if already in wishlist
     if (typeof isInWishlist === 'function' && isInWishlist(productId)) {
+        console.log('[v0] Removing from wishlist');
         if (typeof removeFromWishlist === 'function') {
             removeFromWishlist(productId);
             button.classList.remove('in-wishlist');
             button.innerHTML = '<i class="far fa-heart"></i> Wishlist';
+            button.title = 'Add to wishlist';
             if (typeof updateWishlistCount === 'function') {
                 updateWishlistCount();
             }
+            // Update button styles
+            updateWishlistButtons();
         }
     } else {
+        console.log('[v0] Adding to wishlist');
         if (typeof addToWishlist === 'function') {
             addToWishlist(product);
             button.classList.add('in-wishlist');
             button.innerHTML = '<i class="fas fa-heart"></i> Wishlist';
+            button.title = 'Remove from wishlist';
             if (typeof updateWishlistCount === 'function') {
                 updateWishlistCount();
             }
+            // Update button styles
+            updateWishlistButtons();
         }
     }
 }
@@ -678,32 +662,70 @@ async function loadAllProducts() {
 
 async function loadLatestProducts() {
     const container = document.getElementById('latestProducts');
-    if (!container) return;
+    if (!container) {
+        console.log('[v0] Latest products container not found');
+        return;
+    }
 
-    showLoading(container);
+    container.innerHTML = `
+        <div class="col-12 text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    `;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/products?limit=10000`);
+        console.log('[v0] Fetching latest products...');
+        const response = await fetch(`${API_BASE_URL}/products?limit=100`);
         if (!response.ok) throw new Error('Failed to load products');
 
         const data = await response.json();
-        const products = data.products;
+        const allFetchedProducts = data.products || [];
+
+        console.log('[v0] Fetched', allFetchedProducts.length, 'total products');
+
+        // Get the latest 8 products (newest by ID)
+        const latestProducts = allFetchedProducts.sort((a, b) => b.id - a.id).slice(0, 8);
+
+        console.log('[v0] Displaying', latestProducts.length, 'latest products');
+
+        if (latestProducts.length === 0) {
+            container.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted">No products available</p>
+                </div>
+            `;
+            return;
+        }
 
         container.innerHTML = '';
 
-        products.forEach(product => {
-            container.innerHTML += createProductCard(product);
+        // Add each product card
+        let html = '';
+        latestProducts.forEach(product => {
+            html += createProductCard(product);
         });
+        container.innerHTML = html;
 
-        // Attach event listeners
-        attachCartEventListeners(products);
+        // Attach event listeners after rendering
+        setTimeout(() => {
+            attachCartEventListeners(latestProducts);
+
+            // Update wishlist button states
+            if (typeof updateWishlistButtons === 'function') {
+                updateWishlistButtons();
+            }
+
+            console.log('[v0] Latest products loaded and listeners attached');
+        }, 100);
 
     } catch (error) {
-        console.error('Error loading latest products:', error);
+        console.error('[v0] Error loading latest products:', error);
         container.innerHTML = `
             <div class="col-12 text-center py-5">
                 <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
-                <p class="text-muted">Failed to load products</p>
+                <p class="text-muted">Failed to load products. Please refresh the page.</p>
             </div>
         `;
     }
@@ -752,19 +774,22 @@ function renderProductDetails(product) {
                 <!-- Product Images Gallery -->
                 <div class="col-lg-6">
                     <div class="product-image-gallery">
-                        <div class="product-main-image">
+                        <div class="product-main-image" id="zoomContainer">
                             <img id="mainProductImage" 
                                  src="${images[0] || 'https://via.placeholder.com/500'}" 
                                  alt="${product.title}"
+                                 style="cursor: zoom-in;"
                                  onerror="this.src='https://via.placeholder.com/500'">
+                            <div class="zoom-lens" id="zoomLens"></div>
                         </div>
+                        <div class="zoom-result" id="zoomResult"></div>
                         ${images.length > 1 ? `
                             <div class="product-thumbnails">
                                 ${images.map((img, index) => `
                                     <img src="${img}" 
                                          alt="Product ${index + 1}"
                                          class="thumbnail-img ${index === 0 ? 'active' : ''}"
-                                         onclick="document.getElementById('mainProductImage').src='${img}'; document.querySelectorAll('.thumbnail-img').forEach(el => el.classList.remove('active')); this.classList.add('active');"
+                                         onclick="updateMainImage('${img}', event);"
                                          onerror="this.src='https://via.placeholder.com/80'">
                                 `).join('')}
                             </div>
@@ -915,14 +940,33 @@ function setupProductDetailListeners(product) {
 
     // Wishlist button
     if (wishlistBtn) {
+        // Update button state if product is already in wishlist
+        if (typeof isInWishlist === 'function' && isInWishlist(product.id)) {
+            wishlistBtn.classList.add('in-wishlist');
+            wishlistBtn.innerHTML = '<i class="fas fa-heart me-2"></i>Remove from Wishlist';
+        }
+
         wishlistBtn.addEventListener('click', () => {
-            wishlistBtn.classList.toggle('active');
-            if (wishlistBtn.classList.contains('active')) {
-                wishlistBtn.innerHTML = '<i class="fas fa-heart text-danger"></i>';
-                showNotification('Added to wishlist', 'success');
+            if (typeof isInWishlist === 'function' && isInWishlist(product.id)) {
+                // Remove from wishlist
+                if (typeof removeFromWishlist === 'function') {
+                    removeFromWishlist(product.id);
+                    wishlistBtn.classList.remove('in-wishlist');
+                    wishlistBtn.innerHTML = '<i class="fas fa-heart me-2"></i>Add to Wishlist';
+                    if (typeof updateWishlistCount === 'function') {
+                        updateWishlistCount();
+                    }
+                }
             } else {
-                wishlistBtn.innerHTML = '<i class="fas fa-heart"></i>';
-                showNotification('Removed from wishlist', 'info');
+                // Add to wishlist
+                if (typeof addToWishlist === 'function') {
+                    addToWishlist(product);
+                    wishlistBtn.classList.add('in-wishlist');
+                    wishlistBtn.innerHTML = '<i class="fas fa-heart me-2"></i>Remove from Wishlist';
+                    if (typeof updateWishlistCount === 'function') {
+                        updateWishlistCount();
+                    }
+                }
             }
         });
     }
@@ -941,25 +985,20 @@ async function loadRelatedProducts(category) {
         const relatedProducts = data.products.filter(p => p.id !== currentProductId).slice(0, 4);
 
         if (relatedProducts.length === 0) {
-            container.style.display = 'none';
+            container.parentElement.style.display = 'none';
             return;
         }
 
-        container.innerHTML = `
-            <h2 class="mb-4">Related Products</h2>
-            <div class="row">
-                ${relatedProducts.map(product => createProductCard(product, true)).join('')}
-            </div>
-        `;
+        // Clear the existing heading and use proper grid layout
+        let html = '';
+        relatedProducts.forEach(product => {
+            html += createProductCard(product);
+        });
+        
+        container.innerHTML = html;
 
         // Attach event listeners for cart and wishlist
         attachCartEventListeners(relatedProducts);
-        
-        // Attach wishlist event listeners
-        document.querySelectorAll('.add-to-wishlist-btn').forEach(button => {
-            button.removeEventListener('click', handleAddToWishlist);
-            button.addEventListener('click', handleAddToWishlist);
-        });
         
         // Update wishlist button states
         if (typeof updateWishlistButtons === 'function') {
@@ -968,7 +1007,7 @@ async function loadRelatedProducts(category) {
 
     } catch (error) {
         console.error('Error loading related products:', error);
-        container.style.display = 'none';
+        container.parentElement.style.display = 'none';
     }
 }
 
@@ -1004,6 +1043,102 @@ function initializePage() {
 }
 
 // ===============================
+// IMAGE ZOOM FUNCTIONALITY
+// ===============================
+
+function updateMainImage(imgSrc, event) {
+    const mainImage = document.getElementById('mainProductImage');
+    if (mainImage) {
+        mainImage.src = imgSrc;
+        document.querySelectorAll('.thumbnail-img').forEach(el => el.classList.remove('active'));
+        if (event && event.target) {
+            event.target.classList.add('active');
+        }
+        initializeZoom();
+    }
+}
+
+function initializeZoom() {
+    const container = document.getElementById('zoomContainer');
+    const mainImage = document.getElementById('mainProductImage');
+    const zoomLens = document.getElementById('zoomLens');
+    const zoomResult = document.getElementById('zoomResult');
+
+    if (!container || !mainImage || !zoomLens || !zoomResult) return;
+
+    // Set zoom result image
+    zoomResult.style.backgroundImage = `url('${mainImage.src}')`;
+
+    // Zoom lens effect
+    container.addEventListener('mouseenter', () => {
+        zoomLens.classList.add('active');
+        zoomResult.classList.add('active');
+        mainImage.style.cursor = 'zoom-in';
+    });
+
+    container.addEventListener('mouseleave', () => {
+        zoomLens.classList.remove('active');
+        zoomResult.classList.remove('active');
+    });
+
+    container.addEventListener('mousemove', (e) => {
+        if (!zoomLens.classList.contains('active')) return;
+
+        const rect = container.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Position zoom lens
+        let lensX = x - zoomLens.offsetWidth / 2;
+        let lensY = y - zoomLens.offsetHeight / 2;
+
+        // Keep lens within container
+        lensX = Math.max(0, Math.min(lensX, rect.width - zoomLens.offsetWidth));
+        lensY = Math.max(0, Math.min(lensY, rect.height - zoomLens.offsetHeight));
+
+        zoomLens.style.left = lensX + 'px';
+        zoomLens.style.top = lensY + 'px';
+
+        // Calculate zoom position
+        const zoomX = (-lensX) * (400 / 100);
+        const zoomY = (-lensY) * (400 / 100);
+
+        zoomResult.style.backgroundPosition = zoomX + 'px ' + zoomY + 'px';
+    });
+
+    // Touch zoom for mobile
+    let touchStartDistance = 0;
+
+    container.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+            touchStartDistance = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+        }
+    });
+
+    container.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 2) {
+            const touchDistance = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+
+            if (touchDistance > touchStartDistance) {
+                mainImage.style.transform = 'scale(1.2)';
+            } else {
+                mainImage.style.transform = 'scale(1)';
+            }
+        }
+    });
+
+    container.addEventListener('touchend', () => {
+        mainImage.style.transform = 'scale(1)';
+    });
+}
+
+// ===============================
 // EXPORT FUNCTIONS
 // ===============================
 window.loadAllProducts = loadAllProducts;
@@ -1014,6 +1149,39 @@ window.addToCart = addToCart;
 window.formatPrice = formatPrice;
 window.renderProducts = renderProducts;
 window.allProducts = allProducts;
+window.updateMainImage = updateMainImage;
+window.initializeZoom = initializeZoom;
+
+// ===============================
+// PAGE INITIALIZATION FUNCTION
+// ===============================
+function initializePage() {
+    const latestProductsContainer = document.getElementById('latestProducts');
+    const productDetailsContainer = document.getElementById('productDetails');
+    const productsContainer = document.getElementById('productsContainer');
+    const categoryListContainer = document.getElementById('categoryList');
+
+    if (latestProductsContainer) {
+        console.log('[v0] Homepage detected - loading latest products');
+        loadLatestProducts();
+    }
+
+    if (productDetailsContainer) {
+        console.log('[v0] Product details page detected');
+        loadProductDetails();
+        setTimeout(initializeZoom, 500);
+    }
+
+    if (productsContainer) {
+        console.log('[v0] Products page detected');
+        loadAllProducts();
+    }
+
+    if (categoryListContainer && typeof loadCategories === 'function') {
+        console.log('[v0] Categories page detected');
+        loadCategories();
+    }
+}
 
 // ===============================
 // DOM READY - SINGLE INITIALIZATION
@@ -1022,4 +1190,5 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializePage);
 } else {
     initializePage();
+    console.log('[v0] Products.js loaded successfully');
 }

@@ -159,7 +159,7 @@ function createCategoryCard(category) {
 
     return `
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-            <div class="card category-card h-100 shadow-sm border-0">
+            <div class="card category-card h-100 shadow-sm border-0 flex">
                 <div class="category-image-wrapper overflow-hidden" style="height: 200px;">
                     <img src="${categoryImage}" 
                          class="card-img-top w-100 h-100" 
@@ -169,7 +169,7 @@ function createCategoryCard(category) {
                 </div>
                 <div class="card-body d-flex flex-column text-center p-3">
                     <h5 class="card-title mb-3 fw-bold">${categoryName}</h5>
-                    <a href="categories.html?category=${encodeURIComponent(categoryValue)}" class="btn btn-primary mt-auto px-4">
+                    <a href="categories.html?category=${encodeURIComponent(categoryValue)}" class="btn btn-primary mt-auto px-2">
                         Shop Now <i class="fas fa-arrow-right ms-2"></i>
                     </a>
                 </div>
@@ -408,7 +408,7 @@ function displayCategoryProducts(products) {
 
     // Attach event listeners to Add to Cart buttons
     attachCartEventListeners();
-    
+
     // Attach wishlist event listeners
     attachWishlistEventListeners();
 }
@@ -431,6 +431,12 @@ function showAllCategories() {
         const url = new URL(window.location);
         url.searchParams.delete('category');
         window.history.replaceState({}, '', url);
+
+        // Reload categories if the list is empty
+        if (categories.length === 0) {
+            console.log('[v0] Reloading categories...');
+            loadAllCategories();
+        }
     }
 }
 
@@ -509,7 +515,7 @@ function attachWishlistEventListeners() {
         button.removeEventListener('click', handleAddToWishlist);
         button.addEventListener('click', handleAddToWishlist);
     });
-    
+
     // Update wishlist button states
     if (typeof updateWishlistButtons === 'function') {
         updateWishlistButtons();

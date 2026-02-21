@@ -82,19 +82,17 @@ function saveWishlist() {
 
 function addToWishlist(product) {
     if (!product || !product.id) {
-        console.error('[Wishlist] Invalid product');
-        showNotification('Cannot add invalid product to wishlist', 'danger');
+        console.log('[WISHLIST] Invalid product');
         return false;
     }
 
-    console.log('[Wishlist] Adding product:', product.title);
+    console.log('[WISHLIST] Adding product:', product.title);
 
     // Check if product already in wishlist
     const existingItem = wishlist.find(item => item.id === product.id);
 
     if (existingItem) {
-        console.log('[Wishlist] Product already in wishlist:', product.title);
-        showNotification(`${product.title} is already in your wishlist`, 'info');
+        console.log('[WISHLIST] Product already in wishlist:', product.title);
         return false;
     }
 
@@ -111,7 +109,7 @@ function addToWishlist(product) {
     });
 
     if (saveWishlist()) {
-        showNotification(`<strong>${product.title}</strong> added to wishlist!`, 'success');
+        console.log('[WISHLIST] Product added to wishlist:', product.title);
         updateWishlistButtons();
         return true;
     }
@@ -126,10 +124,7 @@ function removeFromWishlist(productId) {
 
     if (wishlist.length < initialLength) {
         saveWishlist();
-        console.log('[Wishlist] Removed product:', productId);
-        if (product) {
-            showNotification(`${product.title} removed from wishlist`, 'info');
-        }
+        console.log('[WISHLIST] Removed product:', productId);
         updateWishlistButtons();
         return true;
     }
@@ -219,38 +214,38 @@ function renderWishlist() {
         const rating = item.rating || 0;
 
         html += `
-            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-6 mb-4">
                 <div class="card product-card h-100 border-0 shadow-sm">
                     <div class="position-relative product-image-container">
                         <img src="${item.image || 'https://via.placeholder.com/300'}" 
                              class="card-img-top product-img" 
                              alt="${item.title}"
-                             style="height: 250px; object-fit: cover;"
                              onerror="this.src='https://via.placeholder.com/300'">
-                        <button class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2" 
+                        <button class="btn btn-danger btn-sm rounded-circle position-absolute top-0 end-0 m-2" 
                                 onclick="removeFromWishlist(${item.id}); renderWishlist();"
-                                title="Remove from wishlist">
-                            <i class="fas fa-times"></i>
+                                title="Remove from wishlist"
+                                style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0; font-size: 0.9rem;">
+                            <i class="fas fa-trash-alt"></i>
                         </button>
                     </div>
                     <div class="card-body d-flex flex-column">
-                        <h6 class="card-title fw-bold mb-2" title="${item.title}">${item.title}</h6>
-                        <p class="card-text text-muted small mb-2 flex-grow-1">${item.description.substring(0, 50)}${item.description.length > 50 ? '...' : ''}</p>
+                        <h6 class="card-title fw-bold" title="${item.title}">${item.title}</h6>
+                        <p class="card-text text-muted small flex-grow-1">${item.description.substring(0, 50)}${item.description.length > 50 ? '...' : ''}</p>
                         <div class="d-flex align-items-center mb-2">
                             <div class="text-warning small">
                                 ${generateStarRating(rating)}
                             </div>
                             <small class="text-muted ms-1">(${rating.toFixed(1)})</small>
                         </div>
-                        <div class="d-flex align-items-center gap-2 mt-auto mb-2 flex-wrap">
+                        <div class="d-flex align-items-center gap-2 mt-auto mb-3 flex-wrap">
                             ${item.discountPercentage ? `
-                                <span class="text-muted" style="text-decoration: line-through; font-size: 0.9rem;">
+                                <span class="text-muted product-old-price">
                                     ₹${(item.price / (1 - item.discountPercentage / 100) || 0).toFixed(2)}
                                 </span>
-                                <span class="text-primary fw-bold fs-5">₹${(item.price || 0).toFixed(2)}</span>
+                                <span class="text-primary fw-bold">₹${(item.price || 0).toFixed(2)}</span>
                                 <span class="badge bg-danger">-${Math.round(item.discountPercentage)}%</span>
                             ` : `
-                                <span class="text-primary fw-bold fs-5">₹${(item.price || 0).toFixed(2)}</span>
+                                <span class="text-primary fw-bold">₹${(item.price || 0).toFixed(2)}</span>
                             `}
                         </div>
                         <div class="d-flex gap-2 mt-2">
@@ -260,12 +255,18 @@ function renderWishlist() {
                                     data-title="${item.title}"
                                     data-price="${item.price}"
                                     data-image="${item.image}">
-                                <i class="fas fa-shopping-cart me-1"></i> Cart
+                                <i class="fas fa-shopping-cart me-1"></i><span class="d-none d-sm-inline">Cart</span>
                             </button>
                             <a href="product-details.html?id=${item.id}" class="btn btn-sm btn-outline-primary flex-grow-1">
-                                <i class="fas fa-eye"></i>
+                                <i class="fas fa-eye"></i><span class="d-none d-sm-inline"> View</span>
                             </a>
                         </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <button class="btn btn-outline-danger btn-sm w-100"
+                                onclick="removeFromWishlist(${item.id}); renderWishlist();">
+                            <i class="fas fa-heart-broken me-1"></i>Remove
+                        </button>
                     </div>
                 </div>
             </div>
@@ -304,9 +305,7 @@ function attachWishlistEventListeners() {
             if (confirm('Are you sure you want to clear your entire wishlist?')) {
                 clearWishlist();
                 renderWishlist();
-                if (typeof window.showNotification === 'function') {
-                    window.showNotification('Wishlist cleared', 'info');
-                }
+                console.log('[WISHLIST] Wishlist cleared by user');
             }
         });
     }
