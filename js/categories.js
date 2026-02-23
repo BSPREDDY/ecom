@@ -244,6 +244,10 @@ function createProductCard(product) {
                                 data-title="${product.title}"
                                 data-price="${product.price}"
                                 data-image="${image}"
+                                data-description="${product.description || ''}"
+                                data-rating="${product.rating || 0}"
+                                data-discount="${product.discountPercentage || 0}"
+                                data-category="${product.category || 'General'}"
                                 title="Add to wishlist">
                             <i class="far fa-heart"></i>
                         </button>
@@ -267,12 +271,10 @@ async function loadCategoryProducts() {
     // Try to get products from window.allProducts first
     if (window.allProducts && window.allProducts.length > 0) {
         categoryProducts = window.allProducts;
-        console.log(`[Categories] Using ${categoryProducts.length} products from window.allProducts`);
         return categoryProducts;
     }
 
     try {
-        console.log('[Categories] Loading products from API...');
         const response = await fetch(`${API_URL}/products?limit=10000`);
 
         if (!response.ok) {
@@ -282,10 +284,8 @@ async function loadCategoryProducts() {
         const data = await response.json();
         categoryProducts = data.products || [];
         window.allProducts = categoryProducts; // Share with other modules
-        console.log(`[Categories] Loaded ${categoryProducts.length} products`);
         return categoryProducts;
     } catch (error) {
-        console.error('[Categories] Error loading products:', error);
         return [];
     }
 }
@@ -295,8 +295,6 @@ async function loadCategoryProducts() {
 // ===============================
 
 async function filterByCategory(category) {
-    console.log('Filtering by category:', category);
-
     // Update URL
     const url = new URL(window.location);
     if (category && category !== 'all') {
@@ -341,11 +339,8 @@ async function filterByCategory(category) {
                 filtered.push(...apiProducts);
             }
         } catch (error) {
-            console.error('Error fetching category products from API:', error);
         }
     }
-
-    console.log(`Found ${filtered.length} products in category ${category}`);
 
     // Update title
     const titleElement = document.getElementById('categoryTitle');
@@ -434,7 +429,6 @@ function showAllCategories() {
 
         // Reload categories if the list is empty
         if (categories.length === 0) {
-            console.log('[v0] Reloading categories...');
             loadAllCategories();
         }
     }
@@ -654,6 +648,86 @@ function initializeHomePageCategories() {
 }
 
 // ===============================
+// EVENT LISTENERS
+// ===============================
+
+function attachCategoryEventListeners() {
+    // Attach cart button listeners
+    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+        button.removeEventListener('click', handleCategoryAddToCart);
+        button.addEventListener('click', handleCategoryAddToCart);
+    });
+
+    // Attach wishlist button listeners
+    document.querySelectorAll('.add-to-wishlist-btn').forEach(button => {
+        button.removeEventListener('click', handleCategoryAddToWishlist);
+        button.addEventListener('click', handleCategoryAddToWishlist);
+    });
+
+    // Update wishlist button states
+    if (typeof updateWishlistButtons === 'function') {
+        updateWishlistButtons();
+    }
+}
+
+function handleCategoryAddToWishlist(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const button = e.currentTarget;
+    const product = {
+        id: parseInt(button.dataset.id),
+        title: button.dataset.title,
+        price: parseFloat(button.dataset.price),
+        image: button.dataset.image,
+        description: button.dataset.description || '',
+        rating: parseFloat(button.dataset.rating) || 0,
+        discountPercentage: parseFloat(button.dataset.discount) || 0,
+        category: button.dataset.category || 'General',
+        thumbnail: button.dataset.image
+    };
+
+    // Check if already in wishlist
+    if (typeof isInWishlist === 'function' && isInWishlist(product.id)) {
+        if (typeof removeFromWishlist === 'function') {
+            removeFromWishlist(product.id);
+            button.classList.remove('in-wishlist');
+            button.innerHTML = '<i class="far fa-heart"></i>';
+            if (typeof updateWishlistCount === 'function') {
+                updateWishlistCount();
+            }
+        }
+    } else {
+        if (typeof addToWishlist === 'function') {
+            addToWishlist(product);
+            button.classList.add('in-wishlist');
+            button.innerHTML = '<i class="fas fa-heart"></i>';
+            if (typeof updateWishlistCount === 'function') {
+                updateWishlistCount();
+            }
+        }
+    }
+}
+
+function handleCategoryAddToCart(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const button = e.currentTarget;
+    const product = {
+        id: parseInt(button.dataset.id),
+        title: button.dataset.title,
+        price: parseFloat(button.dataset.price),
+        image: button.dataset.image,
+        category: button.dataset.category || 'General'
+    };
+
+    if (typeof addToCart === 'function') {
+        addToCart(product, 1);
+    }
+}
+
+// ===============================
 // PAGE INITIALIZATION
 // ===============================
 
@@ -663,7 +737,6 @@ let categoriesPageInitialized = false;
 function initializePage() {
     // Prevent duplicate initialization
     if (categoriesPageInitialized) {
-        console.log('[v0] Categories.js: Page already initialized, skipping...');
         return;
     }
     categoriesPageInitialized = true;
@@ -671,13 +744,14 @@ function initializePage() {
     const path = window.location.pathname;
     const page = path.split('/').pop() || 'index.html';
 
-    console.log('Categories.js: Initializing page:', page);
-
     if (page === 'index.html' || path === '/' || path === '' || path.endsWith('/')) {
         initializeHomePageCategories();
     } else if (page === 'categories.html') {
         initializeCategoriesPage();
     }
+    
+    // Attach event listeners for wishlist and cart buttons
+    attachCategoryEventListeners();
 }
 
 // ===============================

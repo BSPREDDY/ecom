@@ -294,6 +294,10 @@ function createProductCard(product, isRelated = false) {
                                 data-title="${product.title}"
                                 data-price="${product.price}"
                                 data-image="${image}"
+                                data-description="${product.description || ''}"
+                                data-rating="${product.rating || 0}"
+                                data-discount="${product.discountPercentage || 0}"
+                                data-category="${product.category || 'General'}"
                                 title="Add to wishlist">
                             <i class="far fa-heart"></i>
                         </button>
@@ -319,7 +323,6 @@ let currentRenderBatch = 0;
 function renderProducts(products) {
     const container = document.getElementById('productsContainer');
     if (!container) {
-        console.error('Products container not found');
         return;
     }
 
@@ -359,8 +362,6 @@ function renderProducts(products) {
 
     // Attach event listeners for all products
     attachCartEventListeners(products);
-
-    console.log('[v0] Rendered', products.length, 'products');
 }
 
 // ===============================
@@ -407,7 +408,6 @@ function handleAddToCart(e) {
     }
 
     if (!product) {
-        console.error('Product not found:', productId);
         return;
     }
 
@@ -436,8 +436,6 @@ function handleAddToWishlist(e) {
     const button = e.currentTarget;
     const productId = parseInt(button.dataset.id);
 
-    console.log('[v0] Wishlist button clicked for product:', productId);
-
     // Try to find product in allProducts
     let product = allProducts.find(p => p.id === productId);
 
@@ -448,25 +446,25 @@ function handleAddToWishlist(e) {
             title: button.dataset.title,
             price: parseFloat(button.dataset.price),
             image: button.dataset.image,
-            thumbnail: button.dataset.image
+            thumbnail: button.dataset.image,
+            description: button.dataset.description || '',
+            rating: parseFloat(button.dataset.rating) || 0,
+            discountPercentage: parseFloat(button.dataset.discount) || 0,
+            category: button.dataset.category || 'General'
         };
     }
 
     if (!product || !product.id) {
-        console.error('Product not found:', productId);
         showNotification('Product not found', 'danger');
         return;
     }
 
-    console.log('[v0] Product found:', product.title);
-
     // Check if already in wishlist
     if (typeof isInWishlist === 'function' && isInWishlist(productId)) {
-        console.log('[v0] Removing from wishlist');
         if (typeof removeFromWishlist === 'function') {
             removeFromWishlist(productId);
             button.classList.remove('in-wishlist');
-            button.innerHTML = '<i class="far fa-heart"></i> Wishlist';
+            button.innerHTML = '<i class="far fa-heart"></i>';
             button.title = 'Add to wishlist';
             if (typeof updateWishlistCount === 'function') {
                 updateWishlistCount();
@@ -475,11 +473,10 @@ function handleAddToWishlist(e) {
             updateWishlistButtons();
         }
     } else {
-        console.log('[v0] Adding to wishlist');
         if (typeof addToWishlist === 'function') {
             addToWishlist(product);
             button.classList.add('in-wishlist');
-            button.innerHTML = '<i class="fas fa-heart"></i> Wishlist';
+            button.innerHTML = '<i class="fas fa-heart"></i>';
             button.title = 'Remove from wishlist';
             if (typeof updateWishlistCount === 'function') {
                 updateWishlistCount();
@@ -503,8 +500,6 @@ function filterProducts() {
         (parseFloat(document.getElementById('priceMax')?.value) || 100000);
     const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase() || '';
     const sortBy = document.getElementById('sortFilter')?.value || 'default';
-
-    console.log('[v0] Filtering with maxPrice:', maxPrice);
 
     // Apply filters
     filteredProducts = allProducts.filter(product => {
@@ -1162,23 +1157,19 @@ function initializePage() {
     const categoryListContainer = document.getElementById('categoryList');
 
     if (latestProductsContainer) {
-        console.log('[v0] Homepage detected - loading latest products');
         loadLatestProducts();
     }
 
     if (productDetailsContainer) {
-        console.log('[v0] Product details page detected');
         loadProductDetails();
         setTimeout(initializeZoom, 500);
     }
 
     if (productsContainer) {
-        console.log('[v0] Products page detected');
         loadAllProducts();
     }
 
     if (categoryListContainer && typeof loadCategories === 'function') {
-        console.log('[v0] Categories page detected');
         loadCategories();
     }
 }
@@ -1190,5 +1181,4 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializePage);
 } else {
     initializePage();
-    console.log('[v0] Products.js loaded successfully');
 }

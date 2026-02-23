@@ -25,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Listen for wishlist changes from other tabs/windows
     window.addEventListener('storage', (event) => {
         if (event.key === WISHLIST_STORAGE_KEY) {
-            console.log('[Wishlist] Wishlist updated from another tab');
             loadWishlist();
             updateWishlistCount();
             updateWishlistButtons();
@@ -37,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Listen for custom wishlist update events from same tab
     window.addEventListener('wishlistUpdated', () => {
-        console.log('[Wishlist] Wishlist updated (custom event)');
         loadWishlist();
         updateWishlistCount();
         updateWishlistButtons();
@@ -59,7 +57,6 @@ function loadWishlist() {
             wishlist = [];
         }
     } catch (e) {
-        console.error('[Wishlist] Error loading wishlist:', e);
         wishlist = [];
     }
     return wishlist;
@@ -75,24 +72,19 @@ function saveWishlist() {
 
         return true;
     } catch (e) {
-        console.error('[Wishlist] Error saving wishlist:', e);
         return false;
     }
 }
 
 function addToWishlist(product) {
     if (!product || !product.id) {
-        console.log('[WISHLIST] Invalid product');
         return false;
     }
-
-    console.log('[WISHLIST] Adding product:', product.title);
 
     // Check if product already in wishlist
     const existingItem = wishlist.find(item => item.id === product.id);
 
     if (existingItem) {
-        console.log('[WISHLIST] Product already in wishlist:', product.title);
         return false;
     }
 
@@ -109,7 +101,6 @@ function addToWishlist(product) {
     });
 
     if (saveWishlist()) {
-        console.log('[WISHLIST] Product added to wishlist:', product.title);
         updateWishlistButtons();
         return true;
     }
@@ -124,7 +115,6 @@ function removeFromWishlist(productId) {
 
     if (wishlist.length < initialLength) {
         saveWishlist();
-        console.log('[WISHLIST] Removed product:', productId);
         updateWishlistButtons();
         return true;
     }
@@ -168,7 +158,6 @@ function updateWishlistButtons() {
 function clearWishlist() {
     wishlist = [];
     saveWishlist();
-    console.log('[Wishlist] Wishlist cleared');
     return true;
 }
 
@@ -177,7 +166,6 @@ function clearWishlist() {
 // ===============================
 
 function initializeWishlistPage() {
-    console.log('[Wishlist] Initializing wishlist page');
     renderWishlist();
     attachWishlistEventListeners();
 }
@@ -191,8 +179,6 @@ function renderWishlist() {
 
     // Load fresh wishlist data
     loadWishlist();
-
-    console.log('[v0] Wishlist contents:', wishlist);
 
     if (wishlist.length === 0) {
         if (wishlistContainer) wishlistContainer.innerHTML = '';
@@ -214,17 +200,24 @@ function renderWishlist() {
 
         html += `
             <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-6 mb-4">
-                <div class="card product-card h-100 border-0 shadow-sm">
-                    <div class="product-image-container position-relative overflow-hidden" style="background: #f8f9fa;">
+                <div class="card product-card h-100 border-0 shadow-sm transition-all">
+                    <div class="product-image-container position-relative overflow-hidden" style="background: #f8f9fa; height: 250px;">
                         <img src="${item.image || 'https://via.placeholder.com/300'}" 
                              class="card-img-top product-img" 
                              alt="${item.title}"
                              onerror="this.src='https://via.placeholder.com/300'"
-                             style="width: 100%; height: auto; object-fit: cover;">
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                        <div class="position-absolute top-0 end-0 p-2">
+                            <button class="btn btn-sm btn-danger rounded-circle" 
+                                    onclick="removeFromWishlist(${item.id}); renderWishlist();"
+                                    title="Remove from wishlist">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="card-body d-flex flex-column">
-                        <h6 class="card-title fw-bold" title="${item.title}">${item.title}</h6>
-                        <p class="card-text text-muted small flex-grow-1">${item.description.substring(0, 50)}${item.description.length > 50 ? '...' : ''}</p>
+                        <h6 class="card-title fw-bold text-truncate" title="${item.title}">${item.title}</h6>
+                        <p class="card-text text-muted small flex-grow-1" style="line-height: 1.4;">${item.description.substring(0, 60)}${item.description.length > 60 ? '...' : ''}</p>
                         <div class="d-flex align-items-center mb-2">
                             <div class="text-warning small">
                                 ${generateStarRating(rating)}
@@ -233,34 +226,28 @@ function renderWishlist() {
                         </div>
                         <div class="d-flex align-items-center gap-2 mt-auto mb-3 flex-wrap">
                             ${item.discountPercentage ? `
-                                <span class="text-muted product-old-price">
+                                <span class="text-muted product-old-price" style="text-decoration: line-through;">
                                     ₹${(item.price / (1 - item.discountPercentage / 100) || 0).toFixed(2)}
                                 </span>
-                                <span class="text-primary fw-bold">₹${(item.price || 0).toFixed(2)}</span>
+                                <span class="text-primary fw-bold fs-6">₹${(item.price || 0).toFixed(2)}</span>
                                 <span class="badge bg-danger">-${Math.round(item.discountPercentage)}%</span>
                             ` : `
-                                <span class="text-primary fw-bold">₹${(item.price || 0).toFixed(2)}</span>
+                                <span class="text-primary fw-bold fs-6">₹${(item.price || 0).toFixed(2)}</span>
                             `}
                         </div>
-                        <div class="d-flex gap-2 mt-2">
+                        <div class="d-flex gap-2 mt-3">
                             <button class="btn btn-sm btn-primary flex-grow-1" 
                                     onclick="addToCartFromWishlist(${item.id})"
                                     data-id="${item.id}"
                                     data-title="${item.title}"
                                     data-price="${item.price}"
                                     data-image="${item.image}">
-                                <i class="fas fa-shopping-cart me-1"></i><span class="d-none d-sm-inline">Cart</span>
+                                <i class="fas fa-shopping-cart me-1"></i><span class="d-none d-sm-inline">Add to Cart</span>
                             </button>
-                            <a href="product-details.html?id=${item.id}" class="btn btn-sm btn-outline-primary flex-grow-1">
-                                <i class="fas fa-eye"></i><span class="d-none d-sm-inline"> View</span>
+                            <a href="product-details.html?id=${item.id}" class="btn btn-sm btn-outline-primary" title="View product details">
+                                <i class="fas fa-eye"></i>
                             </a>
                         </div>
-                    </div>
-                    <div class="card-footer bg-transparent border-top-0">
-                        <button class="btn btn-outline-danger btn-sm w-100"
-                                onclick="removeFromWishlist(${item.id}); renderWishlist();">
-                            <i class="fas fa-heart-broken me-1"></i>Remove
-                        </button>
                     </div>
                 </div>
             </div>
@@ -299,7 +286,6 @@ function attachWishlistEventListeners() {
             if (confirm('Are you sure you want to clear your entire wishlist?')) {
                 clearWishlist();
                 renderWishlist();
-                console.log('[WISHLIST] Wishlist cleared by user');
             }
         });
     }
@@ -347,5 +333,3 @@ window.clearWishlist = clearWishlist;
 window.loadWishlist = loadWishlist;
 window.saveWishlist = saveWishlist;
 window.addToCartFromWishlist = addToCartFromWishlist;
-
-console.log('[Wishlist] Module loaded successfully');

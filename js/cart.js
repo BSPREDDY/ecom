@@ -13,7 +13,6 @@ let cart = [];
 // ===============================
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('[Cart] Initializing cart module');
     loadCart();
     updateCartCount();
 
@@ -26,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Listen for cart changes from other tabs/windows
     window.addEventListener('storage', (event) => {
         if (event.key === CART_STORAGE_KEY) {
-            console.log('[Cart] Cart updated from another tab');
             loadCart();
             updateCartCount();
             if (cartContainer) {
@@ -37,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Listen for custom cart update events from same tab
     window.addEventListener('cartUpdated', () => {
-        console.log('[Cart] Cart updated (custom event)');
         loadCart();
         updateCartCount();
         if (cartContainer) {
@@ -58,7 +55,6 @@ function loadCart() {
             cart = [];
         }
     } catch (e) {
-        console.error('[Cart] Error loading cart:', e);
         cart = [];
     }
     return cart;
@@ -79,24 +75,19 @@ function saveCart() {
 
         return true;
     } catch (e) {
-        console.error('[Cart] Error saving cart:', e);
         return false;
     }
 }
 
 function cartAddToCart(product, quantity = 1) {
     if (!product || !product.id) {
-        console.error('[Cart] Invalid product');
         return false;
     }
-
-    console.log('[Cart] Adding product:', product.title, 'Qty:', quantity);
 
     const existingItem = cart.find(item => item.id === product.id);
 
     if (existingItem) {
         existingItem.quantity = (existingItem.quantity || 1) + quantity;
-        console.log('[Cart] Updated quantity for:', product.title, 'New qty:', existingItem.quantity);
     } else {
         cart.push({
             id: product.id,
@@ -106,7 +97,6 @@ function cartAddToCart(product, quantity = 1) {
             quantity: quantity,
             category: product.category || 'General'
         });
-        console.log('[Cart] Added new product:', product.title);
     }
 
     if (saveCart()) {
@@ -122,7 +112,6 @@ function cartRemoveFromCart(productId) {
 
     if (cart.length < initialLength) {
         saveCart();
-        console.log('[Cart] Removed product:', productId);
         return true;
     }
 
@@ -133,7 +122,6 @@ function cartUpdateQuantity(productId, quantity) {
     const item = cart.find(item => item.id === productId);
 
     if (!item) {
-        console.error('[Cart] Product not found:', productId);
         return false;
     }
 
@@ -143,14 +131,12 @@ function cartUpdateQuantity(productId, quantity) {
 
     item.quantity = Math.max(1, parseInt(quantity) || 1);
     saveCart();
-    console.log('[Cart] Updated quantity for:', productId, 'to:', item.quantity);
     return true;
 }
 
 function cartClearCart() {
     cart = [];
     saveCart();
-    console.log('[Cart] Cart cleared');
     return true;
 }
 
@@ -180,7 +166,6 @@ function updateCartCount() {
 // ===============================
 
 function initializeCartPage() {
-    console.log('[Cart] Initializing cart page');
     renderCart();
     attachEventListeners();
 }
@@ -194,8 +179,6 @@ function renderCart() {
 
     // Load fresh cart data
     loadCart();
-
-    console.log('[v0] Cart contents:', cart);
 
     if (cart.length === 0) {
         if (cartContainer) cartContainer.innerHTML = '';
@@ -289,7 +272,6 @@ function removeItem(productId) {
     if (item && confirm(`Remove ${item.title} from cart?`)) {
         cartRemoveFromCart(productId);
         renderCart();
-        console.log('[CART] Item removed from cart:', item.title);
     }
 }
 
@@ -311,7 +293,6 @@ function attachEventListeners() {
             if (confirm('Are you sure you want to clear your entire cart?')) {
                 cartClearCart();
                 renderCart();
-                console.log('[CART] Cart cleared by user');
             }
         });
     }
@@ -340,5 +321,3 @@ window.cartGetCount = cartGetCount;
 window.updateCartCount = updateCartCount;
 window.loadCart = loadCart;
 window.saveCart = saveCart;
-
-console.log('[Cart] Module loaded successfully');

@@ -202,6 +202,10 @@ function displaySearchResults(results) {
                                     data-title="${product.title}" 
                                     data-price="${price}" 
                                     data-image="${image}"
+                                    data-description="${product.description || ''}"
+                                    data-rating="${rating || 0}"
+                                    data-discount="${product.discountPercentage || 0}"
+                                    data-category="${product.category || 'General'}"
                                     title="Add to wishlist">
                                 <i class="far fa-heart"></i>
                             </button>
@@ -308,7 +312,12 @@ function handleSearchAddToWishlist(e) {
         id: parseInt(button.dataset.id),
         title: button.dataset.title,
         price: parseFloat(button.dataset.price),
-        image: button.dataset.image
+        image: button.dataset.image,
+        description: button.dataset.description || '',
+        rating: parseFloat(button.dataset.rating) || 0,
+        discountPercentage: parseFloat(button.dataset.discount) || 0,
+        category: button.dataset.category || 'General',
+        thumbnail: button.dataset.image
     };
 
     // Check if already in wishlist

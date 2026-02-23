@@ -40,20 +40,17 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('storage', (e) => {
         if (e.key === 'cart') {
             updateCartCount();
-            console.log('[v0] Cart updated from another tab/window');
         }
         if (e.key === 'wishlist') {
             if (typeof updateWishlistCount === 'function') {
                 updateWishlistCount();
             }
-            console.log('[v0] Wishlist updated from another tab/window');
         }
     });
 
     // Listen for custom cart update events (same tab)
     window.addEventListener('cartUpdated', () => {
         updateCartCount();
-        console.log('[v0] Cart updated (custom event)');
     });
 
     // Listen for custom wishlist update events (same tab)
@@ -61,7 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof updateWishlistCount === 'function') {
             updateWishlistCount();
         }
-        console.log('[v0] Wishlist updated (custom event)');
     });
 
     // Scroll to top button
@@ -128,12 +124,10 @@ function registerServiceWorker() {
 
         if (window.location.protocol === 'https:' || isLocalhost) {
             window.addEventListener('load', function () {
-                navigator.serviceWorker.register('/sw.js')
+            navigator.serviceWorker.register('/sw.js')
                     .then(function (registration) {
-                        console.log('✅ Service Worker registered with scope:', registration.scope);
                     })
                     .catch(function (error) {
-                        console.error('❌ Service Worker registration failed:', error);
                     });
             });
         }
@@ -152,7 +146,6 @@ function updateCartCount() {
         cart = cartData ? JSON.parse(cartData) : [];
         if (!Array.isArray(cart)) cart = [];
     } catch (e) {
-        console.error('Error parsing cart:', e);
         cart = [];
     }
 
@@ -165,11 +158,30 @@ function updateCartCount() {
     cartCountEl.style.display = totalItems > 0 ? 'inline' : 'none';
 }
 
+// ================= WISHLIST COUNT =================
+
+function updateWishlistCount() {
+    const wishlistCountEl = document.getElementById('wishlistCount');
+    if (!wishlistCountEl) return;
+
+    let wishlist = [];
+    try {
+        const wishlistData = localStorage.getItem('wishlist');
+        wishlist = wishlistData ? JSON.parse(wishlistData) : [];
+        if (!Array.isArray(wishlist)) wishlist = [];
+    } catch (e) {
+        wishlist = [];
+    }
+
+    const totalItems = wishlist.length;
+    wishlistCountEl.textContent = totalItems;
+    wishlistCountEl.style.display = totalItems > 0 ? 'inline' : 'none';
+}
+
 // ================= ADD TO CART =================
 
 function addToCart(product) {
     if (!product || !product.id) {
-        console.error('Invalid product');
         showNotification('Cannot add invalid product', 'danger');
         return false;
     }
@@ -180,7 +192,6 @@ function addToCart(product) {
         cart = cartData ? JSON.parse(cartData) : [];
         if (!Array.isArray(cart)) cart = [];
     } catch (e) {
-        console.error('Error loading cart:', e);
         cart = [];
     }
 
@@ -206,7 +217,6 @@ function addToCart(product) {
         showNotification(`<strong>${product.title}</strong> added to cart!`);
         return true;
     } catch (e) {
-        console.error('Error saving cart:', e);
         showNotification('Failed to add to cart.', 'danger');
         return false;
     }
@@ -223,7 +233,6 @@ function updateAuthButton() {
         const userData = localStorage.getItem('user');
         user = userData ? JSON.parse(userData) : null;
     } catch (e) {
-        console.error('Error parsing user data:', e);
         user = null;
     }
 
@@ -249,7 +258,7 @@ function updateAuthButton() {
 
                 // Clear any Firebase session if available
                 if (typeof firebase !== 'undefined' && firebase.auth) {
-                    firebase.auth().signOut().catch(err => console.log('Firebase signout:', err));
+                    firebase.auth().signOut().catch(err => {});
                 }
 
                 // Update button immediately
@@ -279,7 +288,6 @@ function updateAuthButton() {
         authBtn.addEventListener('click', function loginHandler(e) {
             // Let the default href behavior work
             // This ensures it always goes to auth.html
-            console.log('Navigating to auth page');
         }, { once: true });
     }
 }
@@ -360,9 +368,8 @@ function getQueryParam(param) {
 window.formatPrice = formatPrice;
 window.addToCart = addToCart;
 window.updateCartCount = updateCartCount;
+window.updateWishlistCount = updateWishlistCount;
 window.updateAuthButton = updateAuthButton;
 window.showNotification = showNotification;
 window.getQueryParam = getQueryParam;
 window.checkout = checkout;
-
-console.log('🚀 ShopEasy main.js loaded');
