@@ -67,14 +67,6 @@
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <div class="price-range-container">
-                        <label for="priceRange" class="form-label">Price Range</label>
-                        <input type="range" class="form-range" id="priceRange" min="0" max="2000" value="2000" step="50"
-                            oninput="filterProducts()">
-                        <div id="priceValue">₹0 - ₹2000</div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-3">
                     <label for="sortFilter" class="form-label">Sort by</label>
                     <select id="sortFilter" class="form-select" onchange="sortProducts()">
                         <option value="default">Default</option>
@@ -83,6 +75,15 @@
                         <option value="rating">Highest Rated</option>
                         <option value="name">Name A-Z</option>
                     </select>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="price-range-container">
+                        <label for="priceRange" class="form-label">Price Range</label>
+                        <input type="range" class="form-range" id="priceRange" min="0" max="2000" value="2000" step="50"
+                            oninput="filterProducts()">
+                        <div id="priceValue">₹0 - ₹2000</div>
+                    </div>
                 </div>
             </div>
 

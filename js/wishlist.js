@@ -153,14 +153,13 @@ function updateWishlistButtons() {
     // Update all wishlist buttons to reflect current wishlist state
     document.querySelectorAll('.add-to-wishlist-btn').forEach(button => {
         const productId = parseInt(button.dataset.id);
-        const originalText = button.innerHTML.includes('Wishlist') ? ' Wishlist' : '';
         if (isInWishlist(productId)) {
             button.classList.add('in-wishlist');
-            button.innerHTML = '<i class="fas fa-heart"></i>' + originalText;
+            button.innerHTML = '<i class="fas fa-heart"></i>';
             button.title = 'Remove from wishlist';
         } else {
             button.classList.remove('in-wishlist');
-            button.innerHTML = '<i class="far fa-heart"></i>' + originalText;
+            button.innerHTML = '<i class="far fa-heart"></i>';
             button.title = 'Add to wishlist';
         }
     });
@@ -216,17 +215,12 @@ function renderWishlist() {
         html += `
             <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-6 mb-4">
                 <div class="card product-card h-100 border-0 shadow-sm">
-                    <div class="position-relative product-image-container">
+                    <div class="product-image-container position-relative overflow-hidden" style="background: #f8f9fa;">
                         <img src="${item.image || 'https://via.placeholder.com/300'}" 
                              class="card-img-top product-img" 
                              alt="${item.title}"
-                             onerror="this.src='https://via.placeholder.com/300'">
-                        <button class="btn btn-danger btn-sm rounded-circle position-absolute top-0 end-0 m-2" 
-                                onclick="removeFromWishlist(${item.id}); renderWishlist();"
-                                title="Remove from wishlist"
-                                style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0; font-size: 0.9rem;">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
+                             onerror="this.src='https://via.placeholder.com/300'"
+                             style="width: 100%; height: auto; object-fit: cover;">
                     </div>
                     <div class="card-body d-flex flex-column">
                         <h6 class="card-title fw-bold" title="${item.title}">${item.title}</h6>

@@ -159,15 +159,15 @@ function createCategoryCard(category) {
 
     return `
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-            <div class="card category-card h-100 shadow-sm border-0 flex">
-                <div class="category-image-wrapper overflow-hidden" style="height: 200px;">
+            <div class="card category-card h-100 shadow-sm border-0 flex" style="display: flex; flex-direction: column;">
+                <div class="category-image-wrapper overflow-hidden" style="height: 200px; width: 100%; flex-shrink: 0;">
                     <img src="${categoryImage}" 
                          class="card-img-top w-100 h-100" 
-                         style="object-fit: cover; transition: transform 0.3s ease;"
+                         style="object-fit: cover; transition: transform 0.3s ease; width: 100%; height: 100%;"
                          alt="${categoryName}"
                          onerror="this.src='https://via.placeholder.com/300x200/6c757d/ffffff?text=${encodeURIComponent(categoryName)}'">
                 </div>
-                <div class="card-body d-flex flex-column text-center p-3">
+                <div class="card-body d-flex flex-column text-center p-3 flex-grow-1">
                     <h5 class="card-title mb-3 fw-bold">${categoryName}</h5>
                     <a href="categories.html?category=${encodeURIComponent(categoryValue)}" class="btn btn-primary mt-auto px-2">
                         Shop Now <i class="fas fa-arrow-right ms-2"></i>
@@ -197,11 +197,11 @@ function createProductCard(product) {
     return `
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card product-card h-100 shadow-sm border-0">
-                <div class="position-relative product-image-container" style="overflow: hidden; background: #f8f9fa;">
+                <div class="position-relative product-image-container" style="overflow: hidden; background: #f8f9fa; height: 200px;">
                     <img src="${image}" 
                          class="card-img-top product-img" 
                          alt="${product.title}"
-                         style="height: 250px; object-fit: cover; width: 100%;"
+                         style="height: 200px; object-fit: cover; width: 100%;"
                          onerror="this.src='https://via.placeholder.com/300'">
                     <span class="badge ${isInStock ? 'bg-success' : 'bg-danger'} position-absolute top-0 end-0 m-2">
                         ${isInStock ? 'In Stock' : 'Out of Stock'}
@@ -245,7 +245,7 @@ function createProductCard(product) {
                                 data-price="${product.price}"
                                 data-image="${image}"
                                 title="Add to wishlist">
-                            <i class="far fa-heart"></i> Wishlist
+                            <i class="far fa-heart"></i>
                         </button>
                     </div>
                 </div>

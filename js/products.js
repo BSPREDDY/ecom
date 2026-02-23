@@ -295,7 +295,7 @@ function createProductCard(product, isRelated = false) {
                                 data-price="${product.price}"
                                 data-image="${image}"
                                 title="Add to wishlist">
-                            <i class="far fa-heart"></i><span class="d-none d-sm-inline"> Wish</span>
+                            <i class="far fa-heart"></i>
                         </button>
                     </div>
                 </div>
@@ -994,12 +994,12 @@ async function loadRelatedProducts(category) {
         relatedProducts.forEach(product => {
             html += createProductCard(product);
         });
-        
+
         container.innerHTML = html;
 
         // Attach event listeners for cart and wishlist
         attachCartEventListeners(relatedProducts);
-        
+
         // Update wishlist button states
         if (typeof updateWishlistButtons === 'function') {
             updateWishlistButtons();
