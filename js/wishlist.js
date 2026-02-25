@@ -12,7 +12,6 @@ let wishlist = [];
 // ===============================
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('[Wishlist] Initializing wishlist module');
     loadWishlist();
     updateWishlistCount();
 

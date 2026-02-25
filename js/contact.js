@@ -280,8 +280,6 @@ $(document).ready(function () {
             // Reset form
             resetForm();
 
-            // Log to console (for debugging)
-            console.log('Contact form submitted:', formData);
 
         } catch (error) {
             console.error('Form submission error:', error);

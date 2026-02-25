@@ -11,7 +11,6 @@ let isLoadingProducts = false;
 // Wait for DOM and dependencies
 document.addEventListener('DOMContentLoaded', () => {
     if (searchPageInitialized) {
-        console.log('[Search] Already initialized, skipping...');
         return;
     }
 
@@ -25,7 +24,6 @@ function initializeSearch() {
     if (searchPageInitialized) return;
     searchPageInitialized = true;
 
-    console.log('[Search] Initializing search page');
 
     // Update cart count if function exists
     if (typeof window.updateCartCount === 'function') {
@@ -46,7 +44,6 @@ function initializeSearch() {
     setupSearchForm();
 
     // Always load fresh products (ignore existing ones to ensure we get 10,000)
-    console.log('[Search] Loading 10,000 products from API...');
     loadAllProducts().then(() => {
         checkUrlForSearch();
     });
@@ -124,7 +121,6 @@ function setupSearchForm() {
 async function loadAllProducts() {
     // Prevent multiple simultaneous loading attempts
     if (isLoadingProducts) {
-        console.log('[Search] Already loading products, skipping...');
         return allProducts;
     }
 
@@ -151,7 +147,6 @@ async function loadAllProducts() {
     }
 
     try {
-        console.log('[Search] Loading 10,000 products from API...');
 
         // DummyJSON supports limit parameter - set to maximum (usually 100 is default, but we can request more)
         // Note: DummyJSON free tier might have limits, but we'll request as many as possible
@@ -174,11 +169,9 @@ async function loadAllProducts() {
             loadingStatus.textContent = `Loaded ${allProducts.length} products successfully!`;
         }
 
-        console.log(`[Search] Loaded ${allProducts.length} products from API`);
 
         // If we got less than expected, try to get more by pagination
         if (allProducts.length < 10000 && allProducts.length > 0) {
-            console.log(`[Search] Only got ${allProducts.length} products, trying pagination...`);
             allProducts = await loadAllProductsWithPagination();
         }
 
@@ -198,12 +191,10 @@ async function loadAllProducts() {
         console.error('[Search] Error loading products:', error);
 
         // Try pagination approach as fallback
-        console.log('[Search] Trying pagination to get more products...');
         allProducts = await loadAllProductsWithPagination();
 
         if (allProducts.length === 0) {
             // Use mock data as last resort with 100 products
-            console.log('[Search] Using mock data as fallback');
             allProducts = getMockProducts(100); // Generate 100 mock products
         }
 
@@ -243,7 +234,6 @@ async function loadAllProductsWithPagination() {
         const firstData = await firstResponse.json();
         total = firstData.total || 100; // Fallback to 100 if total not available
 
-        console.log(`[Search] Total products available: ${total}`);
 
         const totalPages = Math.ceil(Math.min(total, 10000) / limit);
 
@@ -278,7 +268,6 @@ async function loadAllProductsWithPagination() {
             await new Promise(resolve => setTimeout(resolve, 100));
         }
 
-        console.log(`[Search] Loaded ${allFetchedProducts.length} products via pagination`);
         return allFetchedProducts;
 
     } catch (error) {
@@ -322,7 +311,6 @@ function performSearch() {
     const searchInput = document.getElementById('searchInput');
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
-    console.log('[Search] Searching for:', searchTerm);
 
     if (!searchTerm) {
         displayEmptySearch();
@@ -363,7 +351,6 @@ function performSearch() {
 function performSearchNow(searchTerm) {
     const products = Array.isArray(allProducts) ? allProducts : [];
 
-    console.log(`[Search] Searching in ${products.length} products`);
 
     // Show searching indicator
     const searchResultsContainer = document.getElementById('searchResults');
@@ -395,7 +382,6 @@ function performSearchNow(searchTerm) {
             );
         });
 
-        console.log(`[Search] Found ${searchResults.length} results`);
 
         // Update page title
         const searchTitle = document.getElementById('searchTitle');
@@ -423,7 +409,6 @@ function displaySearchResults(results) {
     }
 
     const safeResults = results || [];
-    console.log('[Search] Displaying', safeResults.length, 'results');
 
     if (safeResults.length === 0) {
         searchResultsContainer.innerHTML = `
@@ -618,7 +603,6 @@ function handleAddToCart(e) {
         }
     } else {
         // Fallback
-        console.log('Add to cart:', product);
         setTimeout(() => {
             button.innerHTML = '<i class="fas fa-check"></i> Added!';
             setTimeout(() => {

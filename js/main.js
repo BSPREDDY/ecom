@@ -124,7 +124,7 @@ function registerServiceWorker() {
 
         if (window.location.protocol === 'https:' || isLocalhost) {
             window.addEventListener('load', function () {
-            navigator.serviceWorker.register('/sw.js')
+                navigator.serviceWorker.register('/sw.js')
                     .then(function (registration) {
                     })
                     .catch(function (error) {
@@ -258,7 +258,7 @@ function updateAuthButton() {
 
                 // Clear any Firebase session if available
                 if (typeof firebase !== 'undefined' && firebase.auth) {
-                    firebase.auth().signOut().catch(err => {});
+                    firebase.auth().signOut().catch(err => { });
                 }
 
                 // Update button immediately

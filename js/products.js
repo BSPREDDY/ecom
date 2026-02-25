@@ -619,14 +619,12 @@ function setupFilters() {
 async function loadAllProducts() {
     const container = document.getElementById('productsContainer');
     if (!container) {
-        console.log('Products container not found');
         return;
     }
 
     showLoading(container);
 
     try {
-        console.log('[v0] Loading products from API...');
         const response = await fetch(`${window.API_BASE_URL}/products?limit=10000`);
 
         if (!response.ok) {
@@ -641,7 +639,6 @@ async function loadAllProducts() {
         window.productsAllProducts = productsAllProducts;
         window.allProducts = productsAllProducts; // Also store as allProducts for compatibility
 
-        console.log(`[v0] Loaded ${productsAllProducts.length} products`);
 
         // Initialize filters
         populateCategories();
@@ -652,10 +649,9 @@ async function loadAllProducts() {
 
     } catch (error) {
         console.error('[v0] Error loading products, retrying...', error);
-        
+
         // Retry with basic endpoint
         try {
-            console.log('[v0] Retrying with /products endpoint...');
             const retryResponse = await fetch(`${window.API_BASE_URL}/products`);
             if (retryResponse.ok) {
                 const retryData = await retryResponse.json();
@@ -663,8 +659,7 @@ async function loadAllProducts() {
                 filteredProducts = [...productsAllProducts];
                 window.productsAllProducts = productsAllProducts;
                 window.allProducts = productsAllProducts;
-                
-                console.log(`[v0] Loaded ${productsAllProducts.length} products on retry`);
+
                 populateCategories();
                 setupFilters();
                 renderProducts(productsAllProducts);
@@ -681,7 +676,6 @@ async function loadAllProducts() {
 async function loadLatestProducts() {
     const container = document.getElementById('latestProducts');
     if (!container) {
-        console.log('[v0] Latest products container not found');
         return;
     }
 
@@ -694,19 +688,16 @@ async function loadLatestProducts() {
     `;
 
     try {
-        console.log('[v0] Fetching latest products...');
         const response = await fetch(`${window.API_BASE_URL}/products?limit=100`);
         if (!response.ok) throw new Error('Failed to load products');
 
         const data = await response.json();
         const allFetchedProducts = data.products || [];
 
-        console.log('[v0] Fetched', allFetchedProducts.length, 'total products');
 
         // Get the latest 8 products (newest by ID)
         const latestProducts = allFetchedProducts.sort((a, b) => b.id - a.id).slice(0, 8);
 
-        console.log('[v0] Displaying', latestProducts.length, 'latest products');
 
         if (latestProducts.length === 0) {
             container.innerHTML = `
@@ -735,7 +726,6 @@ async function loadLatestProducts() {
                 updateWishlistButtons();
             }
 
-            console.log('[v0] Latest products loaded and listeners attached');
         }, 100);
 
     } catch (error) {
@@ -1039,7 +1029,6 @@ let pageInitialized = false;
 function initializePage() {
     // Prevent duplicate initialization
     if (pageInitialized) {
-        console.log('[v0] Products.js: Page already initialized, skipping...');
         return;
     }
     pageInitialized = true;

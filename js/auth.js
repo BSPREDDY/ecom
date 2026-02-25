@@ -7,12 +7,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Check if on auth page
     if (!document.querySelector('.auth-container')) return;
 
-    // Log Firebase status for debugging
-    console.log('Firebase available:', typeof firebase !== 'undefined');
-    if (typeof firebase !== 'undefined') {
-        console.log('Firebase apps:', firebase.apps ? firebase.apps.length : 0);
-    }
-
     // Form elements
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
@@ -573,7 +567,6 @@ async function handleLogin(e) {
     try {
         // Check Firebase availability
         if (typeof firebase === 'undefined' || !firebase.auth) {
-            console.log('Firebase not available, using demo mode');
 
             // Demo login
             const user = {
@@ -681,7 +674,6 @@ async function handleSignup(e) {
     try {
         // Check Firebase availability
         if (typeof firebase === 'undefined' || !firebase.auth) {
-            console.log('Firebase not available, using demo mode');
 
             const demoUser = await simulateSignup(name, email, password);
 

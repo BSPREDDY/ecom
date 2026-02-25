@@ -11,4 +11,3 @@ window.CONFIG = {
         appId: "1:719879359858:web:8eb24d174d30245c45e1eb"
     }
 };
-console.log('Config loaded:', CONFIG);

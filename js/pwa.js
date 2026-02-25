@@ -23,9 +23,7 @@ const URLS_TO_CACHE = [
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            console.log('[v0] Service Worker: Caching app shell');
             return cache.addAll(URLS_TO_CACHE).catch((error) => {
-                console.log('[v0] Cache addAll error:', error);
                 // Continue even if some resources fail to cache
                 return Promise.resolve();
             });
@@ -41,7 +39,6 @@ self.addEventListener('activate', (event) => {
             return Promise.all(
                 cacheNames.map((cacheName) => {
                     if (cacheName !== CACHE_NAME) {
-                        console.log('[v0] Service Worker: Deleting old cache -', cacheName);
                         return caches.delete(cacheName);
                     }
                 })
@@ -119,7 +116,6 @@ self.addEventListener('sync', (event) => {
         event.waitUntil(
             // Sync cart data when back online
             new Promise((resolve, reject) => {
-                console.log('[v0] Service Worker: Syncing cart');
                 // Cart is stored in localStorage and will sync when user opens the app
                 resolve();
             })
@@ -127,4 +123,3 @@ self.addEventListener('sync', (event) => {
     }
 });
 
-console.log('[v0] Service Worker: Loaded');

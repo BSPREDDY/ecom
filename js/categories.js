@@ -274,12 +274,10 @@ async function loadCategoryProducts() {
     // Try to get products from window.allProducts first
     if (window.allProducts && window.allProducts.length > 0) {
         categoryProducts = window.allProducts;
-        console.log(`[Categories] Using cached products: ${categoryProducts.length}`);
         return categoryProducts;
     }
 
     try {
-        console.log('[Categories] Loading all products...');
         const response = await fetch(`${API_URL}/products?limit=10000`);
 
         if (!response.ok) {
@@ -288,31 +286,28 @@ async function loadCategoryProducts() {
 
         const data = await response.json();
         categoryProducts = data.products || [];
-        console.log(`[Categories] Loaded ${categoryProducts.length} products`);
-        
+
         window.allProducts = categoryProducts; // Share with other modules
         window.categoryProducts = categoryProducts;
-        
+
         return categoryProducts;
     } catch (error) {
         console.error('[Categories] Error loading products:', error);
-        
+
         // Try fetching just /products
         try {
-            console.log('[Categories] Retrying with /products endpoint...');
             const retryResponse = await fetch(`${API_URL}/products`);
             if (retryResponse.ok) {
                 const retryData = await retryResponse.json();
                 categoryProducts = retryData.products || [];
                 window.allProducts = categoryProducts;
                 window.categoryProducts = categoryProducts;
-                console.log(`[Categories] Loaded ${categoryProducts.length} products on retry`);
                 return categoryProducts;
             }
         } catch (retryError) {
             console.error('[Categories] Retry also failed:', retryError);
         }
-        
+
         return [];
     }
 }
@@ -512,7 +507,6 @@ function handleAddToCart(e) {
         }, 300);
     } else {
         // Fallback
-        console.log('Add to cart:', product);
         button.innerHTML = '<i class="fas fa-check"></i> Added!';
         setTimeout(() => {
             button.innerHTML = originalHtml;
@@ -614,7 +608,6 @@ async function loadAllCategories() {
     showLoading(container, 'Loading categories...');
 
     try {
-        console.log('Fetching categories from:', CATEGORY_API);
         const response = await fetch(CATEGORY_API);
 
         if (!response.ok) {
@@ -653,7 +646,6 @@ async function loadAllCategories() {
         html += '</div>';
         container.innerHTML = html;
 
-        console.log(`[Categories] Loaded ${categories.length} categories`);
 
     } catch (error) {
         console.error('[Categories] Error loading categories:', error);
@@ -664,7 +656,6 @@ async function loadAllCategories() {
             categories.map(category => createCategoryCard(category)).join('') +
             '</div>';
 
-        console.log(`[Categories] Loaded ${categories.length} fallback categories`);
     }
 }
 
@@ -673,7 +664,6 @@ async function loadAllCategories() {
 // ===============================
 
 async function initializeCategoriesPage() {
-    console.log('Initializing categories page');
 
     // Load products first
     await loadCategoryProducts();
@@ -692,7 +682,6 @@ async function initializeCategoriesPage() {
 }
 
 function initializeHomePageCategories() {
-    console.log('Initializing home page categories');
     loadAllCategories();
 }
 

@@ -24,7 +24,7 @@
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box
+    box-sizing: border-box;
 }
 
 body,
@@ -806,6 +806,7 @@ body {
 
 @media (max-width:1024px) {
     .hero-section {
+        padding-left: 100px;
         min-height: 500px;
         padding-bottom: 60px
     }
@@ -1247,6 +1248,98 @@ body {
         height: 200px !important;
         object-fit: cover !important;
         width: 100% !important
+    }
+}
+
+
+
+/* Laptop L (1440px) - Increase product image height by 50px */
+@media (min-width:1440px) {
+    .col-xl-3 {
+        flex: 0 0 calc(25% - 0.75rem)
+    }
+
+    .product-card img,
+    .product-img,
+    .product-image-container img,
+    .card img.product-img,
+    #latestProducts .product-card img,
+    #productsContainer .product-card img,
+    .product-card .card-img-top {
+        height: 270px !important;
+        /* Increased from 200px to 250px (+50px) */
+        min-height: 270px !important;
+        max-height: 270px !important;
+        aspect-ratio: 1 / 1;
+        object-fit: cover
+    }
+
+    .product-image-container,
+    #latestProducts .product-image-container,
+    #productsContainer .product-image-container,
+    .product-card .product-image-container {
+        height: 270px !important;
+        min-height: 270px !important;
+        max-height: 270px !important;
+        overflow: hidden !important
+    }
+
+    .product-title {
+        font-size: .95rem
+    }
+
+    .product-price {
+        font-size: 1.3rem
+    }
+
+    .section-title {
+        font-size: 2.2rem
+    }
+}
+
+/* Laptop (1024px to 1439px) - Increase product image height by 50px */
+@media (min-width:1024px) and (max-width:1439px) {
+
+    .col-xl-3,
+    .col-lg-3 {
+        flex: 0 0 calc(25% - 0.75rem)
+    }
+
+    .product-card img,
+    .product-img,
+    .product-image-container img,
+    .card img.product-img,
+    #latestProducts .product-card img,
+    #productsContainer .product-card img,
+    .product-card .card-img-top {
+        height: 270px !important;
+        /* Increased from 200px to 250px (+50px) */
+        min-height: 270px !important;
+        max-height: 270px !important;
+        aspect-ratio: 1 / 1;
+        object-fit: cover
+    }
+
+    .product-image-container,
+    #latestProducts .product-image-container,
+    #productsContainer .product-image-container,
+    .product-card .product-image-container {
+        height: 270px !important;
+        min-height: 270px !important;
+        max-height: 270px !important;
+        overflow: hidden !important
+    }
+
+    .product-title {
+        font-size: .9rem
+    }
+
+    .product-price {
+        font-size: 1.25rem
+    }
+
+    .section-title {
+        font-size: 2rem
     }
 }
 
