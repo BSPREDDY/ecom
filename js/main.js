@@ -297,53 +297,8 @@ function updateAuthButton() {
 // ================= NOTIFICATIONS =================
 
 function showNotification(message, type = 'success', duration = 3000) {
-    document.querySelectorAll('.alert-notification').forEach(n => n.remove());
-
-    const notification = document.createElement('div');
-    notification.className = `alert alert-${type} alert-notification`;
-    notification.style.cssText = `
-        position: fixed;
-        top: 100px;
-        right: 20px;
-        z-index: 9999;
-        min-width: 320px;
-        max-width: 450px;
-        border: none;
-        border-radius: 12px;
-        border-left: 4px solid;
-        animation: slideInRight 0.3s ease-out;
-        padding: 1rem 1.5rem;
-        font-weight: 500;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    `;
-
-    const colors = {
-        'success': { icon: 'fa-check-circle', color: '#10b981' },
-        'danger': { icon: 'fa-exclamation-circle', color: '#ef4444' },
-        'warning': { icon: 'fa-exclamation-triangle', color: '#f59e0b' },
-        'info': { icon: 'fa-info-circle', color: '#06b6d4' }
-    };
-
-    const typeConfig = colors[type] || colors['success'];
-    notification.style.borderLeftColor = typeConfig.color;
-    notification.style.color = typeConfig.color;
-
-    notification.innerHTML = `
-        <i class="fas ${typeConfig.icon} fa-lg me-2"></i>${message}
-    `;
-
-    document.body.appendChild(notification);
-
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.style.animation = 'slideOutRight 0.3s ease-out forwards';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 300);
-        }
-    }, duration);
+    // Toasts disabled - console logging only
+    console.log(`[${type.toUpperCase()}] ${message}`);
 }
 
 // ================= CHECKOUT FUNCTION =================

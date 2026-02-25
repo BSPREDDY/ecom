@@ -200,7 +200,7 @@ function renderCart() {
         const itemTotal = (item.price || 0) * quantity;
 
         html += `
-            <tr>
+            <tr class="align-middle">
                 <td>
                     <div class="d-flex align-items-center gap-3">
                         <img src="${item.image || 'https://via.placeholder.com/80'}" 
@@ -214,16 +214,17 @@ function renderCart() {
                         </div>
                     </div>
                 </td>
-                <td>
-                    <div class="input-group input-group-sm" style="max-width: 100px;">
+                <td style="text-align: center;">
+                    <div class="d-flex justify-content-center align-items-center gap-2">
                         <button class="btn btn-outline-secondary btn-sm" 
-                                onclick="cartUpdateQuantity(${item.id}, ${quantity - 1}); renderCart();">-</button>
-                        <input type="number" 
+                                onclick="cartUpdateQuantity(${item.id}, ${quantity - 1}); renderCart();">−</button>
+                        <input type="input" 
                                value="${quantity}" 
                                class="form-control text-center quantity-input"
                                data-id="${item.id}"
                                min="1" 
-                               max="999">
+                               max="999"
+                               style="width: 50px;">
                         <button class="btn btn-outline-secondary btn-sm" 
                                 onclick="cartUpdateQuantity(${item.id}, ${quantity + 1}); renderCart();">+</button>
                     </div>

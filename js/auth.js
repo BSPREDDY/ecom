@@ -161,7 +161,7 @@ function showLoginForm() {
     }
     if (authTitle) authTitle.textContent = "Welcome Back";
     if (authSubtitle) authSubtitle.textContent = "Please login to your account";
-    document.title = "ShopEasy - Login";
+    document.title = "SARUKU - Login";
 
     // Clear messages and errors
     clearMessages();
@@ -185,7 +185,7 @@ function showSignupForm() {
     }
     if (authTitle) authTitle.textContent = "Create Account";
     if (authSubtitle) authSubtitle.textContent = "Sign up to get started";
-    document.title = "ShopEasy - Sign Up";
+    document.title = "SARUKU - Sign Up";
 
     // Clear messages, errors, and reset password strength
     clearMessages();
