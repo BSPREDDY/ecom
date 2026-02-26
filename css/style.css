@@ -806,7 +806,7 @@ body {
 
 @media (max-width:1024px) {
     .hero-section {
-        padding-left: 100px;
+        padding-left: 10px;
         min-height: 500px;
         padding-bottom: 60px
     }
